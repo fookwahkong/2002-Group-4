@@ -1,6 +1,7 @@
 package main.utils;
 
 import main.entity.user.User;
+import main.entity.user.UserFactory;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
@@ -9,17 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileIOUtil {
-    // Temporarily use users.csv
     // To extend functionality once proper user classes are added
 
-    private static final String USERS_FILE = "main/data/users.csv";
+    private static final String APPLICANTS_FILE = "src/main/data/applicants.csv";
+    private static final String MANAGERS_FILE = "src/main/data/managers.csv";
+    private static final String OFFICERS_FILE = "src/main/data/officers.csv";
 
-    public static List<User> loadUsers() {
+    public static List<User> loadAll() {
+        List<User> allUsers = new ArrayList<>();
+        allUsers.addAll(loadUsersFromFile(APPLICANTS_FILE, UserRole.APPLICANT));
+        allUsers.addAll(loadUsersFromFile(MANAGERS_FILE, UserRole.HDB_MANAGER));
+        allUsers.addAll(loadUsersFromFile(OFFICERS_FILE, UserRole.HDB_OFFICER));
+        return allUsers;
+    }
+
+    public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {
         // return a list of user objects temporarily
         // can consider creating UserFactory for proper instantiation
 
         List<User> users = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(USERS_FILE))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
 
             // consume header
@@ -39,17 +49,11 @@ public class FileIOUtil {
                 }
 
                 String password = parts[4];
-
-                // default as applicant first, to be changed
-                UserRole role = UserRole.APPLICANT;
-
-                users.add(new User(userID, password, age, maritalStatus, role));
+                users.add(UserFactory.createUser(userID, password, age, maritalStatus, userRole));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         return users;
     }
-
 }

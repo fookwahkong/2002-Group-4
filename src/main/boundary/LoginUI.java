@@ -1,6 +1,9 @@
 package main.boundary;
 
 import main.controller.LoginController;
+import main.entity.user.User;
+import main.enums.UserRole;
+
 import java.util.Scanner;
 
 public class LoginUI {
@@ -9,11 +12,11 @@ public class LoginUI {
     private ChangePasswordUI changePasswordUI;
 
     public LoginUI() {
-        loginController = new LoginController();
+        loginController = LoginController.getInstance();
         changePasswordUI = new ChangePasswordUI();
     }
 
-    public int showLoginMenu() {
+    public User showLoginMenu() {
         boolean validLogin = false;
 
         while (!validLogin) {
@@ -59,12 +62,12 @@ public class LoginUI {
                     System.out.print("Enter password: ");
                     String password = scanner.nextLine().trim();
 
-                    int loggedIn = loginController.login(nric, password);
+                    User user = loginController.login(nric, password);
 
-                    if (loggedIn != -1) {
+                    if (user != null) {
                         validLogin = true;
                         System.out.println("Login successful!\n");
-                        return loggedIn;
+                        return user;
                     } else {
                         System.out.println("Invalid NRIC or password. Please try again.\n");
                     }
@@ -87,6 +90,27 @@ public class LoginUI {
 
             System.out.println();
         }
-    return -1;
+        return null;
+    }
+
+    public void navigateToMainMenu(User user) {
+        if (user == null) {
+            return;
+        }
+
+        UserRole role = user.getUserRole();
+        switch (role) {
+            case APPLICANT:
+                new ApplicantUI().showMenu();
+                break;
+            case HDB_OFFICER:
+                new OfficerUI().showMenu();
+                break;
+            case HDB_MANAGER:
+                new ManagerUI().showMenu();
+                break;
+            default:
+                break;
+        }
     }
 }

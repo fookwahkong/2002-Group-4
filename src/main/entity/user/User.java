@@ -31,4 +31,8 @@ public class User {
         return this.password;
     }
 
+    public UserRole getUserRole() {
+        return this.userRole;
+    }
+
 }

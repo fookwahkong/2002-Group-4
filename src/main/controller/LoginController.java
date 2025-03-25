@@ -4,30 +4,33 @@ import main.entity.user.User;
 import main.utils.FileIOUtil;
 import java.util.ArrayList;
 import java.util.List;
+import main.controller.NRICChecker;
 
 public class LoginController {
     private List<User> users;
-    private User currentUser;
 
     public LoginController() {
         users = new ArrayList<>();
         users = FileIOUtil.loadUsers();
     }
 
-    public User login(String userID, String password) {
-        // implement NRIC validation
-
-        // polymorphic: to implement subclasses of User
-        for (User user: users) {
-            if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {
-                currentUser = user;
-                return user;
+    public int login(String userID, String password) {
+        // NRICChecker checker = new NRICChecker();
+    
+        // if (!checker.isNRICCorrect(userID)) {
+        //     System.out.println("Invalid NRIC format. Please try again.");
+        //     return -1;
+        // }
+    
+        for (User user : users) {
+            if (user.getUserID().trim().equalsIgnoreCase(userID.trim()) && 
+                user.getPassword().trim().equals(password.trim())) {
+                return 1; // Successful login
             }
         }
-        return null; // login failed
+    
+        System.out.println("Invalid userID or password.");
+        return -1;
     }
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
+    
 }

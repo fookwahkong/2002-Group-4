@@ -12,7 +12,7 @@ public class FileIOUtil {
     // Temporarily use users.csv
     // To extend functionality once proper user classes are added
 
-    private static final String USERS_FILE = "src/main/data/users.csv";
+    private static final String USERS_FILE = "main/data/users.csv";
 
     public static List<User> loadUsers() {
         // return a list of user objects temporarily

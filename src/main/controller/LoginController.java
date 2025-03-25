@@ -4,7 +4,6 @@ import main.entity.user.User;
 import main.utils.FileIOUtil;
 import java.util.ArrayList;
 import java.util.List;
-import main.controller.NRICChecker;
 import java.util.regex.*;
 
 public class LoginController {
@@ -25,18 +24,15 @@ public class LoginController {
         return matcher.matches();
     }
 
-    public User login(String userID, String password) {
+    public int login(String userID, String password) {
         // polymorphic: to implement subclasses of User
         for (User user: users) {
             if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {
-                currentUser = user;
-                return user;
+                return 1;
             }
         }
-        return null; // login failed
+        return -1; // login failed
     }
 
-    public User getCurrentUser() {
-        return currentUser;
-    }
+
 }

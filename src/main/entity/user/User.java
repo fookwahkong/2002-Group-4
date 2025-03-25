@@ -3,7 +3,7 @@ package main.entity.user;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
-public class User {
+public abstract class User {
     private String userID;
     private String password;
     private String name;
@@ -11,9 +11,10 @@ public class User {
     private MaritalStatus maritalStatus;
     private UserRole userRole;
 
-    public User(String userID, String password, int age, MaritalStatus maritalStatus, UserRole userRole) {
+    public User(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         this.userID = userID;
         this.password = password;
+        this.name = name;
         this.age = age;
         this.maritalStatus = maritalStatus;
         this.userRole = userRole;

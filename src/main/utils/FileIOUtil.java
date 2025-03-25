@@ -49,7 +49,7 @@ public class FileIOUtil {
                 }
 
                 String password = parts[4];
-                users.add(UserFactory.createUser(userID, password, age, maritalStatus, userRole));
+                users.add(UserFactory.createUser(userID, password, name, age, maritalStatus, userRole));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

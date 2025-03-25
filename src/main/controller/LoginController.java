@@ -5,6 +5,7 @@ import main.utils.FileIOUtil;
 import java.util.ArrayList;
 import java.util.List;
 import main.controller.NRICChecker;
+import java.util.regex.*;
 
 public class LoginController {
     private List<User> users;
@@ -13,24 +14,29 @@ public class LoginController {
         users = new ArrayList<>();
         users = FileIOUtil.loadUsers();
     }
+    
+    public boolean verifyNric(String nric) {
+        // starts with S or T, followed by 7-digit number and ends with another letter
+        String regex = "^[ST]\\d{7}[A-Z]$";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(nric);
 
-    public int login(String userID, String password) {
-        // NRICChecker checker = new NRICChecker();
-    
-        // if (!checker.isNRICCorrect(userID)) {
-        //     System.out.println("Invalid NRIC format. Please try again.");
-        //     return -1;
-        // }
-    
-        for (User user : users) {
-            if (user.getUserID().trim().equalsIgnoreCase(userID.trim()) && 
-                user.getPassword().trim().equals(password.trim())) {
-                return 1; // Successful login
+        return matcher.matches();
+    }
+
+    public User login(String userID, String password) {
+        // polymorphic: to implement subclasses of User
+        for (User user: users) {
+            if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {
+                currentUser = user;
+                return user;
             }
         }
-    
-        System.out.println("Invalid userID or password.");
-        return -1;
+        return null; // login failed
     }
-    
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
 }

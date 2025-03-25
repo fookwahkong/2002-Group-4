@@ -44,8 +44,17 @@ public class LoginUI {
                 case 1:
                     System.out.println("Logging in with your SingPass account...");
 
-                    System.out.print("Enter NRIC: ");
-                    String nric = scanner.nextLine().trim();
+            boolean validNric = false;
+            String nric = "";
+            while (!validNric) {
+                System.out.print("Enter userID: ");
+                nric = scanner.nextLine().trim();
+                if (loginController.verifyNric(nric)) {
+                    validNric = true;
+                } else {
+                    System.out.println("Invalid userID. Please try again.");
+                }
+            }
 
                     System.out.print("Enter password: ");
                     String password = scanner.nextLine().trim();

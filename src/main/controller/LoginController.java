@@ -44,4 +44,8 @@ public class LoginController {
     public User getCurrentUser() {
         return currentUser;
     }
+
+    public void logout() {
+        currentUser = null;
+    }
 }

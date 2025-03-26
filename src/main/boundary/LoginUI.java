@@ -17,57 +17,53 @@ public class LoginUI {
     }
 
     public User showLoginMenu() {
-        boolean validLogin = false;
+        boolean exit = false;
+        User loggedInUser = null;
 
-        while (!validLogin) {
+        while (!exit) {
             // Display menu
             System.out.println("""
-                ==================================
-                   BTO MANAGEMENT SYSTEM LOGIN   
-                ==================================
-                1. Login with your Singpass account
-                2. Change Password
-                3. Exit
-                ==================================
-                Enter your choice:  
-                """);
+            ==================================
+               BTO MANAGEMENT SYSTEM LOGIN   
+            ==================================
+            1. Login with your Singpass account
+            2. Change Password
+            3. Exit
+            ==================================
+            Enter your choice:  
+            """);
 
             // Ensure valid integer input
-            int choice;
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-            } else {
+            if (!scanner.hasNextInt()) {
                 System.out.println("Invalid input! Please enter a number.");
                 scanner.next(); // Clear invalid input
                 continue;
             }
 
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
             switch (choice) {
                 case 1:
                     System.out.println("Logging in with your SingPass account...");
 
-            boolean validNric = false;
-            String nric = "";
-            while (!validNric) {
-                System.out.print("Enter userID: ");
-                nric = scanner.nextLine().trim();
-                if (loginController.verifyNric(nric)) {
-                    validNric = true;
-                } else {
-                    System.out.println("Invalid userID. Please try again.");
-                }
-            }
+                    String nric;
+                    do {
+                        System.out.print("Enter userID: ");
+                        nric = scanner.nextLine().trim();
+                        if (!loginController.verifyNric(nric)) {
+                            System.out.println("Invalid userID. Please try again.");
+                        }
+                    } while (!loginController.verifyNric(nric));
 
                     System.out.print("Enter password: ");
                     String password = scanner.nextLine().trim();
 
-                    User user = loginController.login(nric, password);
+                    loggedInUser = loginController.login(nric, password);
 
-                    if (user != null) {
-                        validLogin = true;
+                    if (loggedInUser != null) {
                         System.out.println("Login successful!\n");
-                        return user;
+                        return loggedInUser;
                     } else {
                         System.out.println("Invalid NRIC or password. Please try again.\n");
                     }
@@ -75,14 +71,13 @@ public class LoginUI {
 
                 case 2:
                     System.out.println("Redirecting to Change Password...");
-                    // Call Change Password method here
                     changePasswordUI.showChangePasswordMenu();
                     break;
 
                 case 3:
                     System.out.println("Exiting BTO Management System...");
-                    scanner.close();                       // Exit the program
-
+                    exit = true;
+                    break;
 
                 default:
                     System.out.println("Invalid choice! Please enter a number between 1 and 3.");

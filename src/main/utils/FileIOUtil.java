@@ -11,10 +11,11 @@ import java.util.List;
 
 public class FileIOUtil {
     // To extend functionality once proper user classes are added
+    static final String CLASSPATH = System.getProperty("java.class.path");
 
-    private static final String APPLICANTS_FILE = "src/main/data/applicants.csv";
-    private static final String MANAGERS_FILE = "src/main/data/managers.csv";
-    private static final String OFFICERS_FILE = "src/main/data/officers.csv";
+    private static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
+    private static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
+    private static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
 
     public static List<User> loadAll() {
         List<User> allUsers = new ArrayList<>();

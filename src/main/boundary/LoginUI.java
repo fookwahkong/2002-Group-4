@@ -1,19 +1,25 @@
 package main.boundary;
 
-import main.controller.LoginController;
+import main.controller.user.UserManager;
 import main.entity.user.User;
 import main.enums.UserRole;
 
 import java.util.Scanner;
 
 public class LoginUI {
-    private static Scanner scanner = new Scanner(System.in);
-    private LoginController loginController;
-    private ChangePasswordUI changePasswordUI;
+    private static final Scanner scanner = new Scanner(System.in);
+    private final ChangePasswordUI changePasswordUI;
 
     public LoginUI() {
-        loginController = LoginController.getInstance();
-        changePasswordUI = new ChangePasswordUI();
+        this.changePasswordUI = new ChangePasswordUI();
+    }
+
+    public void startLogin() {
+        User loggedInUser = showLoginMenu();
+
+        if (loggedInUser != null) {
+            navigateToMainMenu(loggedInUser);
+        }
     }
 
     public User showLoginMenu() {
@@ -21,7 +27,6 @@ public class LoginUI {
         User loggedInUser = null;
 
         while (!exit) {
-            // Display menu
             System.out.println("""
             ==================================
                BTO MANAGEMENT SYSTEM LOGIN   
@@ -33,54 +38,20 @@ public class LoginUI {
             Enter your choice:  
             """);
 
-            // Ensure valid integer input
-            if (!scanner.hasNextInt()) {
-                System.out.println("Invalid input! Please enter a number.");
-                scanner.next(); // Clear invalid input
-                continue;
-            }
-
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice = getValidIntInput();
 
             switch (choice) {
-                case 1:
-                    System.out.println("Logging in with your SingPass account...");
-
-                    String nric;
-                    do {
-                        System.out.print("Enter userID: ");
-                        nric = scanner.nextLine().trim();
-                        if (!loginController.verifyNric(nric)) {
-                            System.out.println("Invalid userID. Please try again.");
-                        }
-                    } while (!loginController.verifyNric(nric));
-
-                    System.out.print("Enter password: ");
-                    String password = scanner.nextLine().trim();
-
-                    loggedInUser = loginController.login(nric, password);
-
-                    if (loggedInUser != null) {
-                        System.out.println("Login successful!\n");
-                        return loggedInUser;
-                    } else {
-                        System.out.println("Invalid NRIC or password. Please try again.\n");
-                    }
-                    break;
-
-                case 2:
-                    System.out.println("Redirecting to Change Password...");
-                    changePasswordUI.showChangePasswordMenu();
-                    break;
-
-                case 3:
+                case 1 -> loggedInUser = handleLogin();
+                case 2 -> changePasswordUI.showChangePasswordMenu();
+                case 3 -> {
                     System.out.println("Exiting BTO Management System...");
                     exit = true;
-                    break;
+                }
+                default -> System.out.println("Invalid choice! Please enter a number between 1 and 3.");
+            }
 
-                default:
-                    System.out.println("Invalid choice! Please enter a number between 1 and 3.");
+            if (loggedInUser != null) {
+                return loggedInUser;
             }
 
             System.out.println();
@@ -88,24 +59,50 @@ public class LoginUI {
         return null;
     }
 
-    public void navigateToMainMenu(User user) {
-        if (user == null) {
-            return;
-        }
+    private User handleLogin() {
+        System.out.println("Logging in with your SingPass account...");
 
-        UserRole role = user.getUserRole();
-        switch (role) {
-            case APPLICANT:
-                new ApplicantUI().showMenu();
-                break;
-            case HDB_OFFICER:
-                new OfficerUI().showMenu();
-                break;
-            case HDB_MANAGER:
-                new ManagerUI().showMenu();
-                break;
-            default:
-                break;
+        String nric;
+        do {
+            System.out.print("Enter userID: ");
+            nric = scanner.nextLine().trim();
+            if (!UserManager.verifyNRIC(nric)) {
+                System.out.println("Invalid userID format. Try again.");
+            }
+        } while (!UserManager.verifyNRIC(nric));
+
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine().trim();
+
+        User user = UserManager.getInstance().login(nric, password);
+
+        if (user != null) {
+            System.out.println("Login successful!\n");
+            return user;
+        } else {
+            System.out.println("Invalid NRIC or password. Please try again.\n");
+            return null;
+        }
+    }
+
+    private int getValidIntInput() {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input! Please enter a number.");
+            scanner.next(); // Clear invalid input
+        }
+        int input = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        return input;
+    }
+
+    public void navigateToMainMenu(User user) {
+        if (user == null) return;
+
+        switch (user.getUserRole()) {
+            case APPLICANT -> new ApplicantUI().showMenu();
+            case HDB_OFFICER -> new OfficerUI().showMenu();
+            case HDB_MANAGER -> new ManagerUI().showMenu();
+            default -> System.out.println("Unknown role. Cannot proceed.");
         }
     }
 }

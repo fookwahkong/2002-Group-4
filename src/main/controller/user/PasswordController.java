@@ -1,4 +1,4 @@
-package main.controller;
+package main.controller.user;
 
 public class PasswordController {
 

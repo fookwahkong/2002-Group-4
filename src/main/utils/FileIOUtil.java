@@ -17,7 +17,7 @@ public class FileIOUtil {
     private static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     private static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
 
-    public static List<User> loadAll() {
+    public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
         allUsers.addAll(loadUsersFromFile(APPLICANTS_FILE, UserRole.APPLICANT));
         allUsers.addAll(loadUsersFromFile(MANAGERS_FILE, UserRole.HDB_MANAGER));
@@ -26,9 +26,6 @@ public class FileIOUtil {
     }
 
     public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {
-        // return a list of user objects temporarily
-        // can consider creating UserFactory for proper instantiation
-
         List<User> users = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;

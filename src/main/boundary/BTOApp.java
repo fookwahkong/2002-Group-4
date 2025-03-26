@@ -1,15 +1,12 @@
 package main.boundary;
-import main.entity.user.User;
+import main.controller.user.UserManager;
 
 public class BTOApp {
     public static void start() {
-        System.out.println("BTO Management System");
+
+        UserManager.load();
+
         LoginUI loginUI = new LoginUI();
-
-        User loggedInUser = loginUI.showLoginMenu();
-
-        if (loggedInUser != null) {
-            loginUI.navigateToMainMenu(loggedInUser);
-        }
+        loginUI.startLogin();
     }
 }

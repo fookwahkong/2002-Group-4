@@ -2,7 +2,7 @@ package main.boundary;
 
 import java.util.Scanner;
 
-import main.controller.PasswordController;
+import main.controller.user.PasswordController;
 
 public class ChangePasswordUI {
 

@@ -1,4 +1,4 @@
-package main.controller;
+package main.controller.user;
 
 import main.entity.user.User;
 import main.utils.FileIOUtil;
@@ -6,32 +6,31 @@ import main.utils.FileIOUtil;
 import java.util.List;
 import java.util.regex.*;
 
-public class LoginController {
-    private static LoginController instance;
-    private List<User> users;
+public class UserManager {
+    private static UserManager instance;
+    private static List<User> users;
     private User currentUser;
     private static final Pattern NRIC_PATTERN = Pattern.compile("^[ST]\\d{7}[A-Z]$");
 
-    public LoginController() {
-        users = FileIOUtil.loadAll();
-    }
+    private UserManager() {}
 
-    // singleton
-    // instance will persist throughout lifetime
-    public static LoginController getInstance() {
+    // Singleton
+    public static UserManager getInstance() {
         if (instance == null) {
-            instance = new LoginController();
+            instance = new UserManager();
         }
         return instance;
     }
-    
-    public boolean verifyNric(String nric) {
-        // starts with S or T, followed by 7-digit number and ends with another letter
+
+    public static void load() {
+        users = FileIOUtil.loadUsers();
+    }
+
+    public static boolean verifyNRIC(String nric) {
         return NRIC_PATTERN.matcher(nric).matches();
     }
 
     public User login(String userID, String password) {
-        // polymorphic: to implement subclasses of User
         for (User user: users) {
             if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {
                 currentUser = user;

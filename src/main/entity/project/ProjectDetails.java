@@ -8,8 +8,7 @@ import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.entity.Housing;
 import main.controller.Application;
-import main.entity.project.Enquiry;
-import main.controller.Registration;
+import main.controller.user.Registration;
 
 public abstract class ProjectDetails {
 

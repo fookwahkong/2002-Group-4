@@ -3,7 +3,9 @@ package main.boundary;
 import main.controller.user.ApplicantController;
 import main.controller.user.UserManager;
 import main.controller.project.ProjectController;
+import main.entity.project.Enquiry;
 import main.entity.project.Project;
+import main.entity.user.Applicant;
 import main.entity.user.User;
 
 import java.util.Scanner;
@@ -12,19 +14,35 @@ import java.util.List;
 
 public class ApplicantUI {
     private static final Scanner scanner = new Scanner(System.in);
-    private final User currentUser = UserManager.getInstance().getCurrentUser();
+    private final Applicant currentUser = (Applicant) UserManager.getInstance().getCurrentUser();
 
     public void showMenu() {
-        System.out.println("APPLICANT UI");
-        System.out.println("==================================");
-        System.out.println("5. Submit Enquiry");
+        boolean loggedIn = true;
+        while (loggedIn) {
+            System.out.println("APPLICANT UI");
+            System.out.println("==================================");
+            System.out.println("5. Submit Enquiry");
+            System.out.println("6. View Submitted Enquiry");
+            System.out.println("7. Edit Submitted Enquiry");
+            System.out.println("8. Delete Enquiry");
+            System.out.println("9. Logout");
+            System.out.println("==================================");
+            System.out.println("Enter your choice: ");
 
+            int choice = getValidIntInput();
 
-        int choice = getValidIntInput();
-
-        switch (choice) {
-            case 5 -> submitEnquiry();
-            default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
+            switch (choice) {
+                case 5 -> submitEnquiry();
+                case 6 -> viewEnquiry();
+                case 7 -> editEnquiry();
+                case 8 -> deleteEnquiry();
+                case 9 -> {
+                    System.out.println("Logging out.");
+                    loggedIn = false;
+                    break;
+                }
+                default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
+            }
         }
     }
 
@@ -50,6 +68,25 @@ public class ApplicantUI {
         // selected project will be pass to ApplicantController
         ApplicantController.submitEnquiry(message, proj);
     }
+
+    private void viewEnquiry() {
+        List<Enquiry> enquiryList = currentUser.getEnquiryList();
+        for (Enquiry e: enquiryList) {
+            e.viewEnquiry("applicant");
+        }
+        System.out.println();
+    }
+
+    private void editEnquiry() {
+        List<Enquiry> enquiryList = currentUser.getEnquiryList();
+        for (Enquiry e: enquiryList) {
+            e.viewEnquiry("applicant");
+        }
+        System.out.println();
+    }
+
+    private void deleteEnquiry() {}
+    
     private int getValidIntInput() {
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid input! Please enter a number.");

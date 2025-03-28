@@ -11,8 +11,9 @@ import java.util.Scanner;
 public class ApplicantController {
     public static void submitEnquiry(String message, Project project) {
         Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
-        Enquiry enquiry = new Enquiry(currentUser, message);
+        Enquiry enquiry = new Enquiry(currentUser, project, message);
         project.addEnquiry(enquiry);
+        currentUser.addEnquiry(enquiry);
         System.out.println("Enquiry Submitted.");
     }
 }

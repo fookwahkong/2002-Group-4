@@ -3,6 +3,8 @@ package main.entity.project;
 import main.entity.user.Applicant;
 
 public class Enquiry {
+    public static Enquiry[] enquiryList;
+
     Applicant applicant;
     ProjectDetails project;
     String message;

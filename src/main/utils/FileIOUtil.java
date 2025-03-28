@@ -51,13 +51,16 @@ public class FileIOUtil {
 
                     // Set housing type one details
                     project.setHousingTypeOne(
-                            Float.parseFloat(parts[4].trim().replace("\"", "").replace(",", ""))  // Selling price
+                            Float.parseFloat(parts[4].trim().replace("\"", "").replace(",", "")),  // Selling price
+                            Integer.parseInt(parts[3].trim().replace("\"", "").replace(",", ""))
                     );
+
 
                     // Set housing type two details
                     project.setHousingTypeTwo(
-                            Float.parseFloat(parts[7].trim().replace("\"", "").replace(",", ""))  // Selling price
-                    );
+                            Float.parseFloat(parts[7].trim().replace("\"", "").replace(",", "")), // Selling price
+                            Integer.parseInt(parts[6].trim().replace("\"", "").replace(",", ""))
+                            );
 
                     // Set application dates
                     project.setDate(

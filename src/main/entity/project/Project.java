@@ -24,7 +24,6 @@ public class Project {
     private List<Registration> registrations;
     private Housing housingTypeOne;
     private Housing housingTypeTwo;
-    private int numberofHousing;
 
     public Project(String name, String neighborhood, boolean visible) {
         this.name = name;
@@ -78,14 +77,16 @@ public class Project {
         this.registrations.add(registration);
     }
 
-    public void setHousingTypeOne(float sellingPrice) {
+    public void setHousingTypeOne(float sellingPrice, int numberofUnits) {
         this.housingTypeOne = new Housing("2-Room");
         this.housingTypeOne.setSellingPrice(sellingPrice);
+        this.housingTypeOne.setNumberOfUnits(numberofUnits);
     }
 
-    public void setHousingTypeTwo(float sellingPrice) {
+    public void setHousingTypeTwo(float sellingPrice, int numberOfUnits) {
         this.housingTypeTwo = new Housing("3-Room");
         this.housingTypeTwo.setSellingPrice(sellingPrice);
+        this.housingTypeTwo.setNumberOfUnits(numberOfUnits);
     }
 
     public List<Registration> getRegistrationList(User user) {

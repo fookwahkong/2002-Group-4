@@ -5,6 +5,7 @@ import java.util.List;
 
 import main.entity.project.Project;
 import main.utils.FileIOUtil;
+import main.entity.user.User;
 
 
 public class ProjectController {
@@ -12,9 +13,17 @@ public class ProjectController {
     public ProjectController() {
     }
 
-    public static List<Project> getProjectList() {
+    public static List<Project> getProjectList(User user) {
         return projects;
     } 
+
+    public static List<Project> getProjectListFiltered(User user, int filter) {
+        List<Project> projectlist = new ArrayList<>();
+        switch(filter) {
+            default: break;
+        }
+        return projectlist;
+    }
 
     public static void load() {
         projects = FileIOUtil.loadProjects();

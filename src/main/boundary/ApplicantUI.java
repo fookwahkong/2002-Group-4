@@ -1,8 +1,10 @@
 package main.boundary;
 
 import main.controller.user.ApplicantController;
+import main.controller.user.UserManager;
 import main.controller.project.ProjectController;
 import main.entity.project.Project;
+import main.entity.user.User;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 
 public class ApplicantUI {
     private static final Scanner scanner = new Scanner(System.in);
+    private final User currentUser = UserManager.getInstance().getCurrentUser();
 
     public void showMenu() {
         System.out.println("APPLICANT UI");
@@ -28,7 +31,7 @@ public class ApplicantUI {
     public void submitEnquiry() {
         // go to ProjectController to get list of projects
         System.out.println("List of visible projects:");
-        List<Project> projectList = ProjectController.getProjectList();
+        List<Project> projectList = ProjectController.getProjectList(currentUser);
         int cnt = 1;
         for (Project p: projectList) {
             System.out.print(cnt + ". ");

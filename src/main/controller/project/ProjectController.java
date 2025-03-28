@@ -12,6 +12,10 @@ public class ProjectController {
     public ProjectController() {
     }
 
+    public static List<Project> getProjectList() {
+        return projects;
+    } 
+
     public static void load() {
         projects = FileIOUtil.loadProjects();
         for (Project p: projects) {

@@ -16,11 +16,16 @@ public class ApplicantUI {
         int choice = getValidIntInput();
 
         switch (choice) {
-            case 5 -> ApplicantController.submitEnquiry();
+            case 5 -> submitEnquiry();
             default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
         }
     }
 
+    public void submitEnquiry() {
+        // take in input;
+        // go to ProjectController to get list of projects
+        // selected project will be pass to ApplicantController
+    }
     private int getValidIntInput() {
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid input! Please enter a number.");

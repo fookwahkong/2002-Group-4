@@ -1,12 +1,18 @@
 package main.utils;
 
+import main.controller.user.UserManager;
+import main.entity.user.HDBManager;
+import main.entity.user.HDBOfficer;
 import main.entity.user.User;
 import main.entity.user.UserFactory;
+import main.entity.project.Project;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class FileIOUtil {
@@ -16,6 +22,7 @@ public class FileIOUtil {
     private static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
     private static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     private static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
+    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -23,6 +30,25 @@ public class FileIOUtil {
         allUsers.addAll(loadUsersFromFile(MANAGERS_FILE, UserRole.HDB_MANAGER));
         allUsers.addAll(loadUsersFromFile(OFFICERS_FILE, UserRole.HDB_OFFICER));
         return allUsers;
+    }
+
+    public static List<Project> loadProjects() {
+        List<Project> allProjects = new ArrayList<>();
+
+        // temp loading. to use csv later
+
+        Project temp = new Project("Acacia Breeze", "Yishun", true);
+        temp.setHousingTypeOne(350000);
+        temp.setHousingTypeTwo(450000);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+        temp.setDate(LocalDate.parse("2/15/2025", formatter), LocalDate.parse("3/20/2025", formatter));
+        temp.setManagerInCharge((HDBManager) UserManager.getInstance().findUserByName("Jessica"));
+        temp.setOfficerSlot(3);
+        temp.addOfficersIncharge((HDBOfficer) UserManager.getInstance().findUserByName("Daniel"));
+        temp.addOfficersIncharge((HDBOfficer) UserManager.getInstance().findUserByName("Emily"));
+
+        allProjects.add(temp);
+        return allProjects;
     }
 
     public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {

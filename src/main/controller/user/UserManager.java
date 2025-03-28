@@ -30,6 +30,15 @@ public class UserManager {
         return NRIC_PATTERN.matcher(nric).matches();
     }
 
+    public User findUserByName(String targetName) {
+        for (User user: users) {
+            if (user.getName().equals(targetName)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     public User login(String userID, String password) {
         for (User user: users) {
             if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {

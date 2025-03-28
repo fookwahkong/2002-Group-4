@@ -2,7 +2,6 @@ package main.boundary;
 
 import main.controller.user.UserManager;
 import main.entity.user.User;
-import main.enums.UserRole;
 
 import java.util.Scanner;
 

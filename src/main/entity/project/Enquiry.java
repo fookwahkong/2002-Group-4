@@ -6,12 +6,12 @@ public class Enquiry {
     public static Enquiry[] enquiryList;
 
     Applicant applicant;
-    ProjectDetails project;
+    Project project;
     String message;
     String reply;
     String[] peopleValidforViewing = {"applicant", "manager"};
 
-    public Enquiry(Applicant applicant, ProjectDetails project, String message) {
+    public Enquiry(Applicant applicant, Project project, String message) {
         this.applicant = applicant;
         this.project = project;
         this.message = message;

@@ -36,4 +36,8 @@ public abstract class User {
         return this.userRole;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
 }

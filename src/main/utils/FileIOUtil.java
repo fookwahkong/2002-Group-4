@@ -34,20 +34,60 @@ public class FileIOUtil {
 
     public static List<Project> loadProjects() {
         List<Project> allProjects = new ArrayList<>();
-
-        // temp loading. to use csv later
-
-        Project temp = new Project("Acacia Breeze", "Yishun", true);
-        temp.setHousingTypeOne(350000);
-        temp.setHousingTypeTwo(450000);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
-        temp.setDate(LocalDate.parse("2/15/2025", formatter), LocalDate.parse("3/20/2025", formatter));
-        temp.setManagerInCharge((HDBManager) UserManager.getInstance().findUserByName("Jessica"));
-        temp.setOfficerSlot(3);
-        temp.addOfficersIncharge((HDBOfficer) UserManager.getInstance().findUserByName("Daniel"));
-        temp.addOfficersIncharge((HDBOfficer) UserManager.getInstance().findUserByName("Emily"));
 
-        allProjects.add(temp);
+        try (BufferedReader reader = new BufferedReader(new FileReader(PROJECTS_FILE))) {
+            String line = reader.readLine(); // consume first line
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                if (parts.length >= 13) {
+                    Project project = new Project(
+                            parts[0].trim(),  // Project Name
+                            parts[1].trim(),  // Neighborhood
+                            true  // Assuming this is always true for now
+                    );
+
+                    // Set housing type one details
+                    project.setHousingTypeOne(
+                            Float.parseFloat(parts[4].trim().replace("\"", "").replace(",", ""))  // Selling price
+                    );
+
+                    // Set housing type two details
+                    project.setHousingTypeTwo(
+                            Float.parseFloat(parts[7].trim().replace("\"", "").replace(",", ""))  // Selling price
+                    );
+
+                    // Set application dates
+                    project.setDate(
+                            LocalDate.parse(parts[8].trim(), formatter),
+                            LocalDate.parse(parts[9].trim(), formatter)
+                    );
+
+                    // Set manager
+                    HDBManager manager = (HDBManager) UserManager.getInstance()
+                            .findUserByName(parts[10].trim());
+                    project.setManagerInCharge(manager);
+
+                    // Set officer slot
+                    project.setOfficerSlot(Integer.parseInt(parts[11].trim()));
+
+                    // Add officers
+                    String[] officers = parts[12].trim().replace("\"", "").split(",");
+                    for (String officerName : officers) {
+                        HDBOfficer officer = (HDBOfficer) UserManager.getInstance()
+                                .findUserByName(officerName.trim());
+                        project.addOfficersIncharge(officer);
+                    }
+
+                    allProjects.add(project);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return allProjects;
     }
 

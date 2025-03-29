@@ -9,13 +9,13 @@ public class HDBOfficer extends Applicant {
         super(userID, password, name, age, maritalStatus, userRole);
     }
 
-    public static List<Enquiry> getEnquiriesByOfficer(HDBOfficer officer) {
-        List<Enquiry> officerEnquiries = new ArrayList<>();
-        
-        for (Project project : ProjectController.getOfficerProjects(officer)) {
-            officerEnquiries.addAll(project.getEnquiriesHandledByOfficer(officer));
+    public void viewEnquiriesForProjects() {
+        List<Project> officerProjects = ProjectController.getOfficerProjects(this);
+        for (Project project : officerProjects) {
+            for (Enquiry enquiry : project.getEnquiries()) {
+                enquiry.viewEnquiry("officer");
+            }
         }
-        return officerEnquiries;
     }
 
     public static void replyToEnquiry(Enquiry enquiry, String response) {

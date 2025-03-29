@@ -41,4 +41,24 @@ public class Enquiry {
     public void setMessage(String newMessage) {
         this.message = newMessage;
     }
+
+    private boolean replied = false;
+
+    public void setResponse(String response) {
+        this.reply = response;
+    }
+
+
+    public String getReply() {
+        return this.reply;
+    }
+
+    public void setReplied(boolean status) {
+        this.replied = status;
+    }
+
+    public boolean isReplied() {
+        return this.replied;
+    }
+
 }

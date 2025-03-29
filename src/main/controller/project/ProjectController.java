@@ -35,6 +35,13 @@ public class ProjectController
         .toList();
   }
 
+  public static List<Project> getOfficerProjects(HDBOfficer officer) 
+  {
+    return ProjectController.getProjectList(officer).stream()
+        .filter(project -> project.getAssignedOfficers().contains(officer))
+        .toList();
+  }
+
 
   public static void createProject(String projectName, String neighbourhood, float priceOne,
                                    int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,

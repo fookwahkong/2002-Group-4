@@ -79,8 +79,12 @@ public class Project
     this.enquiries.add(enquiry);
   }
 
-    public void deleteEnquiry(Enquiry enquiry) {
-        this.enquiries.remove(enquiry);
+  public void deleteEnquiry(Enquiry enquiry) {
+      this.enquiries.remove(enquiry);
+  }
+
+  public List<Enquiry> getEnquiries() {
+        return this.enquiries;
     }
 
   public void addRegistration(Registration registration)

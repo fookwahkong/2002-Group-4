@@ -110,4 +110,8 @@ public class Project
   public HDBManager getManager() {
     return this.manager;
   }
+
+  public List<HDBOfficer> getAssignedOfficers() {
+    return this.officers;
+  }
 }

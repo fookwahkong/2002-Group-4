@@ -16,4 +16,12 @@ public class ApplicantController {
         currentUser.addEnquiry(enquiry);
         System.out.println("Enquiry Submitted.");
     }
+
+    public static void deleteEnquiry(Enquiry enquiry) {
+        Applicant applicant = enquiry.getApplicant();
+        Project project = enquiry.getProject();
+
+        applicant.deleteEnquiry(enquiry);
+        project.deleteEnquiry(enquiry);
+    }
 }

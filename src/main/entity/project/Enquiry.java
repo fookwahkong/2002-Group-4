@@ -29,4 +29,16 @@ public class Enquiry {
             System.out.println();
         }
     }
+
+    public Project getProject() {
+        return this.project;
+    }
+
+    public Applicant getApplicant() {
+        return this.applicant;
+    }
+
+    public void setMessage(String newMessage) {
+        this.message = newMessage;
+    }
 }

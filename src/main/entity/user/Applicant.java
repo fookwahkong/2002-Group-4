@@ -21,6 +21,10 @@ public class Applicant extends User {
     public void addEnquiry(Enquiry e) {
         enquiryList.add(e);
     }
+
+    public void deleteEnquiry(Enquiry e) {
+        enquiryList.remove(e);
+    }
     
     void viewProjects() {
         

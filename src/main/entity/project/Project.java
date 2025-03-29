@@ -73,6 +73,10 @@ public class Project {
         this.enquiries.add(enquiry);
     }
 
+    public void deleteEnquiry(Enquiry enquiry) {
+        this.enquiries.remove(enquiry);
+    }
+
     public void addRegistration(Registration registration) {
         this.registrations.add(registration);
     }

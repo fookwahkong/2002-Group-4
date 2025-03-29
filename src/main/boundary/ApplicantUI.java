@@ -69,23 +69,45 @@ public class ApplicantUI {
         ApplicantController.submitEnquiry(message, proj);
     }
 
-    private void viewEnquiry() {
+    private List<Enquiry> viewEnquiry() {
         List<Enquiry> enquiryList = currentUser.getEnquiryList();
+        System.out.println("Enquiries:");
+        int cnt = 0;
         for (Enquiry e: enquiryList) {
+            cnt += 1;
+            System.out.print(cnt + ". ");
             e.viewEnquiry("applicant");
         }
         System.out.println();
+        return enquiryList;
     }
 
     private void editEnquiry() {
-        List<Enquiry> enquiryList = currentUser.getEnquiryList();
-        for (Enquiry e: enquiryList) {
-            e.viewEnquiry("applicant");
-        }
-        System.out.println();
+        List<Enquiry> enquiryList = this.viewEnquiry(); // get enquiry list
+
+        // get the enquiry to edit
+        System.out.println("Select the enquiry to edit: ");
+        int enquiryIndex = getValidIntInput() - 1;
+        Enquiry enquiry = enquiryList.get(enquiryIndex);
+
+        // take in input;
+        System.out.print("Enter new enquiry message: ");
+        String newMessage = scanner.nextLine();
+        enquiry.setMessage(newMessage);
+        System.out.println("Message edited.");
     }
 
-    private void deleteEnquiry() {}
+    private void deleteEnquiry() {
+        List<Enquiry> enquiryList = this.viewEnquiry();
+
+        // get the qnquiry to delete
+        System.out.println("Select the enquiry to delete: ");
+        int enquiryIndex = getValidIntInput() - 1;
+        Enquiry enquiry = enquiryList.get(enquiryIndex);
+
+        ApplicantController.deleteEnquiry(enquiry);
+        System.out.println("Enquiry deleted.");
+    }
     
     private int getValidIntInput() {
         while (!scanner.hasNextInt()) {

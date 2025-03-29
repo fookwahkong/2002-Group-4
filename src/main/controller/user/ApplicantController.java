@@ -24,4 +24,17 @@ public class ApplicantController {
         applicant.deleteEnquiry(enquiry);
         project.deleteEnquiry(enquiry);
     }
+
+    public static void viewEnquiries() {
+        Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
+        for (Enquiry enquiry : currentUser.getEnquiryList()) {
+            enquiry.viewEnquiry("applicant");
+        }
+    }
+
+    public static void modifyEnquiry(Enquiry enquiry, String newMessage) {
+        enquiry.setMessage(newMessage);
+        System.out.println("Enquiry updated.");
+    }
+
 }

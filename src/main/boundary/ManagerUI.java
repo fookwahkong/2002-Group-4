@@ -5,8 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+
+import main.controller.enquiry.EnquiryController;
 import main.controller.project.ProjectController;
 import main.controller.user.UserManager;
+import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.entity.user.HDBManager;
 
@@ -24,7 +27,7 @@ public class ManagerUI
 
       try
       {
-        int choice = getValidIntInput(1, 4);
+        int choice = getValidIntInput(1, 6);
 
         switch (choice)
         {
@@ -32,6 +35,8 @@ public class ManagerUI
           case 2 -> createHDBProject();
           case 3 -> editHDBProject();
           case 4 -> deleteHDBProject();
+          case 5 -> viewAllEnquiries();
+          case 6 -> viewAndReplyToEnquiries();
           case 0 ->
           {
             return; // Exit method
@@ -52,6 +57,8 @@ public class ManagerUI
     System.out.println("2. Create HDB Project");
     System.out.println("3. Edit HDB Project");
     System.out.println("4. Delete HDB Project");
+    System.out.println("5. View all enquiries");
+    System.out.println("6. View and reply enquiries on projects you handle");
     System.out.println("0. Exit");
     System.out.print("Enter your choice: ");
   }
@@ -137,6 +144,44 @@ public class ManagerUI
     int projIndex = getIntInput("Select the project to submit enquiry for: ") - 1;
     Project proj = projectList.get(projIndex);
     ProjectController.deleteProject(proj);
+  }
+
+  private void viewAllEnquiries() 
+  {
+    System.out.println(currentUser.getUserRole());
+    List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
+    int cnt = 1;
+    System.out.println(enquiryList);
+    for (Enquiry e : enquiryList) 
+    {
+      System.out.print(cnt + ".");
+      e.viewEnquiry("manager");
+    }
+  }
+
+  private void viewAndReplyToEnquiries() {
+    List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
+    if (enquiries.isEmpty()) {
+        System.out.println("No enquiries assigned to you.");
+        return;
+    }
+
+    System.out.println("Enquiries you are handling:");
+    int index = 1;
+    for (Enquiry enquiry : enquiries) {
+        System.out.println(index++ + ". " + enquiry.getContent());
+    }
+
+    int enquiryIndex = getIntInput("Select an enquiry to reply (0 to cancel): ") - 1;
+    if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
+        System.out.println("Returning to menu.");
+        return;
+    }
+
+    Enquiry selectedEnquiry = enquiries.get(enquiryIndex);
+    String reply = getStringInput("Enter your reply: ");
+    EnquiryController.replyToEnquiry(selectedEnquiry, reply);
+    System.out.println("Reply sent successfully!");
   }
 
   private String getStringInput(String prompt)

@@ -11,70 +11,61 @@ import main.entity.user.HDBOfficer;
 import main.entity.user.User;
 import main.utils.FileIOUtil;
 
-
-
-public class ProjectController
-{
+public class ProjectController {
   private static List<Project> projects = new ArrayList<>();
 
-  public ProjectController()
-  {
+  public ProjectController() {
   }
 
-  public static void load()
-  {
+  public static void load() {
     projects = FileIOUtil.loadProjects();
   }
 
-  public static List<Project> getProjectList(User user)
-  {
+  //get ALL the projects
+  public static List<Project> getProjectList(User user) {
     return projects;
   }
 
-  public static List<Project> getManagerProjects(HDBManager manager)
-  {
-    return ProjectController.getProjectList(manager).stream()
-        .filter(project -> project.getManager().equals(manager))
+  //get projects managed by manager
+  public static List<Project> getManagerProjects(HDBManager user) {
+    return ProjectController.getProjectList(user).stream()
+        .filter(project -> project.getManager().equals(user))
         .toList();
   }
 
-  public static List<Project> getOfficerProjects(HDBOfficer officer) 
-  {
+  //get projects managed by officer
+  public static List<Project> getOfficerProjects(HDBOfficer officer) {
     return ProjectController.getProjectList(officer).stream()
         .filter(project -> project.getAssignedOfficers().contains(officer))
         .toList();
   }
 
-
   public static void createProject(String projectName, String neighbourhood, float priceOne,
-                                   int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
-                                   String openingDate, String closingDate, HDBManager manager,
-                                   int officerSlots)
-  {
+      int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
+      String openingDate, String closingDate, HDBManager manager,
+      int officerSlots) {
+
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
     Project project = new Project(
         projectName,
         neighbourhood,
-        true  // Assuming this is always true for now
+        true // Assuming this is always true for now
     );
 
     // Set housing type one details
     project.setHousingTypeOne(
         priceOne, // Selling price
-        numberOfUnitsOne
-    );
+        numberOfUnitsOne);
 
     // Set housing type two details
     project.setHousingTypeTwo(
         priceTwo, // Selling price
-        numberOfUnitsTwo
-    );
+        numberOfUnitsTwo);
 
     // Set application dates
     project.setDate(
         LocalDate.parse(openingDate.trim(), formatter),
-        LocalDate.parse(closingDate.trim(), formatter)
-    );
+        LocalDate.parse(closingDate.trim(), formatter));
 
     project.setManagerInCharge(manager);
 
@@ -82,6 +73,7 @@ public class ProjectController
     project.setOfficerSlot(officerSlots);
 
     projects.add(project);
+    
   }
 
   public static void deleteProject(Project project) {

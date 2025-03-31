@@ -1,9 +1,8 @@
-package main.entity.project;
+package main.entity;
 
+import main.entity.project.Project;
 import main.entity.user.Applicant;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Enquiry {
     Applicant applicant;
@@ -30,6 +29,10 @@ public class Enquiry {
         }
     }
 
+    public String getContent() {
+        return this.message;
+    }
+
     public Project getProject() {
         return this.project;
     }
@@ -48,6 +51,9 @@ public class Enquiry {
         this.reply = response;
     }
 
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
 
     public String getReply() {
         return this.reply;

@@ -4,7 +4,7 @@ import main.controller.project.ProjectController;
 import main.controller.enquiry.EnquiryController;
 import main.controller.user.UserManager;
 import main.entity.project.Project;
-import main.entity.enquiry.Enquiry;
+import main.entity.Enquiry;
 import main.entity.user.HDBOfficer;
 
 import java.util.List;
@@ -41,9 +41,9 @@ public class OfficerUI {
         System.out.print("Enter your choice: ");
     }
 
-    /**
-     * View all projects that the officer is handling.
-     */
+
+    // View all projects that the officer is handling.
+
     private void viewProjects() {
         List<Project> projects = ProjectController.getOfficerProjects(currentUser);
         if (projects.isEmpty()) {
@@ -57,9 +57,8 @@ public class OfficerUI {
         }
     }
 
-    /**
-     * View and reply to enquiries that the officer is handling.
-     */
+    //View and reply to enquiries that the officer is handling.
+
     private void viewAndReplyToEnquiries() {
         List<Enquiry> enquiries = EnquiryController.getEnquiriesByOfficer(currentUser);
         if (enquiries.isEmpty()) {
@@ -80,9 +79,9 @@ public class OfficerUI {
         }
 
         Enquiry selectedEnquiry = enquiries.get(enquiryIndex);
-        String response = getStringInput("Enter your response: ");
-        EnquiryController.replyToEnquiry(selectedEnquiry, response);
-        System.out.println("Response sent successfully!");
+        String reply = getStringInput("Enter your reply: ");
+        EnquiryController.replyToEnquiry(selectedEnquiry, reply);
+        System.out.println("Reply sent successfully!");
     }
 
     private String getStringInput(String prompt) {

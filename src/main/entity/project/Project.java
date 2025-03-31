@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import main.controller.user.Registration;
+import main.entity.Enquiry;
 import main.entity.Housing;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;

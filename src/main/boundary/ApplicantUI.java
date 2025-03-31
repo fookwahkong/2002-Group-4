@@ -3,13 +3,11 @@ package main.boundary;
 import main.controller.user.ApplicantController;
 import main.controller.user.UserManager;
 import main.controller.project.ProjectController;
-import main.entity.project.Enquiry;
+import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.entity.user.Applicant;
-import main.entity.user.User;
 
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicantUI {

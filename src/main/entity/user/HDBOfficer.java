@@ -1,7 +1,12 @@
 package main.entity.user;
 
+import java.util.*;
+
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
+import main.controller.project.ProjectController;
+import main.entity.project.Project;
+import main.entity.Enquiry;
 
 public class HDBOfficer extends Applicant {
 

@@ -1,6 +1,6 @@
 package main.entity.user;
 
-import main.entity.project.Enquiry;
+import main.entity.Enquiry;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 

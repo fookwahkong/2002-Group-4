@@ -60,7 +60,7 @@ public class OfficerUI {
     //View and reply to enquiries that the officer is handling.
 
     private void viewAndReplyToEnquiries() {
-        List<Enquiry> enquiries = EnquiryController.getEnquiriesByOfficer(currentUser);
+        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(currentUser);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");
             return;

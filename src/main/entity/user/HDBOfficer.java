@@ -12,6 +12,7 @@ public class HDBOfficer extends Applicant {
 
     public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
+        this.assignedProjects = new ArrayList<>();
     }
 
     public void viewEnquiriesForProjects() {
@@ -31,5 +32,13 @@ public class HDBOfficer extends Applicant {
         enquiry.setResponse(response);
         enquiry.setReplied(true);  
         System.out.println("Response submitted: " + response);
+    }
+
+    public List<Project> getAssignedProjects() {
+        return assignedProjects;
+    }
+
+    public void assignProject(Project project) {
+        assignedProjects.add(project);
     }
 }

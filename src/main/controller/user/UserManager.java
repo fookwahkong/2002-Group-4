@@ -3,6 +3,7 @@ package main.controller.user;
 import main.entity.user.User;
 import main.utils.FileIOUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.*;
 
@@ -26,6 +27,23 @@ public class UserManager {
         users = FileIOUtil.loadUsers();
     }
 
+    public static void save() {
+        List<User> applicants = new ArrayList<>();
+        List<User> officers = new ArrayList<>();
+        List<User> managers = new ArrayList<>();
+
+        for (User user: users) {
+            switch (user.getUserRole()) {
+                case APPLICANT -> applicants.add(user);
+                case HDB_OFFICER -> officers.add(user);
+                case HDB_MANAGER -> managers.add(user); 
+            }
+        }
+
+        FileIOUtil.saveUsersToFile(applicants, FileIOUtil.APPLICANTS_FILE);
+        FileIOUtil.saveUsersToFile(officers, FileIOUtil.OFFICERS_FILE);
+        FileIOUtil.saveUsersToFile(managers, FileIOUtil.MANAGERS_FILE);
+    }
     public static boolean verifyNRIC(String nric) {
         return NRIC_PATTERN.matcher(nric).matches();
     }

@@ -7,11 +7,6 @@ import java.util.Scanner;
 
 public class LoginUI {
     private static final Scanner scanner = new Scanner(System.in);
-    private final ChangePasswordUI changePasswordUI;
-
-    public LoginUI() {
-        this.changePasswordUI = new ChangePasswordUI();
-    }
 
     public void startLogin() {
         User loggedInUser = showLoginMenu();
@@ -31,8 +26,7 @@ public class LoginUI {
                BTO MANAGEMENT SYSTEM LOGIN   
             ==================================
             1. Login with your Singpass account
-            2. Change Password
-            3. Exit
+            2. Exit
             ==================================
             Enter your choice:  
             """);
@@ -41,8 +35,7 @@ public class LoginUI {
 
             switch (choice) {
                 case 1 -> loggedInUser = handleLogin();
-                case 2 -> changePasswordUI.showChangePasswordMenu();
-                case 3 -> {
+                case 2 -> {
                     System.out.println("Exiting BTO Management System...");
                     exit = true;
                 }
@@ -77,6 +70,11 @@ public class LoginUI {
 
         if (user != null) {
             System.out.println("Login successful!\n");
+            
+            //to delete debug message
+            System.out.println("DEBUG - User: " + user.getName() + 
+            ", Role: " + user.getUserRole() + 
+            ", Class: " + user.getClass().getName());
             return user;
         } else {
             System.out.println("Invalid NRIC or password. Please try again.\n");
@@ -94,14 +92,39 @@ public class LoginUI {
         return input;
     }
 
+
     public void navigateToMainMenu(User user) {
         if (user == null) return;
+        
+        //to delete debug message
+        System.out.println("DEBUG - Before navigation - User: " + user.getName() + 
+        ", Role: " + user.getUserRole() + 
+        ", Class: " + user.getClass().getName());        
 
-        switch (user.getUserRole()) {
-            case APPLICANT -> new ApplicantUI().showMenu();
-            case HDB_OFFICER -> new OfficerUI().showMenu();
-            case HDB_MANAGER -> new ManagerUI().showMenu();
-            default -> System.out.println("Unknown role. Cannot proceed.");
+        try {
+            switch (user.getUserRole()) {
+                case APPLICANT:
+                    System.out.println("Opening ApplicantUI...");
+                    new ApplicantUI().showMenu(); 
+                    break;
+                case HDB_OFFICER:
+                    System.out.println("Opening OfficerUI...");
+                    new OfficerUI().showMenu();
+                    break;
+                case HDB_MANAGER:
+                    System.out.println("Opening ManagerUI...");
+                    new ManagerUI().showMenu();
+                    break;
+                default:
+                    System.out.println("Unknown role. Cannot proceed.");
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR when navigating to UI: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+    public void navigateToLoginMenu() {
+        new LoginUI().startLogin();
+    }
+
 }

@@ -9,7 +9,8 @@ import main.entity.project.Project;
 import main.entity.Enquiry;
 
 public class HDBOfficer extends Applicant {
-
+    ArrayList<Project> assignedProjects;
+    
     public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
         this.assignedProjects = new ArrayList<>();

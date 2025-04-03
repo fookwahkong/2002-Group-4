@@ -1,6 +1,17 @@
 package main.controller.user;
 
+import main.entity.user.User;
+
 public class PasswordController {
+
+    public boolean updatePassword(User user, String newPassword) {
+        if (isPasswordValid(newPassword)) {
+            user.changePassword(newPassword);
+            UserManager.save();
+            return true;
+        } 
+        return false;
+    }
 
     public boolean isPasswordValid(String password) {
         if (password == null || password.length() < 8) {

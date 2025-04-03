@@ -3,6 +3,8 @@ package main.boundary;
 import java.util.Scanner;
 
 import main.controller.user.PasswordController;
+import main.controller.user.UserManager;
+import main.entity.user.User;
 
 public class ChangePasswordUI {
 
@@ -14,8 +16,14 @@ public class ChangePasswordUI {
     }
 
     public void showChangePasswordMenu() {
-        boolean successful = false;
+        User currentUser = UserManager.getInstance().getCurrentUser();
 
+        if (currentUser == null) {
+            System.out.println("No user is currently logged in");
+            return;
+        }
+
+        boolean successful = false;
         while (!successful) {
 
             String content = """
@@ -37,14 +45,12 @@ public class ChangePasswordUI {
 
             String password = scanner.nextLine().trim();
 
-            // Implement password validation
-            boolean passwordChange = passwordController.isPasswordValid(password);
+            successful = passwordController.updatePassword(currentUser, password);
 
-            if (passwordChange) {
+            if (successful) {
                 System.out.println("Password changed successfully!");
-                successful = true;
             } else {
-                System.out.println("Password change failed. Please try again.");
+                System.out.println("Password change failed. Please ensure it meets all requirements.");
 
             }
 

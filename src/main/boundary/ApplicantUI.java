@@ -9,11 +9,9 @@ import main.entity.user.Applicant;
 import main.entity.user.User;
 import main.enums.UserRole;
 
-import java.util.Scanner;
 import java.util.List;
 
-public class ApplicantUI {
-    private static final Scanner scanner = new Scanner(System.in);
+public class ApplicantUI extends UI{
     private final Applicant currentUser;
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
@@ -34,7 +32,7 @@ public class ApplicantUI {
             displayMenuOptions();
             
             try {
-                int choice = getValidIntInput();
+                int choice = getValidIntInput(5, 10);
 
                 switch (choice) {
                     case 5 -> submitEnquiry();
@@ -79,9 +77,8 @@ public class ApplicantUI {
             System.out.println(p.getName());
             cnt += 1;
         }
-        System.out.println("Select the project to submit enquiry for: ");
 
-        int projIndex = getValidIntInput() - 1;
+        int projIndex = getIntInput("Select the project to submit enquiry for: ") - 1;
         Project proj = projectList.get(projIndex);
 
         // take in input;
@@ -109,8 +106,7 @@ public class ApplicantUI {
         List<Enquiry> enquiryList = this.viewEnquiry(); // get enquiry list
 
         // get the enquiry to edit
-        System.out.println("Select the enquiry to edit: ");
-        int enquiryIndex = getValidIntInput() - 1;
+        int enquiryIndex = getIntInput("Select the enquiry to edit: ") - 1;
         Enquiry enquiry = enquiryList.get(enquiryIndex);
 
         // take in input;
@@ -124,21 +120,11 @@ public class ApplicantUI {
         List<Enquiry> enquiryList = this.viewEnquiry();
 
         // get the qnquiry to delete
-        System.out.println("Select the enquiry to delete: ");
-        int enquiryIndex = getValidIntInput() - 1;
+        int enquiryIndex = getIntInput("Select the enquiry to delete: ") - 1;
         Enquiry enquiry = enquiryList.get(enquiryIndex);
 
         ApplicantController.deleteEnquiry(enquiry);
         System.out.println("Enquiry deleted.");
     }
 
-    private int getValidIntInput() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("Invalid input! Please enter a number.");
-            scanner.next(); // Clear invalid input
-        }
-        int input = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-        return input;
-    }
 }

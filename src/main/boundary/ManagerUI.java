@@ -1,10 +1,7 @@
 package main.boundary;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Scanner;
 
 import main.controller.enquiry.EnquiryController;
 import main.controller.project.ProjectController;
@@ -15,9 +12,7 @@ import main.entity.user.HDBManager;
 import main.entity.user.User;
 import main.enums.UserRole;
 
-public class ManagerUI {
-  private static final Scanner scanner = new Scanner(System.in);
-  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+public class ManagerUI extends UI {
   private final HDBManager currentUser;
   private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
@@ -159,7 +154,7 @@ public class ManagerUI {
           noOfUnitsTwo,
           openingDate.format(DATE_FORMATTER),
           closingDate.format(DATE_FORMATTER),
-          (HDBManager) currentUser,
+          currentUser,
           slots);
 
       System.out.println("HDB Project created successfully!");
@@ -298,55 +293,5 @@ public class ManagerUI {
     System.out.println("Reply sent successfully!");
   }
 
-  private String getStringInput(String prompt) {
-    System.out.print(prompt);
-    return scanner.nextLine().trim();
-  }
 
-  private int getIntInput(String prompt) {
-    while (true) {
-      try {
-        System.out.print(prompt);
-        return Integer.parseInt(scanner.nextLine());
-      } catch (NumberFormatException e) {
-        System.out.println("Invalid input. Please enter a valid integer.");
-      }
-    }
-  }
-
-  private float getFloatInput(String prompt) {
-    while (true) {
-      try {
-        System.out.print(prompt);
-        return Float.parseFloat(scanner.nextLine());
-      } catch (NumberFormatException e) {
-        System.out.println("Invalid input. Please enter a valid number.");
-      }
-    }
-  }
-
-  private LocalDate getDateInput(String prompt) {
-    while (true) {
-      try {
-        System.out.print(prompt);
-        return LocalDate.parse(scanner.nextLine(), DATE_FORMATTER);
-      } catch (DateTimeParseException e) {
-        System.out.println("Invalid date format. Please use mm/dd/yyyy.");
-      }
-    }
-  }
-
-  private int getValidIntInput(int min, int max) {
-    while (true) {
-      try {
-        int input = Integer.parseInt(scanner.nextLine());
-        if (input >= min && input <= max) {
-          return input;
-        }
-        System.out.printf("Please enter a number between %d and %d%n", min, max);
-      } catch (NumberFormatException e) {
-        System.out.println("Invalid input! Please enter a number.");
-      }
-    }
-  }
 }

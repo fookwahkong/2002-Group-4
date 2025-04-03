@@ -1,6 +1,5 @@
 package main.controller.enquiry;
 
-import java.lang.management.PlatformManagedObject;
 import java.util.*;
 
 import main.controller.project.ProjectController;
@@ -14,42 +13,44 @@ import main.utils.FileIOUtil;
 
 public class EnquiryController {
 
-    private static List<Enquiry> enquiries = new ArrayList<>();
+    public static void load(List<Project> projects) {
+        FileIOUtil.loadEnquiries(projects);
+    }
 
     //get enquiries on ALL project
     public static List<Enquiry> getEnquiriesList(User user) {
+        List<Enquiry> result = new ArrayList<>(); // Create a new list each time
         UserRole userRole = user.getUserRole();
-
+    
         if (userRole == UserRole.HDB_MANAGER) {
-            List<Project> projectList = ProjectController.getProjectList(user); //get ALL the projects
-            
+            List<Project> projectList = ProjectController.getProjectList();
             for (Project p : projectList) {
-                enquiries.addAll(p.getEnquiries());
+                result.addAll(p.getEnquiries());
             }
-            return enquiries;
-
-        } else {
-
-            return enquiries;
         }
-    } 
+        return result;
+    }
 
     public static List<Enquiry> getEnquiriesByManager(HDBManager manager) {
-        List<Project> projectList = ProjectController.getManagerProjects(manager); //get the projects handled by Manager
+        List<Enquiry> result = new ArrayList<>(); // Create a new list each time
+        List<Project> projectList = ProjectController.getManagerProjects(manager);
             
         for (Project p : projectList) {
-            enquiries.addAll(p.getEnquiries());
+            result.addAll(p.getEnquiries());
         }
-        return enquiries;
+        
+        return result;
     }
 
     public static List<Enquiry> getEnquiriesByOfficer(HDBOfficer officer) {
-        List<Project> projectList = ProjectController.getOfficerProjects(officer); //get the projects handled by Officer
+        List<Enquiry> result = new ArrayList<>(); // Create a new list each time
+        List<Project> projectList = ProjectController.getOfficerProjects(officer);
             
-            for (Project p : projectList) {
-                enquiries.addAll(p.getEnquiries());
-            }
-            return enquiries;
+        for (Project p : projectList) {
+            result.addAll(p.getEnquiries());
+        }
+        
+        return result;
     }
 
     public static void replyToEnquiry(Enquiry selectedEnquiry, String reply) {

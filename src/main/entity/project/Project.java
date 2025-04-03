@@ -119,4 +119,8 @@ public class Project
   public List<HDBOfficer> getAssignedOfficers() {
     return this.officers;
   }
+
+  public boolean getVisibility() {
+    return this.visible;
+  }
 }

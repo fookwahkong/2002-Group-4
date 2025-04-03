@@ -1,10 +1,12 @@
 package main.utils;
 
 import main.controller.user.UserManager;
+import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.entity.user.User;
 import main.entity.user.UserFactory;
+import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
@@ -19,10 +21,11 @@ public class FileIOUtil {
     // To extend functionality once proper user classes are added
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    public static final String APPLICANTS_FILE =  "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/applicants.csv";
-    public static final String MANAGERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/managers.csv";
-    public static final String OFFICERS_FILE =  "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/officers.csv";
-    private static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+    public static final String APPLICANTS_FILE =  CLASSPATH + "main/data/applicants.csv";
+    public static final String MANAGERS_FILE = CLASSPATH + "main/data/managers.csv";
+    public static final String OFFICERS_FILE =  CLASSPATH + "main/data/officers.csv";
+    private static final String PROJECTS_FILE = CLASSPATH + "main/data/projects.csv";
+    public static final String ENQUIRIES_FILE = CLASSPATH + "main/data/enquiries.csv";
 
 
     public static List<User> loadUsers() {
@@ -93,6 +96,59 @@ public class FileIOUtil {
         }
 
         return allProjects;
+    }
+
+
+    public static void loadEnquiries(List<Project> projects) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ENQUIRIES_FILE))) {
+            String line = reader.readLine(); // consume header
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+
+                if (parts.length >= 5) {
+                    String applicantID = parts[0].trim();
+                    String projectName = parts[1].trim();
+                    String message = parts[2].trim();
+                    String reply = parts[3].trim();
+                    boolean replied = Boolean.parseBoolean(parts[4].trim());
+
+                    // Find the applicant
+                    User applicantUser = UserManager.getInstance().findUserByID(applicantID);
+                    if (applicantUser == null || !(applicantUser instanceof Applicant)) {
+                        System.out.println("Warning: Applicant not found for ID: " + applicantID);
+                        continue; // Skip if applicant not found or not an Applicant
+                    }
+                    Applicant applicant = (Applicant) applicantUser;
+
+                    // Find the project
+                    Project project = null;
+                    for (Project p : projects) {
+                        if (p.getName().equals(projectName)) {
+                            project = p;
+                            break;
+                        }
+                    }
+
+                    if (project == null) {
+                        System.out.println("Warning: Project not found: " + projectName);
+                        continue; // Skip if project not found
+                    }
+
+                    // Create and add the enquiry
+                    Enquiry enquiry = new Enquiry(applicant, project, message);
+                    if (!reply.equals("-")) {
+                        enquiry.setReply(reply);
+                    }
+                    enquiry.setReplied(replied);
+                    project.addEnquiry(enquiry);
+                    System.out.println("Added enquiry to project " + projectName);
+
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading enquiries: " + e.getMessage());
+        }
     }
 
     public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {

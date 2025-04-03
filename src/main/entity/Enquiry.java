@@ -17,13 +17,16 @@ public class Enquiry {
         this.project = project;
     }
 
+
     public void viewEnquiry(String viewer) {
+        System.out.println("ENQUIRY");
+        System.out.println("=======================================");
         if (viewer.equals("applicant")) {
             System.out.println("Enquiry on project " + project.getName() + ": " + message);
             System.out.println("Response: " + reply);
             System.out.println();
         } else {
-            System.out.println("Enquiry from " + applicant.getUserID() + "on project " + project.getName() + ": " + message);
+            System.out.println("Enquiry from " + applicant.getName() + " on project " + project.getName() + ": " + message);
             System.out.println("Response: " + reply);
             System.out.println();
         }

@@ -5,8 +5,8 @@ import java.util.*;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 import main.controller.project.ProjectController;
-import main.entity.project.Project;
 import main.entity.Enquiry;
+import main.entity.project.Project;
 
 public class HDBOfficer extends Applicant {
     ArrayList<Project> assignedProjects;

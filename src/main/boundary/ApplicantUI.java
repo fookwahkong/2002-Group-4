@@ -29,7 +29,8 @@ public class ApplicantUI {
     }
 
     public void showMenu() {
-        while (true) {
+        boolean running = true;
+        while (running) {
             displayMenuOptions();
             
             try {
@@ -41,7 +42,11 @@ public class ApplicantUI {
                     case 7 -> editEnquiry();
                     case 8 -> deleteEnquiry();
                     case 9 -> changePasswordUI.showChangePasswordMenu();
-                    case 10 -> new LoginUI().navigateToLoginMenu();
+                    case 10 -> {
+                        UserManager.getInstance().logout();
+                        running = false;
+                        new LoginUI().startLogin();
+                    }
                     default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
                 }
 

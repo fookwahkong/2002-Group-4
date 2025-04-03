@@ -8,9 +8,7 @@ public class BTOApp {
 
         UserManager.load();
         ProjectController.load();
-
-        //load Enquiries to the respective projects
-        EnquiryController.load(ProjectController.getProjectList());
+        EnquiryController.load();
 
         LoginUI loginUI = new LoginUI();
         loginUI.startLogin();

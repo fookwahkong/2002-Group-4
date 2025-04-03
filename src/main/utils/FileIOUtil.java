@@ -21,11 +21,11 @@ public class FileIOUtil {
     // To extend functionality once proper user classes are added
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    public static final String APPLICANTS_FILE =  CLASSPATH + "main/data/applicants.csv";
-    public static final String MANAGERS_FILE = CLASSPATH + "main/data/managers.csv";
-    public static final String OFFICERS_FILE =  CLASSPATH + "main/data/officers.csv";
-    private static final String PROJECTS_FILE = CLASSPATH + "main/data/projects.csv";
-    public static final String ENQUIRIES_FILE = CLASSPATH + "main/data/enquiries.csv";
+    public static final String APPLICANTS_FILE =  CLASSPATH + "/main/data/applicants.csv";
+    public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
+    public static final String OFFICERS_FILE =  CLASSPATH + "/main/data/officers.csv";
+    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
 
 
     public static List<User> loadUsers() {
@@ -58,6 +58,7 @@ public class FileIOUtil {
                             Float.parseFloat(parts[4].trim().replace("\"", "").replace(",", "")),  // Selling price
                             Integer.parseInt(parts[3].trim().replace("\"", "").replace(",", ""))
                     );
+
 
 
                     // Set housing type two details

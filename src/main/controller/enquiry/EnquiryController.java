@@ -13,8 +13,8 @@ import main.utils.FileIOUtil;
 
 public class EnquiryController {
 
-    public static void load(List<Project> projects) {
-        FileIOUtil.loadEnquiries(projects);
+    public static void load() {
+        FileIOUtil.loadEnquiries(ProjectController.getProjectList());
     }
 
     //get enquiries on ALL project

@@ -33,7 +33,8 @@ public class ManagerUI {
   }
 
   public void showMenu() {
-    while (true) {
+    boolean running = true;
+    while (running) {
       displayMenuOptions();
 
       try {
@@ -47,7 +48,11 @@ public class ManagerUI {
           case 5 -> viewAllEnquiries();
           case 6 -> viewAndReplyToEnquiries();
           case 7 -> changePasswordUI.showChangePasswordMenu();
-          case 0 -> new LoginUI().navigateToLoginMenu();
+          case 0 -> {
+            UserManager.getInstance().logout();
+            running = false;
+            new LoginUI().startLogin();
+          }
         }
       } catch (Exception e) {
         System.out.println("An error occurred: " + e.getMessage());
@@ -71,19 +76,62 @@ public class ManagerUI {
 
   private void viewProjects() {
     int filterChoice = getIntInput("Select projects to view (1. All 2. Self): ");
+    List<Project> projectsToShow;
+
     switch (filterChoice) {
-      case 1 -> {
-        for (Project p : ProjectController.getProjectList()) {
-          System.out.println(p.getName());
-        }
-      }
-      case 2 -> {
-        for (Project p : ProjectController.getManagerProjects(currentUser)) {
-          System.out.println(p.getName());
-        }
+      case 1 -> projectsToShow = ProjectController.getProjectList();
+      case 2 -> projectsToShow = ProjectController.getManagerProjects(currentUser);
+      default -> {
+        System.out.println("Invalid choice. Returning to menu.");
+        return;
       }
     }
 
+    if (projectsToShow.isEmpty()) {
+      System.out.println("No projects to display");
+      return;
+    }
+
+    System.out.println("Available Projects:");
+    for (int i = 0; i < projectsToShow.size(); i++) {
+      System.out.println((i + 1) + ". " + projectsToShow.get(i).getName());
+    }
+    System.out.println("0. Return to main menu");
+
+    int projectChoice = getIntInput("\nSelect a project to view details (0 to return): ");
+    if (projectChoice == 0) {
+      return;
+    }
+
+    if (projectChoice < 1 || projectChoice > projectsToShow.size()) {
+      System.out.println("Invalid project selection.");
+      return;
+    }
+
+    // Display detailed information about the selected project
+    Project selectedProject = projectsToShow.get(projectChoice - 1);
+    displayProjectDetails(selectedProject);
+  }
+
+  private void displayProjectDetails(Project project) {
+    System.out.println("\nProject Details:");
+    System.out.println("==================================");
+    System.out.println("Name: " + project.getName());
+    System.out.println("Neighbourhood: " + project.getNeighbourhood());
+    System.out.println("Manager: " + project.getManager().getName());
+
+    System.out.println("\nHousing Types:");
+    System.out.println("- 2-Room: $" + project.getPriceTypeOne() + " (" + project.getNoOfUnitsTypeOne() + " units)");
+    System.out.println("- 3-Room: $" + project.getPriceTypeTwo() + " (" + project.getNoOfUnitsTypeTwo() + " units)");
+
+    System.out.println("\nApplication Period:");
+    System.out.println("Opening Date: " + project.getOpeningDate());
+    System.out.println("Closing Date: " + project.getClosingDate());
+
+    System.out.println("\nOfficer Slots: " + project.getSlots());
+
+    System.out.print("\nPress Enter to continue...");
+    scanner.nextLine();
   }
 
   private void createHDBProject() {
@@ -121,9 +169,78 @@ public class ManagerUI {
   }
 
   private void editHDBProject() {
-    System.out.println("Edit HDB Project functionality not implemented yet.");
-    // TODO: Implement project editing logic
+    List<Project> projectList = ProjectController.getProjectList();
+
+    if (projectList.isEmpty()) {
+      System.out.println("You have no projects to edit.");
+      return;
+    }
+
+    System.out.println("\nYour HDB Projects:");
+    for (int i = 0; i < projectList.size(); i++) {
+      Project project = projectList.get(i);
+      String visibilityStatus = ProjectController.isProjectVisible(project) ? "Visible" : "Hidden";
+      System.out.println((i + 1) + ". " + project.getName() + " (" + visibilityStatus + ")");
+    }
+
+    int projectIndex = getIntInput("\nSelect a project to edit (0 to cancel): ") - 1;
+    if (projectIndex < 0 || projectIndex >= projectList.size()) {
+      System.out.println("Returning to main menu.");
+      return;
+    }
+
+    Project selectedProject = projectList.get(projectIndex);
+    boolean editing = true;
+
+    while (editing) {
+      System.out.println("\nEditing Project: " + selectedProject.getName());
+      System.out.println("1. Edit project name");
+      System.out.println("2. Edit neighbourhood");
+      System.out.println("3. Edit 2-Room price");
+      System.out.println("4. Edit number of 2-Room units");
+      System.out.println("5. Edit 3-Room price");
+      System.out.println("6. Edit number of 3-Room units");
+      System.out.println("7. Edit opening date");
+      System.out.println("8. Edit closing date");
+      System.out.println("9. Edit number of officer slots");
+      System.out.println("10. Toggle visibility (" + (ProjectController.isProjectVisible(selectedProject) ? "Currently Visible" : "Currently Hidden") + ")");
+      System.out.println("0. Save and return to main menu");
+
+      int choice = getValidIntInput(0, 10);
+
+      try {
+        switch (choice) {
+          case 1 -> ProjectController.updateProjectName(selectedProject, getStringInput("Enter new project name: "));
+          case 2 -> ProjectController.updateProjectNeighbourhood(selectedProject, getStringInput("Enter new neighbourhood: "));
+          case 3 -> ProjectController.updateProjectPriceTypeOne(selectedProject, getFloatInput("Enter new 2-Room price: "));
+          case 4 -> ProjectController.updateProjectNoOfUnitsTypeOne(selectedProject, getIntInput("Enter new number of 2-Room units: "));
+          case 5 -> ProjectController.updateProjectPriceTypeTwo(selectedProject, getFloatInput("Enter new 3-Room price: "));
+          case 6 -> ProjectController.updateProjectNoOfUnitsTypeTwo(selectedProject, getIntInput("Enter new number of 3-Room units: "));
+          case 7 -> {
+            LocalDate newOpeningDate = getDateInput("Enter new opening date (mm/dd/yyyy): ");
+            ProjectController.updateProjectOpeningDate(selectedProject, newOpeningDate.format(DATE_FORMATTER));
+          }
+          case 8 -> {
+            LocalDate newClosingDate = getDateInput("Enter new closing date (mm/dd/yyyy): ");
+            ProjectController.updateProjectClosingDate(selectedProject, newClosingDate.format(DATE_FORMATTER));
+          }
+          case 9 -> ProjectController.updateProjectSlots(selectedProject, getIntInput("Enter new number of officer slots: "));
+          case 10 -> {
+            boolean currentVisibility = ProjectController.isProjectVisible(selectedProject);
+            ProjectController.toggleProjectVisibility(selectedProject);
+            System.out.println("Project visibility toggled to: " + (!currentVisibility ? "Visible" : "Hidden"));
+          }
+          case 0 -> {
+            System.out.println("Project updated successfully!");
+            editing = false;
+          }
+        }
+      } catch (Exception e) {
+        System.out.println("Error updating project: " + e.getMessage());
+      }
+    }
   }
+
 
   private void deleteHDBProject() {
     List<Project> projectList = ProjectController.getProjectList();
@@ -134,7 +251,7 @@ public class ManagerUI {
       cnt += 1;
     }
 
-    int projIndex = getIntInput("Select the project to submit enquiry for: ") - 1;
+    int projIndex = getIntInput("Select the project to delete: ") - 1;
     Project proj = projectList.get(projIndex);
     ProjectController.deleteProject(proj);
   }

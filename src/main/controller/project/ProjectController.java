@@ -13,6 +13,7 @@ import main.utils.FileIOUtil;
 
 public class ProjectController {
   private static List<Project> projects = new ArrayList<>();
+  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
   public ProjectController() {
   }
@@ -52,7 +53,7 @@ public class ProjectController {
       String openingDate, String closingDate, HDBManager manager,
       int officerSlots) {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+
     Project project = new Project(
         projectName,
         neighbourhood,
@@ -85,6 +86,50 @@ public class ProjectController {
 
   public static void deleteProject(Project project) {
     projects.remove(project);
+  }
+
+  public static boolean isProjectVisible(Project project) {
+    return project.getVisibility();
+  }
+
+  public static void toggleProjectVisibility(Project project) {
+    project.setVisiblity(!project.getVisibility());
+  }
+
+  public static void updateProjectName(Project project, String name) {
+    project.setName(name);
+  }
+
+  public static void updateProjectNeighbourhood(Project project, String neighbourhood) {
+    project.setNeighbourhood(neighbourhood);
+  }
+
+  public static void updateProjectPriceTypeOne(Project project, float price) {
+    project.setPriceTypeOne(price);
+  }
+
+  public static void updateProjectNoOfUnitsTypeOne(Project project, int units) {
+    project.setNoOfUnitsTypeOne(units);
+  }
+
+  public static void updateProjectPriceTypeTwo(Project project, float price) {
+    project.setPriceTypeTwo(price);
+  }
+
+  public static void updateProjectNoOfUnitsTypeTwo(Project project, int units) {
+    project.setNoOfUnitsTypeTwo(units);
+  }
+
+  public static void updateProjectOpeningDate(Project project, String openingDate) {
+    project.setOpeningDate(LocalDate.parse(openingDate.trim(), formatter));
+  }
+
+  public static void updateProjectClosingDate(Project project, String closingDate) {
+    project.setClosingDate(LocalDate.parse(closingDate.trim(), formatter));
+  }
+
+  public static void updateProjectSlots(Project project, int slots) {
+    project.setOfficerSlot(slots);
   }
 
 }

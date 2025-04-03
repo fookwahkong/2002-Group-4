@@ -29,7 +29,8 @@ public class OfficerUI {
     }
 
     public void showMenu() {
-        while (true) {
+        boolean running = true;
+        while (running) {
             displayMenuOptions();
             try {
                 int choice = getValidIntInput(0, 3);
@@ -37,7 +38,12 @@ public class OfficerUI {
                     case 1 -> viewProjects();
                     case 2 -> viewAndReplyToEnquiries();
                     case 3 -> changePasswordUI.showChangePasswordMenu();
-                    case 0 -> new LoginUI().navigateToLoginMenu();
+                    case 0 ->
+                    {
+                        UserManager.getInstance().logout();
+                        running = false;
+                        new LoginUI().startLogin();
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());

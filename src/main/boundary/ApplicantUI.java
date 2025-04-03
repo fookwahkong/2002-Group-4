@@ -6,42 +6,62 @@ import main.controller.project.ProjectController;
 import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.entity.user.Applicant;
+import main.entity.user.User;
+import main.enums.UserRole;
 
 import java.util.Scanner;
 import java.util.List;
 
 public class ApplicantUI {
     private static final Scanner scanner = new Scanner(System.in);
-    private final Applicant currentUser = (Applicant) UserManager.getInstance().getCurrentUser();
+    private final Applicant currentUser;
+    private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+
+    public ApplicantUI() {
+        User user = UserManager.getInstance().getCurrentUser();
+
+        // downcasting user to applicant
+        if (user != null && user.getUserRole() == UserRole.APPLICANT) {
+            this.currentUser = (Applicant) user;
+        } else {
+            throw new IllegalStateException("Current user is not an Applicant");
+        }
+    }
 
     public void showMenu() {
-        boolean loggedIn = true;
-        while (loggedIn) {
-            System.out.println("APPLICANT UI");
-            System.out.println("==================================");
-            System.out.println("5. Submit Enquiry");
-            System.out.println("6. View Submitted Enquiry");
-            System.out.println("7. Edit Submitted Enquiry");
-            System.out.println("8. Delete Enquiry");
-            System.out.println("9. Logout");
-            System.out.println("==================================");
-            System.out.println("Enter your choice: ");
+        while (true) {
+            displayMenuOptions();
+            
+            try {
+                int choice = getValidIntInput();
 
-            int choice = getValidIntInput();
-
-            switch (choice) {
-                case 5 -> submitEnquiry();
-                case 6 -> viewEnquiry();
-                case 7 -> editEnquiry();
-                case 8 -> deleteEnquiry();
-                case 9 -> {
-                    System.out.println("Logging out.");
-                    loggedIn = false;
-                    break;
+                switch (choice) {
+                    case 5 -> submitEnquiry();
+                    case 6 -> viewEnquiry();
+                    case 7 -> editEnquiry();
+                    case 8 -> deleteEnquiry();
+                    case 9 -> changePasswordUI.showChangePasswordMenu();
+                    case 10 -> new LoginUI().navigateToLoginMenu();
+                    default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
                 }
-                default -> System.out.println("Invalid choice! Please enter a number between 1 and 5");
+
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
             }
         }
+    }
+
+    private void displayMenuOptions() {
+        System.out.println("APPLICANT UI");
+        System.out.println("==================================");
+        System.out.println("5. Submit Enquiry");
+        System.out.println("6. View Submitted Enquiry");
+        System.out.println("7. Edit Submitted Enquiry");
+        System.out.println("8. Delete Enquiry");
+        System.out.println("9. Change Password");
+        System.out.println("10. Logout");
+        System.out.println("==================================");
+        System.out.println("Enter your choice: ");
     }
 
     public void submitEnquiry() {
@@ -49,7 +69,7 @@ public class ApplicantUI {
         System.out.println("List of visible projects:");
         List<Project> projectList = ProjectController.getProjectList(currentUser);
         int cnt = 1;
-        for (Project p: projectList) {
+        for (Project p : projectList) {
             System.out.print(cnt + ". ");
             System.out.println(p.getName());
             cnt += 1;
@@ -71,7 +91,7 @@ public class ApplicantUI {
         List<Enquiry> enquiryList = currentUser.getEnquiryList();
         System.out.println("Enquiries:");
         int cnt = 0;
-        for (Enquiry e: enquiryList) {
+        for (Enquiry e : enquiryList) {
             cnt += 1;
             System.out.print(cnt + ". ");
             e.viewEnquiry("applicant");
@@ -106,7 +126,7 @@ public class ApplicantUI {
         ApplicantController.deleteEnquiry(enquiry);
         System.out.println("Enquiry deleted.");
     }
-    
+
     private int getValidIntInput() {
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid input! Please enter a number.");

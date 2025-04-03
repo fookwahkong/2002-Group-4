@@ -19,10 +19,11 @@ public class FileIOUtil {
     // To extend functionality once proper user classes are added
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    private static final String APPLICANTS_FILE =  CLASSPATH + "/main/data/applicants.csv";
-    private static final String MANAGERS_FILE = CLASSPATH + "/main/data/applicants.csv";
-    private static final String OFFICERS_FILE =  CLASSPATH + "/main/data/applicants.csv";
-    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/applicants.csv";
+    public static final String APPLICANTS_FILE =  "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/applicants.csv";
+    public static final String MANAGERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/managers.csv";
+    public static final String OFFICERS_FILE =  "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/officers.csv";
+    private static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -123,4 +124,29 @@ public class FileIOUtil {
         }
         return users;
     }
+
+    public static void saveUsersToFile(List<User> userList, String filepath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+            // Write header
+            writer.write("Name,UserID,Age,MaritalStatus,Password");
+            writer.newLine();
+            
+            // Write each user
+            for (User user : userList) {
+                String maritalStatusStr = (user.getMaritalStatus() == MaritalStatus.SINGLE) ? "Single" : "Married";
+                
+                String line = String.format("%s,%s,%d,%s,%s",
+                        user.getName(),
+                        user.getUserID(),
+                        user.getAge(),
+                        maritalStatusStr,
+                        user.getPassword());
+                
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving users to file: " + e.getMessage());
+        }
+    } 
 }

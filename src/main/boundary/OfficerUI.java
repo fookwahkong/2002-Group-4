@@ -6,25 +6,38 @@ import main.controller.user.UserManager;
 import main.entity.project.Project;
 import main.entity.Enquiry;
 import main.entity.user.HDBOfficer;
+import main.entity.user.User;
+import main.enums.UserRole;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class OfficerUI {
     private static final Scanner scanner = new Scanner(System.in);
-    private final HDBOfficer currentUser = (HDBOfficer) UserManager.getInstance().getCurrentUser();
+    private final HDBOfficer currentUser;
+    private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+
+    public OfficerUI() {
+        User user = UserManager.getInstance().getCurrentUser();
+        
+        //downcasting from user to officer
+        if (user != null && user.getUserRole() == UserRole.HDB_OFFICER) {
+            this.currentUser = (HDBOfficer) user;
+        } else {
+            throw new IllegalStateException("Current user is not an HDB Officer");
+        }
+    }
 
     public void showMenu() {
         while (true) {
             displayMenuOptions();
             try {
-                int choice = getValidIntInput(1, 3);
+                int choice = getValidIntInput(0, 3);
                 switch (choice) {
                     case 1 -> viewProjects();
                     case 2 -> viewAndReplyToEnquiries();
-                    case 0 -> {
-                        return; // Exit the menu
-                    }
+                    case 3 -> changePasswordUI.showChangePasswordMenu();
+                    case 0 -> new LoginUI().navigateToLoginMenu();
                 }
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());
@@ -37,7 +50,8 @@ public class OfficerUI {
         System.out.println("==================================");
         System.out.println("1. View projects I'm handling");
         System.out.println("2. View and reply to enquiries");
-        System.out.println("0. Exit");
+        System.out.println("3. Change Password");
+        System.out.println("0. Logout");
         System.out.print("Enter your choice: ");
     }
 

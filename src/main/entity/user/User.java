@@ -40,4 +40,11 @@ public abstract class User {
         return this.name;
     }
 
+    public MaritalStatus getMaritalStatus() {
+        return this.maritalStatus;
+    }
+
+    public int getAge() {
+        return this.age;
+    }
 }

@@ -1,8 +1,8 @@
 package main.controller.user;
 
-import main.entity.user.Applicant;
 import main.entity.Enquiry;
 import main.entity.project.Project;
+import main.entity.user.Applicant;
 
 
 public class ApplicantController {
@@ -25,7 +25,7 @@ public class ApplicantController {
     public static void viewEnquiries() {
         Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
         for (Enquiry enquiry : currentUser.getEnquiryList()) {
-            enquiry.viewEnquiry("applicant");
+            enquiry.viewEnquiry(currentUser.getUserRole());
         }
     }
 

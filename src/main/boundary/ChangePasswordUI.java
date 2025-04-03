@@ -1,15 +1,12 @@
 package main.boundary;
 
-import java.util.Scanner;
-
 import main.controller.user.PasswordController;
 import main.controller.user.UserManager;
 import main.entity.user.User;
 
-public class ChangePasswordUI {
+public class ChangePasswordUI extends UI {
 
-    private static Scanner scanner = new Scanner(System.in);
-    private PasswordController passwordController;           
+    private PasswordController passwordController;
 
     public ChangePasswordUI() {
         passwordController = new PasswordController();
@@ -37,13 +34,11 @@ public class ChangePasswordUI {
                     4. Include at least one number
                     5. Include at least one special character (e.g., !, @, #, $, %, ^, &, *)
                     ==================================================================================
-
+                    
                     Enter your new password:
                     """;
 
-            System.out.println(content);
-
-            String password = scanner.nextLine().trim();
+            String password = getStringInput(content);
 
             successful = passwordController.updatePassword(currentUser, password);
 

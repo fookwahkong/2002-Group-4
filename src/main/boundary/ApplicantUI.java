@@ -1,8 +1,8 @@
 package main.boundary;
 
+import main.controller.project.ProjectController;
 import main.controller.user.ApplicantController;
 import main.controller.user.UserManager;
-import main.controller.project.ProjectController;
 import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.entity.user.Applicant;
@@ -11,7 +11,7 @@ import main.enums.UserRole;
 
 import java.util.List;
 
-public class ApplicantUI extends UI{
+public class ApplicantUI extends UI {
     private final Applicant currentUser;
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
@@ -30,7 +30,7 @@ public class ApplicantUI extends UI{
         boolean running = true;
         while (running) {
             displayMenuOptions();
-            
+
             try {
                 int choice = getValidIntInput(5, 10);
 
@@ -96,7 +96,7 @@ public class ApplicantUI extends UI{
         for (Enquiry e : enquiryList) {
             cnt += 1;
             System.out.print(cnt + ". ");
-            e.viewEnquiry("applicant");
+            e.viewEnquiry(currentUser.getUserRole());
         }
         System.out.println();
         return enquiryList;

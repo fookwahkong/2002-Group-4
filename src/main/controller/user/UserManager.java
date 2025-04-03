@@ -5,15 +5,16 @@ import main.utils.FileIOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
 public class UserManager {
+    private static final Pattern NRIC_PATTERN = Pattern.compile("^[ST]\\d{7}[A-Z]$");
     private static UserManager instance;
     private static List<User> users;
     private User currentUser;
-    private static final Pattern NRIC_PATTERN = Pattern.compile("^[ST]\\d{7}[A-Z]$");
 
-    private UserManager() {}
+    private UserManager() {
+    }
 
     // Singleton
     public static UserManager getInstance() {
@@ -32,11 +33,11 @@ public class UserManager {
         List<User> officers = new ArrayList<>();
         List<User> managers = new ArrayList<>();
 
-        for (User user: users) {
+        for (User user : users) {
             switch (user.getUserRole()) {
                 case APPLICANT -> applicants.add(user);
                 case HDB_OFFICER -> officers.add(user);
-                case HDB_MANAGER -> managers.add(user); 
+                case HDB_MANAGER -> managers.add(user);
             }
         }
 
@@ -44,12 +45,13 @@ public class UserManager {
         FileIOUtil.saveUsersToFile(officers, FileIOUtil.OFFICERS_FILE);
         FileIOUtil.saveUsersToFile(managers, FileIOUtil.MANAGERS_FILE);
     }
+
     public static boolean verifyNRIC(String nric) {
         return NRIC_PATTERN.matcher(nric).matches();
     }
 
     public User findUserByName(String targetName) {
-        for (User user: users) {
+        for (User user : users) {
             if (user.getName().equals(targetName)) {
                 return user;
             }
@@ -58,7 +60,7 @@ public class UserManager {
     }
 
     public User findUserByID(String userId) {
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUserID().equals(userId)) {
                 return user;
             }
@@ -67,7 +69,7 @@ public class UserManager {
     }
 
     public User login(String userID, String password) {
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {
                 currentUser = user;
                 return user;

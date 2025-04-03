@@ -3,10 +3,7 @@ package main.boundary;
 import main.controller.user.UserManager;
 import main.entity.user.User;
 
-import java.util.Scanner;
-
-public class LoginUI {
-    private static final Scanner scanner = new Scanner(System.in);
+public class LoginUI extends UI {
 
     public void startLogin() {
         User loggedInUser = showLoginMenu();
@@ -21,16 +18,16 @@ public class LoginUI {
 
         while (!exit) {
             System.out.println("""
-            ==================================
-               BTO MANAGEMENT SYSTEM LOGIN   
-            ==================================
-            1. Login with your Singpass account
-            2. Exit
-            ==================================
-            Enter your choice:  
-            """);
+                    ==================================
+                       BTO MANAGEMENT SYSTEM LOGIN   
+                    ==================================
+                    1. Login with your Singpass account
+                    2. Exit
+                    ==================================
+                    Enter your choice:  
+                    """);
 
-            int choice = getValidIntInput();
+            int choice = getValidIntInput(1, 2);
 
             switch (choice) {
                 case 1 -> loggedInUser = handleLogin();
@@ -55,21 +52,19 @@ public class LoginUI {
 
         String nric;
         do {
-            System.out.print("Enter userID: ");
-            nric = scanner.nextLine().trim();
+            nric = getStringInput("Enter userID");
             if (!UserManager.verifyNRIC(nric)) {
                 System.out.println("Invalid userID format. Try again.");
             }
         } while (!UserManager.verifyNRIC(nric));
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine().trim();
+        String password = getStringInput("Enter password: ");
 
         User user = UserManager.getInstance().login(nric, password);
 
         if (user != null) {
             System.out.println("Login successful!\n");
-            
+
             return user;
         } else {
             System.out.println("Invalid NRIC or password. Please try again.\n");
@@ -77,25 +72,17 @@ public class LoginUI {
         }
     }
 
-    private int getValidIntInput() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("Invalid input! Please enter a number.");
-            scanner.next(); // Clear invalid input
-        }
-        int input = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-        return input;
-    }
-
 
     public void navigateToMainMenu(User user) {
-        if (user == null) return;
-        
+        if (user == null) {
+            return;
+        }
+
         try {
             switch (user.getUserRole()) {
                 case APPLICANT:
                     System.out.println("Opening ApplicantUI...");
-                    new ApplicantUI().showMenu(); 
+                    new ApplicantUI().showMenu();
                     break;
                 case HDB_OFFICER:
                     System.out.println("Opening OfficerUI...");
@@ -113,6 +100,7 @@ public class LoginUI {
             e.printStackTrace();
         }
     }
+
     public void navigateToLoginMenu() {
         UserManager.getInstance().logout();
     }

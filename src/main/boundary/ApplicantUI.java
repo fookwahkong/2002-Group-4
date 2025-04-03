@@ -96,7 +96,7 @@ public class ApplicantUI extends UI{
         for (Enquiry e : enquiryList) {
             cnt += 1;
             System.out.print(cnt + ". ");
-            e.viewEnquiry("applicant");
+            e.viewEnquiry(currentUser.getUserRole());
         }
         System.out.println();
         return enquiryList;

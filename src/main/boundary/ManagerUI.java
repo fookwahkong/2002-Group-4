@@ -262,7 +262,7 @@ public class ManagerUI extends UI {
     int cnt = 1;
     for (Enquiry e : enquiryList) {
         System.out.print(cnt + ". ");
-        e.viewEnquiry("manager");
+        e.viewEnquiry(currentUser.getUserRole());
         cnt++;  // Increment the counter
         System.out.println(); // Add a newline for better formatting
     }

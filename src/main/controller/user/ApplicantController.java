@@ -25,7 +25,7 @@ public class ApplicantController {
     public static void viewEnquiries() {
         Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
         for (Enquiry enquiry : currentUser.getEnquiryList()) {
-            enquiry.viewEnquiry("applicant");
+            enquiry.viewEnquiry(currentUser.getUserRole());
         }
     }
 

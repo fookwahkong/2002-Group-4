@@ -20,7 +20,7 @@ public class HDBOfficer extends Applicant {
         List<Project> officerProjects = ProjectController.getOfficerProjects(this);
         for (Project project : officerProjects) {
             for (Enquiry enquiry : project.getEnquiries()) {
-                enquiry.viewEnquiry("officer");
+                enquiry.viewEnquiry(getUserRole());
             }
         }
     }

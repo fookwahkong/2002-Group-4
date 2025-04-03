@@ -2,6 +2,7 @@ package main.entity;
 
 import main.entity.project.Project;
 import main.entity.user.Applicant;
+import main.enums.UserRole;
 
 
 public class Enquiry {
@@ -9,7 +10,7 @@ public class Enquiry {
     String message;
     String reply = "-";
     Project project;
-    String[] peopleValidforViewing = {"applicant", "manager"};
+    UserRole[] peopleValidforViewing = {UserRole.APPLICANT, UserRole.HDB_MANAGER};
 
     public Enquiry(Applicant applicant, Project project, String message) {
         this.applicant = applicant;
@@ -18,10 +19,10 @@ public class Enquiry {
     }
 
 
-    public void viewEnquiry(String viewer) {
+    public void viewEnquiry(UserRole role) {
         System.out.println("ENQUIRY");
         System.out.println("=======================================");
-        if (viewer.equals("applicant")) {
+        if (role == UserRole.APPLICANT) {
             System.out.println("Enquiry on project " + project.getName() + ": " + message);
             System.out.println("Response: " + reply);
             System.out.println();

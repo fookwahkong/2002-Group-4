@@ -73,7 +73,7 @@ public class ManagerUI {
     int filterChoice = getIntInput("Select projects to view (1. All 2. Self): ");
     switch (filterChoice) {
       case 1 -> {
-        for (Project p : ProjectController.getProjectList(currentUser)) {
+        for (Project p : ProjectController.getProjectList()) {
           System.out.println(p.getName());
         }
       }
@@ -126,7 +126,7 @@ public class ManagerUI {
   }
 
   private void deleteHDBProject() {
-    List<Project> projectList = ProjectController.getProjectList(currentUser);
+    List<Project> projectList = ProjectController.getProjectList();
     int cnt = 1;
     for (Project p : projectList) {
       System.out.print(cnt + ". ");
@@ -140,13 +140,19 @@ public class ManagerUI {
   }
 
   private void viewAllEnquiries() {
-    System.out.println(currentUser.getUserRole());
     List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
+    
+    if (enquiryList.isEmpty()) {
+      System.out.println("No enquiries found.");
+      return;
+    }
+    
     int cnt = 1;
-    System.out.println(enquiryList);
     for (Enquiry e : enquiryList) {
-      System.out.print(cnt + ".");
-      e.viewEnquiry("manager");
+        System.out.print(cnt + ". ");
+        e.viewEnquiry("manager");
+        cnt++;  // Increment the counter
+        System.out.println(); // Add a newline for better formatting
     }
   }
 

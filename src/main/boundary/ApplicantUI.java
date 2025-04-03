@@ -67,7 +67,7 @@ public class ApplicantUI {
     public void submitEnquiry() {
         // go to ProjectController to get list of projects
         System.out.println("List of visible projects:");
-        List<Project> projectList = ProjectController.getProjectList(currentUser);
+        List<Project> projectList = ProjectController.getProjectList();
         int cnt = 1;
         for (Project p : projectList) {
             System.out.print(cnt + ". ");

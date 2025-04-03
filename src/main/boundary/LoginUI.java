@@ -71,10 +71,6 @@ public class LoginUI {
         if (user != null) {
             System.out.println("Login successful!\n");
             
-            //to delete debug message
-            System.out.println("DEBUG - User: " + user.getName() + 
-            ", Role: " + user.getUserRole() + 
-            ", Class: " + user.getClass().getName());
             return user;
         } else {
             System.out.println("Invalid NRIC or password. Please try again.\n");
@@ -96,11 +92,6 @@ public class LoginUI {
     public void navigateToMainMenu(User user) {
         if (user == null) return;
         
-        //to delete debug message
-        System.out.println("DEBUG - Before navigation - User: " + user.getName() + 
-        ", Role: " + user.getUserRole() + 
-        ", Class: " + user.getClass().getName());        
-
         try {
             switch (user.getUserRole()) {
                 case APPLICANT:

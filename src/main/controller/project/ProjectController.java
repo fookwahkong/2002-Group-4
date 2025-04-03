@@ -8,7 +8,7 @@ import java.util.List;
 import main.entity.project.Project;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
-import main.entity.user.User;
+import main.entity.user.Applicant;
 import main.utils.FileIOUtil;
 
 public class ProjectController {
@@ -22,23 +22,30 @@ public class ProjectController {
   }
 
   //get ALL the projects
-  public static List<Project> getProjectList(User user) {
+  public static List<Project> getProjectList() {
     return projects;
   }
 
   //get projects managed by manager
   public static List<Project> getManagerProjects(HDBManager user) {
-    return ProjectController.getProjectList(user).stream()
+    return ProjectController.getProjectList().stream()
         .filter(project -> project.getManager().equals(user))
         .toList();
   }
 
   //get projects managed by officer
   public static List<Project> getOfficerProjects(HDBOfficer officer) {
-    return ProjectController.getProjectList(officer).stream()
+    return ProjectController.getProjectList().stream()
         .filter(project -> project.getAssignedOfficers().contains(officer))
         .toList();
   }
+
+  public static List<Project> getApplicantProjects(Applicant applicant) {
+    return ProjectController.getProjectList().stream()
+        .filter(project -> project.getVisibility() == true)
+        .toList();
+  }
+
 
   public static void createProject(String projectName, String neighbourhood, float priceOne,
       int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,

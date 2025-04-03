@@ -18,6 +18,10 @@ public class Applicant extends User {
         return enquiryList;
     }
 
+    public String getName() {
+        return super.getName();
+    }
+
     public void addEnquiry(Enquiry e) {
         enquiryList.add(e);
     }

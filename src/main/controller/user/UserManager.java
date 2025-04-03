@@ -57,6 +57,15 @@ public class UserManager {
         return null;
     }
 
+    public User findUserByID(String userId) {
+        for (User user: users) {
+            if (user.getUserID().equals(userId)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     public User login(String userID, String password) {
         for (User user: users) {
             if (user.getUserID().equals(userID) && user.getPassword().equals(password)) {

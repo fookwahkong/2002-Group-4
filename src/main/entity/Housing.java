@@ -10,7 +10,7 @@ public class Housing {
     }
 
     public void setSellingPrice(float price) {
-        this.sellingPrice = sellingPrice;
+        this.sellingPrice = price;
     }
 
     public int getNumberOfUnits() {
@@ -19,6 +19,10 @@ public class Housing {
 
     public void setNumberOfUnits(int numberOfUnits) {
         this.numberOfUnits = numberOfUnits;
+    }
+
+    public float getSellingPrice() {
+        return this.sellingPrice;
     }
 
 }

@@ -107,6 +107,31 @@ public class Project
     this.housingTypeTwo.setNumberOfUnits(numberOfUnits);
   }
 
+  public void setPriceTypeOne(float sellingPrice) {
+    this.housingTypeOne.setSellingPrice(sellingPrice);
+  }
+
+  public void setPriceTypeTwo(float sellingPrice) {
+    this.housingTypeTwo.setSellingPrice(sellingPrice);
+  }
+
+  public void setNoOfUnitsTypeOne(int noOfUnits) {
+    this.housingTypeOne.setNumberOfUnits(noOfUnits);
+  }
+
+  public void setNoOfUnitsTypeTwo(int noOfUnits) {
+    this.housingTypeTwo.setNumberOfUnits(noOfUnits);
+  }
+
+  public void setOpeningDate(LocalDate openingDate) {
+    this.openingDate = openingDate;
+  }
+
+  public void setClosingDate(LocalDate closingDate) {
+    this.closingDate = closingDate;
+  }
+
+
   public List<Registration> getRegistrationList(User user)
   {
     return registrations;
@@ -122,5 +147,58 @@ public class Project
 
   public boolean getVisibility() {
     return this.visible;
+  }
+
+  public void setVisiblity(boolean visible) {
+    this.visible = visible;
+  }
+
+  public String getNeighbourhood()
+  {
+    return this.neighborhood;
+  }
+
+  public int getNoOfUnitsTypeOne()
+  {
+    return this.housingTypeOne.getNumberOfUnits();
+  }
+
+  public float getPriceTypeOne()
+  {
+    return this.housingTypeOne.getSellingPrice();
+  }
+
+  public int getNoOfUnitsTypeTwo()
+  {
+    return this.housingTypeTwo.getNumberOfUnits();
+  }
+
+  public float getPriceTypeTwo()
+  {
+    return this.housingTypeTwo.getSellingPrice();
+  }
+
+  public LocalDate getOpeningDate()
+  {
+    return this.openingDate;
+  }
+
+  public LocalDate getClosingDate()
+  {
+    return this.closingDate;
+  }
+
+  public int getSlots()
+  {
+    return this.officerSlot;
+  }
+
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
+  public void setNeighbourhood(String neighborhood) {
+    this.neighborhood = neighborhood;
   }
 }

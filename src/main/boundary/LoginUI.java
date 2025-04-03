@@ -10,7 +10,6 @@ public class LoginUI {
 
     public void startLogin() {
         User loggedInUser = showLoginMenu();
-
         if (loggedInUser != null) {
             navigateToMainMenu(loggedInUser);
         }
@@ -37,7 +36,7 @@ public class LoginUI {
                 case 1 -> loggedInUser = handleLogin();
                 case 2 -> {
                     System.out.println("Exiting BTO Management System...");
-                    exit = true;
+                    return null;
                 }
                 default -> System.out.println("Invalid choice! Please enter a number between 1 and 3.");
             }
@@ -115,7 +114,7 @@ public class LoginUI {
         }
     }
     public void navigateToLoginMenu() {
-        new LoginUI().startLogin();
+        UserManager.getInstance().logout();
     }
 
 }

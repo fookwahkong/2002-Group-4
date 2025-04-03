@@ -10,15 +10,13 @@ import main.entity.user.User;
 import main.enums.UserRole;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class OfficerUI {
-    private static final Scanner scanner = new Scanner(System.in);
+public class OfficerUI extends UI {
     private final HDBOfficer currentUser;
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     public OfficerUI() {
-        User user = UserManager.getInstance().getCurrentUser();
+      User user = UserManager.getInstance().getCurrentUser();
         
         //downcasting from user to officer
         if (user != null && user.getUserRole() == UserRole.HDB_OFFICER) {
@@ -102,35 +100,5 @@ public class OfficerUI {
         String reply = getStringInput("Enter your reply: ");
         EnquiryController.replyToEnquiry(selectedEnquiry, reply);
         System.out.println("Reply sent successfully!");
-    }
-
-    private String getStringInput(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine().trim();
-    }
-
-    private int getIntInput(String prompt) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                return Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-            }
-        }
-    }
-
-    private int getValidIntInput(int min, int max) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(scanner.nextLine());
-                if (input >= min && input <= max) {
-                    return input;
-                }
-                System.out.printf("Please enter a number between %d and %d%n", min, max);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number.");
-            }
-        }
     }
 }

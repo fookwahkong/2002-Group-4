@@ -2,15 +2,11 @@ package main.entity;
 
 public class Housing {
     private String type;
-	private float sellingPrice;
+    private float sellingPrice;
     private int numberOfUnits;
 
     public Housing(String type) {
         this.type = type;
-    }
-
-    public void setSellingPrice(float price) {
-        this.sellingPrice = price;
     }
 
     public int getNumberOfUnits() {
@@ -23,6 +19,10 @@ public class Housing {
 
     public float getSellingPrice() {
         return this.sellingPrice;
+    }
+
+    public void setSellingPrice(float price) {
+        this.sellingPrice = price;
     }
 
 }

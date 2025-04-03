@@ -9,7 +9,7 @@ public class PasswordController {
             user.changePassword(newPassword);
             UserManager.save();
             return true;
-        } 
+        }
         return false;
     }
 

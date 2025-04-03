@@ -1,8 +1,8 @@
 package main.controller.user;
 
-import main.entity.user.Applicant;
 import main.entity.Enquiry;
 import main.entity.project.Project;
+import main.entity.user.Applicant;
 
 
 public class ApplicantController {

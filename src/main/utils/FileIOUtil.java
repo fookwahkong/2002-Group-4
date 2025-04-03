@@ -1,32 +1,27 @@
 package main.utils;
 
 import main.controller.user.UserManager;
-import main.entity.user.Applicant;
-import main.entity.user.HDBManager;
-import main.entity.user.HDBOfficer;
-import main.entity.user.User;
-import main.entity.user.UserFactory;
 import main.entity.Enquiry;
 import main.entity.project.Project;
+import main.entity.user.*;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileIOUtil {
     // To extend functionality once proper user classes are added
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    public static final String APPLICANTS_FILE =  CLASSPATH + "/main/data/applicants.csv";
+    public static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
     public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
-    public static final String OFFICERS_FILE =  CLASSPATH + "/main/data/officers.csv";
-    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
     public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-
+    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -60,12 +55,11 @@ public class FileIOUtil {
                     );
 
 
-
                     // Set housing type two details
                     project.setHousingTypeTwo(
                             Float.parseFloat(parts[7].trim().replace("\"", "").replace(",", "")), // Selling price
                             Integer.parseInt(parts[6].trim().replace("\"", "").replace(",", ""))
-                            );
+                    );
 
                     // Set application dates
                     project.setDate(
@@ -169,7 +163,7 @@ public class FileIOUtil {
                 MaritalStatus maritalStatus = null;
                 if (parts[3].equals("Single")) {
                     maritalStatus = MaritalStatus.SINGLE;
-                } else if (parts[3].equals("Married")){
+                } else if (parts[3].equals("Married")) {
                     maritalStatus = MaritalStatus.MARRIED;
                 }
 
@@ -187,23 +181,23 @@ public class FileIOUtil {
             // Write header
             writer.write("Name,UserID,Age,MaritalStatus,Password");
             writer.newLine();
-            
+
             // Write each user
             for (User user : userList) {
                 String maritalStatusStr = (user.getMaritalStatus() == MaritalStatus.SINGLE) ? "Single" : "Married";
-                
+
                 String line = String.format("%s,%s,%d,%s,%s",
                         user.getName(),
                         user.getUserID(),
                         user.getAge(),
                         maritalStatusStr,
                         user.getPassword());
-                
+
                 writer.write(line);
                 writer.newLine();
             }
         } catch (IOException e) {
             throw new RuntimeException("Error saving users to file: " + e.getMessage());
         }
-    } 
+    }
 }

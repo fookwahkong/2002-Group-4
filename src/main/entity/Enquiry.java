@@ -11,13 +11,14 @@ public class Enquiry {
     String reply = "-";
     Project project;
     UserRole[] peopleValidforViewing = {UserRole.APPLICANT, UserRole.HDB_MANAGER};
+    private boolean replied = false;
+
 
     public Enquiry(Applicant applicant, Project project, String message) {
         this.applicant = applicant;
         this.message = message;
         this.project = project;
     }
-
 
     public void viewEnquiry(UserRole role) {
         System.out.println("ENQUIRY");
@@ -49,26 +50,24 @@ public class Enquiry {
         this.message = newMessage;
     }
 
-    private boolean replied = false;
-
     public void setResponse(String response) {
         this.reply = response;
-    }
-
-    public void setReply(String reply) {
-        this.reply = reply;
     }
 
     public String getReply() {
         return this.reply;
     }
 
-    public void setReplied(boolean status) {
-        this.replied = status;
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 
     public boolean isReplied() {
         return this.replied;
+    }
+
+    public void setReplied(boolean status) {
+        this.replied = status;
     }
 
 }

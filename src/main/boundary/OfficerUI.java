@@ -1,7 +1,7 @@
 package main.boundary;
 
-import main.controller.project.ProjectController;
 import main.controller.enquiry.EnquiryController;
+import main.controller.project.ProjectController;
 import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.project.Project;
@@ -16,8 +16,8 @@ public class OfficerUI extends UI {
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     public OfficerUI() {
-      User user = UserManager.getInstance().getCurrentUser();
-        
+        User user = UserManager.getInstance().getCurrentUser();
+
         //downcasting from user to officer
         if (user != null && user.getUserRole() == UserRole.HDB_OFFICER) {
             this.currentUser = (HDBOfficer) user;
@@ -36,8 +36,7 @@ public class OfficerUI extends UI {
                     case 1 -> viewProjects();
                     case 2 -> viewAndReplyToEnquiries();
                     case 3 -> changePasswordUI.showChangePasswordMenu();
-                    case 0 ->
-                    {
+                    case 0 -> {
                         UserManager.getInstance().logout();
                         running = false;
                         new LoginUI().startLogin();

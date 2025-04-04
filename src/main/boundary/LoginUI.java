@@ -52,7 +52,7 @@ public class LoginUI extends UI {
 
         String nric;
         do {
-            nric = getStringInput("Enter userID");
+            nric = getStringInput("Enter userID: ");
             if (!UserManager.verifyNRIC(nric)) {
                 System.out.println("Invalid userID format. Try again.");
             }

@@ -1,8 +1,8 @@
 package main.entity.project;
 
-import main.controller.user.Registration;
 import main.entity.Enquiry;
 import main.entity.Housing;
+import main.entity.Registration;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.entity.user.User;
@@ -59,7 +59,6 @@ public class Project {
             System.out.println("No more slot.");
             return;
         }
-        this.officerSlot -= 1;
         this.officers.add(officer);
     }
 
@@ -99,7 +98,7 @@ public class Project {
         this.housingTypeTwo.setNumberOfUnits(numberOfUnits);
     }
 
-    public List<Registration> getRegistrationList(User user) {
+    public List<Registration> getRegistrationList() {
         return registrations;
     }
 
@@ -177,5 +176,9 @@ public class Project {
 
     public int getSlots() {
         return this.officerSlot;
+    }
+
+    public int getRemainingSlots() {
+        return (this.officerSlot - officers.size());
     }
 }

@@ -5,16 +5,19 @@ import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
+import main.entity.Registration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HDBOfficer extends Applicant {
     ArrayList<Project> assignedProjects;
+    List<Registration> registrationList;
 
     public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
         this.assignedProjects = new ArrayList<>();
+        this.registrationList = new ArrayList<>();
     }
 
     public static void replyToEnquiry(Enquiry enquiry, String response) {
@@ -40,7 +43,15 @@ public class HDBOfficer extends Applicant {
         return assignedProjects;
     }
 
+    public List<Registration> getRegistrationList() {
+        return this.registrationList;
+    }
+    
     public void assignProject(Project project) {
         assignedProjects.add(project);
+    }
+
+    public void addRegistration(Registration registration) {
+        registrationList.add(registration);
     }
 }

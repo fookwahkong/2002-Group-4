@@ -19,7 +19,7 @@ public class ApplicantUI extends UI {
         User user = UserManager.getInstance().getCurrentUser();
 
         // downcasting user to applicant
-        if (user != null && user.getUserRole() == UserRole.APPLICANT) {
+        if (user != null && (user.getUserRole() == UserRole.APPLICANT || user.getUserRole() == UserRole.HDB_OFFICER)) {
             this.currentUser = (Applicant) user;
         } else {
             throw new IllegalStateException("Current user is not an Applicant");
@@ -67,7 +67,7 @@ public class ApplicantUI extends UI {
         System.out.println("Enter your choice: ");
     }
 
-    public void submitEnquiry() {
+    protected void submitEnquiry() {
         // go to ProjectController to get list of projects
         System.out.println("List of visible projects:");
         List<Project> projectList = ProjectController.getProjectList();
@@ -89,7 +89,7 @@ public class ApplicantUI extends UI {
         ApplicantController.submitEnquiry(message, proj);
     }
 
-    private List<Enquiry> viewEnquiry() {
+    protected List<Enquiry> viewEnquiry() {
         List<Enquiry> enquiryList = currentUser.getEnquiryList();
         System.out.println("Enquiries:");
         int cnt = 0;
@@ -102,7 +102,7 @@ public class ApplicantUI extends UI {
         return enquiryList;
     }
 
-    private void editEnquiry() {
+    protected void editEnquiry() {
         List<Enquiry> enquiryList = this.viewEnquiry(); // get enquiry list
 
         // get the enquiry to edit
@@ -116,7 +116,7 @@ public class ApplicantUI extends UI {
         System.out.println("Message edited.");
     }
 
-    private void deleteEnquiry() {
+    protected void deleteEnquiry() {
         List<Enquiry> enquiryList = this.viewEnquiry();
 
         // get the qnquiry to delete

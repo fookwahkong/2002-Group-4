@@ -81,6 +81,7 @@ public class FileIOUtil {
                         HDBOfficer officer = (HDBOfficer) UserManager.getInstance()
                                 .findUserByName(officerName.trim());
                         project.addOfficersIncharge(officer);
+                        officer.assignProject(project);
                     }
 
                     allProjects.add(project);

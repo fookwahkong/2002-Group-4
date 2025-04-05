@@ -1,14 +1,14 @@
 package main.entity.user;
 
-import main.entity.Enquiry;
-import main.enums.MaritalStatus;
-import main.enums.UserRole;
-import main.entity.project.Project;
-
 import java.util.ArrayList;
 import java.util.List;
+import main.entity.Enquiry;
+import main.entity.project.Project;
+import main.enums.MaritalStatus;
+import main.enums.UserRole;
 
 public class Applicant extends User {
+
     private List<Enquiry> enquiryList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
 
@@ -36,7 +36,49 @@ public class Applicant extends User {
         enquiryList.remove(e);
     }
 
-    void viewProjects() {
+    public List<Project> viewOpenProjects(List<Project> allProjects) {
+        List<Project> openProjects = new ArrayList<>();
+        for (Project project : allProjects) {
+            if (project.isVisible()) {
+                openProjects.add(project);
+            }
+        }
+        return openProjects;
 
     }
+
+    public List<Project> viewAppliedProjects() {
+        return new ArrayList<>(projectList);
+    }
+
+    public boolean applyForProject(Project project) {
+        if (project.isVisible() && !projectList.contains(project)) {
+            projectList.add(project);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean flatBooked = false;
+
+    public boolean bookFlat() {
+        if (!flatBooked) {
+            flatBooked = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean withdrawFromProject(Project project) {
+        return projectList.remove(project);
+    }
+
+    public boolean withdrawFromFlat() {
+        if (flatBooked) {
+            flatBooked = false;
+            return true;
+        }
+        return false;
+    }
+
 }

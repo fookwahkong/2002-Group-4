@@ -1,15 +1,13 @@
 package main.entity.project;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import main.entity.Enquiry;
 import main.entity.Housing;
 import main.entity.Registration;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
-import main.entity.user.User;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Project {
 
@@ -180,5 +178,13 @@ public class Project {
 
     public int getRemainingSlots() {
         return (this.officerSlot - officers.size());
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

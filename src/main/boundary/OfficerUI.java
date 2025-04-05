@@ -153,6 +153,7 @@ public class OfficerUI extends ApplicantUI {
             int decisionJoinProject = getValidIntInput(1,2);
             if (decisionJoinProject == 1) {
                 OfficerController.submitRegistration(selectedProject);
+                selectedProject.getPendingOfficers().add(currentUser);
             }
             System.out.println();
         }

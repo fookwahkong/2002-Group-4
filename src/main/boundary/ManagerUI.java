@@ -350,9 +350,9 @@ public class ManagerUI extends UI {
         String action = scanner.nextLine().trim().toUpperCase();
 
         if (action.equals("A")) {
-            currentUser.approveOfficer(selectedOfficer);
+            currentUser.approveOfficer(HDBOfficer selectedOfficer, Project project);
         } else if (action.equals("R")) {
-            currentUser.rejectOfficer(selectedOfficer);
+            currentUser.rejectOfficer(HDBOfficer selectedOfficer, Project project);
         } else {
             System.out.println("Invalid action. Please enter A or R.");
         }

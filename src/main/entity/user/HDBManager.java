@@ -5,7 +5,7 @@ import main.enums.UserRole;
 
 public class HDBManager extends User{
     private List<HDBOfficer> pendingApprovals = new ArrayList<>();
-    private Project managedProject;
+    private Project currentProject;
     public HDBManager(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
     }
@@ -39,6 +39,21 @@ public class HDBManager extends User{
         }
     }
 
+    public void setCurrentProject (Project project) {
+        this.currentProject = project;
+    }
+
+    public void removeCurrentProject() {
+        this.currentProject = null;
+    }
+
+    public Project getCurrentProject() {
+        if (this.currentProject == null) {
+            throw new IllegalStateException("No project is currently assigned to you.");
+        }
+        return this.currentProject;
+
+    
 }
 
 

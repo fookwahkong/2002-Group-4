@@ -44,9 +44,9 @@ public class ManagerUI extends UI {
                     case 5 -> viewAllEnquiries();
                     case 6 -> viewAndReplyToEnquiries();
                     case 7 -> changePasswordUI.showChangePasswordMenu();
-                    case 8 -> ManagePendingOfficers();
+                    case 8 -> managePendingOfficers();
                     case 9 -> viewApprovedOfficers();
-                    case 10 -> ManagePendingApplicants();
+                    case 10 -> managePendingApplicants();
                     case 0 -> {
                         UserManager.getInstance().logout();
                         running = false;
@@ -317,7 +317,7 @@ public class ManagerUI extends UI {
         System.out.println("Reply sent successfully!");
     }
 
-    private void viewAndApprovePendingOfficers() {
+    private void managePendingOfficers() {
         List<HDBOfficer> pendingOfficers = managedProject.getPendingOfficers();
         HDBOfficer selectedOfficer = pendingOfficers.get(index);
         

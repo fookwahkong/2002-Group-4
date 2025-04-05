@@ -34,7 +34,7 @@ public class ManagerUI extends UI {
             displayMenuOptions();
 
             try {
-                int choice = getValidIntInput(0, 9);
+                int choice = getValidIntInput(0, 10);
 
                 switch (choice) {
                     case 1 -> viewProjects();
@@ -44,8 +44,9 @@ public class ManagerUI extends UI {
                     case 5 -> viewAllEnquiries();
                     case 6 -> viewAndReplyToEnquiries();
                     case 7 -> changePasswordUI.showChangePasswordMenu();
-                    case 8 -> viewAndApprovePendingOfficers();
+                    case 8 -> ManagePendingOfficers();
                     case 9 -> viewApprovedOfficers();
+                    case 10 -> ManagePendingApplicants();
                     case 0 -> {
                         UserManager.getInstance().logout();
                         running = false;
@@ -68,8 +69,9 @@ public class ManagerUI extends UI {
         System.out.println("5. View all enquiries");
         System.out.println("6. View and reply enquiries on projects you handle");
         System.out.println("7. Change Password");
-        System.out.println("8. View and approve pending officer approvals");
+        System.out.println("8. Manage pending officers");
         System.out.println("9. View approved officers");
+        System.out.println("10. Manage pending applicants");
         System.out.println("0. Logout");
         System.out.print("Enter your choice: ");
     }
@@ -358,4 +360,40 @@ public class ManagerUI extends UI {
         }
     }
 
+    private void managePendingApplicants() {
+        Project currentProject = currentUser.getCurrentProject();
+        List<Applicant> pending = currentProject.getPendingApplicants(); //getPendingApplicants() not done up yet.
+
+        if (pending.isEmpty()) {
+            System.out.println("No pending applicants.");
+            return;
+        }
+
+        System.out.println("Pending applicants for project: " + currentProject.getName());
+        for (int i = 0; i < pending.size(); i++) {
+            System.out.println((i + 1) + ". " + pending.get(i).getName());
+        }
+
+        System.out.print("Select applicant to review (0 to cancel): ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        if (choice <= 0 || choice > pending.size()) {
+            System.out.println("Cancelled.");
+            return;
+        }
+
+        Applicant selected = pending.get(choice - 1);
+        System.out.print("Approve (A) or Reject (R) applicant: ");
+        String decision = scanner.nextLine().trim().toUpperCase();
+
+        if (decision.equals("A")) {
+            ProjectController.approveApplicant(currentProject, selected);
+            System.out.println("Applicant approved.");
+        } else if (decision.equals("R")) {
+            ProjectController.rejectApplicant(currentProject, selected);
+            System.out.println("Applicant rejected.");
+        } else {
+            System.out.println("Invalid action. Please enter A or R.");
+        }
+    }
 }

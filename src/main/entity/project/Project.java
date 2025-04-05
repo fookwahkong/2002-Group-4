@@ -26,6 +26,8 @@ public class Project
   private List<Registration> registrations;
   private Housing housingTypeOne;
   private Housing housingTypeTwo;
+  private List<HDBOfficer> pendingOfficers = new ArrayList<>();
+
 
   public Project(String name, String neighborhood, boolean visible)
   {
@@ -118,5 +120,9 @@ public class Project
 
   public List<HDBOfficer> getAssignedOfficers() {
     return this.officers;
+  }
+
+  public List<HDBOfficer> getPendingOfficers() {
+    return ArrayList<>(pendingOfficers);
   }
 }

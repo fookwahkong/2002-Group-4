@@ -18,14 +18,27 @@ public class HDBManager extends User{
         pendingApprovals.add(officer);
     }
 
-    public void approveOfficer(HDBOfficer officer) {
-        officer.approve();
-        pendingApprovals.remove(officer);
-        ProjectController.addApprovedOfficer(officer);
+    public void approveOfficer(HDBOfficer officer, Project project) {
+        if (project.getPendingOfficers().contains(officer)) {
+            officer.approve(project);
+            project.getApprovedOfficers().add(officer);
+            project.getPendingOfficers().remove(officer);
+            System.out.println(officer.getName() + " has been approved for project " + project.getName());
+        } else {
+            System.out.println("Officer is not in pending list.");
+        }
     }
 
-    public void rejectOfficer(HDBOfficer officer) {
-        pendingApprovals.remove(officer);
+
+    public void rejectOfficer(HDBOfficer officer, Project project) {
+        if (project.getPendingOfficers().contains(officer)) {
+            project.getPendingOfficers().remove(officer);
+            System.out.println(officer.getName() + " has been rejected for project " + project.getName());
+        } else {
+            System.out.println("Officer is not in pending list.");
+        }
+    }
+
 }
 
 

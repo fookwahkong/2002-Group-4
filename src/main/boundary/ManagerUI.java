@@ -388,9 +388,11 @@ public class ManagerUI extends UI {
 
         if (decision.equals("A")) {
             ProjectController.approveApplicant(currentProject, selected); //approve and reject functions not done yet
+            pending.remove(selected);
             System.out.println("Applicant approved.");
         } else if (decision.equals("R")) {
             ProjectController.rejectApplicant(currentProject, selected);
+            pending.remove(selected);
             System.out.println("Applicant rejected.");
         } else {
             System.out.println("Invalid action. Please enter A or R.");

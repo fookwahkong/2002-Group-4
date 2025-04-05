@@ -21,7 +21,6 @@ public class HDBManager extends User{
     public void approveOfficer(HDBOfficer officer, Project project) {
         if (project.getPendingOfficers().contains(officer)) {
             officer.assignProject(project);
-            project.getApprovedOfficers().add(officer);
             project.addOfficersInCharge(officer);
             project.getPendingOfficers().remove(officer);
             System.out.println(officer.getName() + " has been approved for project " + project.getName());

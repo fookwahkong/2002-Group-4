@@ -387,7 +387,7 @@ public class ManagerUI extends UI {
         String decision = scanner.nextLine().trim().toUpperCase();
 
         if (decision.equals("A")) {
-            ProjectController.approveApplicant(currentProject, selected);
+            ProjectController.approveApplicant(currentProject, selected); //approve and reject functions not done yet
             System.out.println("Applicant approved.");
         } else if (decision.equals("R")) {
             ProjectController.rejectApplicant(currentProject, selected);

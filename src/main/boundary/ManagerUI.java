@@ -18,6 +18,7 @@ public class ManagerUI extends UI {
 
     public ManagerUI() {
         User user = UserManager.getInstance().getCurrentUser();
+        Project currentProject = currentUser.getCurrentProject();
 
         // downcasting from user to manager
         if (user != null && user.getUserRole() == UserRole.HDB_MANAGER) {
@@ -315,21 +316,21 @@ public class ManagerUI extends UI {
     }
 
     private void viewAndApprovePendingOfficers() {
-        List<Project> managedProject = currentUser.getManagerProjects();
         List<HDBOfficer> pendingOfficers = managedProject.getPendingOfficers();
+        HDBOfficer selectedOfficer = pendingOfficers.get(index);
         
-        if (managedProject == null) {
+        if (currentProject == null) {
             System.out.println("You are not assigned to any project.");
             return;
         }
         
 
         if (pendingOfficers.isEmpty()) {
-            System.out.println("No pending officer applications for project: " + managedProject.getName());
+            System.out.println("No pending officer applications for project: " + currentProject.getName());
             return;
         }
 
-        System.out.println("\nPending officer applications for project: " + managedProject.getName());
+        System.out.println("\nPending officer applications for project: " + currentProject.getName());
         for (int i = 0; i < pendingOfficers.size(); i++) {
             HDBOfficer officer = pendingOfficers.get(i);
             System.out.println((i + 1) + ". " + officer.getName());
@@ -344,15 +345,14 @@ public class ManagerUI extends UI {
             return;
         }
 
-        HDBOfficer selectedOfficer = pendingOfficers.get(index);
 
         System.out.print("Approve (A) or Reject (R)? ");
         String action = scanner.nextLine().trim().toUpperCase();
 
         if (action.equals("A")) {
-            currentUser.approveOfficer(HDBOfficer selectedOfficer, Project project);
+            currentUser.approveOfficer(selectedOfficer, project);
         } else if (action.equals("R")) {
-            currentUser.rejectOfficer(HDBOfficer selectedOfficer, Project project);
+            currentUser.rejectOfficer(selectedOfficer, project);
         } else {
             System.out.println("Invalid action. Please enter A or R.");
         }

@@ -315,7 +315,7 @@ public class ManagerUI extends UI {
     }
 
     private void viewAndApprovePendingOfficers() {
-        Project managedProject = currentUser.getManagedProject();
+        List<Project> managedProject = currentUser.getManagerProjects();
         List<HDBOfficer> pendingOfficers = managedProject.getPendingOfficers();
         
         if (managedProject == null) {

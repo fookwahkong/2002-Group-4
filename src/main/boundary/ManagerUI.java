@@ -33,7 +33,7 @@ public class ManagerUI extends UI {
             displayMenuOptions();
 
             try {
-                int choice = getValidIntInput(0, 11);
+                int choice = getValidIntInput(0, 9);
 
                 switch (choice) {
                     case 1 -> viewProjects();
@@ -43,10 +43,8 @@ public class ManagerUI extends UI {
                     case 5 -> viewAllEnquiries();
                     case 6 -> viewAndReplyToEnquiries();
                     case 7 -> changePasswordUI.showChangePasswordMenu();
-                    case 8 -> viewPendingOfficers();
-                    case 9 -> approveOfficer();
-                    case 10 -> viewApprovedOfficers();
-                    case 11 -> assignOfficerToProject();
+                    case 8 -> viewAndApprovePendingOfficers();
+                    case 9 -> viewApprovedOfficers();
                     case 0 -> {
                         UserManager.getInstance().logout();
                         running = false;
@@ -69,10 +67,8 @@ public class ManagerUI extends UI {
         System.out.println("5. View all enquiries");
         System.out.println("6. View and reply enquiries on projects you handle");
         System.out.println("7. Change Password");
-        System.out.println("8. View pending officer approvals");
-        System.out.println("9. Approve officers");
-        System.out.println("10. View approved officers");
-        System.out.println("11. Assign officer to a project");
+        System.out.println("8. View and approve pending officer approvals");
+        System.out.println("9. View approved officers");
         System.out.println("0. Logout");
         System.out.print("Enter your choice: ");
     }
@@ -318,5 +314,48 @@ public class ManagerUI extends UI {
         System.out.println("Reply sent successfully!");
     }
 
+    private void viewAndApprovePendingOfficers() {
+        Project managedProject = currentUser.getManagedProject();
+        List<HDBOfficer> pendingOfficers = managedProject.getPendingOfficers();
+        
+        if (managedProject == null) {
+            System.out.println("You are not assigned to any project.");
+            return;
+        }
+        
+
+        if (pendingOfficers.isEmpty()) {
+            System.out.println("No pending officer applications for project: " + managedProject.getName());
+            return;
+        }
+
+        System.out.println("\nPending officer applications for project: " + managedProject.getName());
+        for (int i = 0; i < pendingOfficers.size(); i++) {
+            HDBOfficer officer = pendingOfficers.get(i);
+            System.out.println((i + 1) + ". " + officer.getName());
+        }
+
+        System.out.println("\nSelect officer to approve/reject (0 to cancel): ");
+        int index = getValidIntInput() - 1;
+
+        if (index == -1) return;
+        if (index < 0 || index >= pendingOfficers.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+
+        HDBOfficer selectedOfficer = pendingOfficers.get(index);
+
+        System.out.print("Approve (A) or Reject (R)? ");
+        String action = scanner.nextLine().trim().toUpperCase();
+
+        if (action.equals("A")) {
+            currentUser.approveOfficer(selectedOfficer);
+        } else if (action.equals("R")) {
+            currentUser.rejectOfficer(selectedOfficer);
+        } else {
+            System.out.println("Invalid action. Please enter A or R.");
+        }
+    }
 
 }

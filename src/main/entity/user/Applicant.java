@@ -39,7 +39,7 @@ public class Applicant extends User {
     public List<Project> viewOpenProjects(List<Project> allProjects) {
         List<Project> openProjects = new ArrayList<>();
         for (Project project : allProjects) {
-            if (project.isVisible()) {
+            if (project.getVisibility()) {
                 openProjects.add(project);
             }
         }
@@ -52,7 +52,7 @@ public class Applicant extends User {
     }
 
     public boolean applyForProject(Project project) {
-        if (project.isVisible() && !projectList.contains(project)) {
+        if (project.getVisibility() && !projectList.contains(project)) {
             projectList.add(project);
             return true;
         }

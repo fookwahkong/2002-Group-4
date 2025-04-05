@@ -179,12 +179,4 @@ public class Project {
     public int getRemainingSlots() {
         return (this.officerSlot - officers.size());
     }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
 }

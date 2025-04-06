@@ -8,7 +8,8 @@ public class HDBManager extends User {
 
     private Project currentProject;
 
-    public HDBManager(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
+    public HDBManager(String userID, String password, String name, int age, MaritalStatus maritalStatus,
+            UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
     }
 
@@ -19,4 +20,9 @@ public class HDBManager extends User {
     public Project getCurrentProject() {
         return this.currentProject;
     }
+
+    public String getId() {
+        return super.getUserID();
+    }
+
 }

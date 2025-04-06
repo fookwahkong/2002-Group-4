@@ -32,9 +32,10 @@ public class ApplicantUI extends UI {
             displayMenuOptions();
 
             try {
-                int choice = getValidIntInput(5, 10);
+                int choice = getValidIntInput(1, 10);
 
                 switch (choice) {
+                    case 1 -> viewOpenProjects();
                     case 5 -> submitEnquiry();
                     case 6 -> viewEnquiry();
                     case 7 -> editEnquiry();
@@ -55,18 +56,31 @@ public class ApplicantUI extends UI {
     }
 
     private void displayMenuOptions() {
-        System.out.println("APPLICANT UI");
-        System.out.println("==================================");
-        System.out.println("5. Submit Enquiry");
-        System.out.println("6. View Submitted Enquiry");
-        System.out.println("7. Edit Submitted Enquiry");
-        System.out.println("8. Delete Enquiry");
-        System.out.println("9. Change Password");
-        System.out.println("10. Logout");
-        System.out.println("==================================");
-        System.out.println("Enter your choice: ");
+        String[] menuOptions = {
+            "APPLICANT UI",
+            "==================================",
+            "1. View the list of open Projects",
+            "5. Submit Enquiry",
+            "6. View Submitted Enquiry",
+            "7. Edit Submitted Enquiry",
+            "8. Delete Enquiry",
+            "9. Change Password",
+            "10. Logout",
+            "==================================",
+            "Enter your choice: "
+        };
+
+        for (String option : menuOptions) {
+            System.out.println(option);
+        }
     }
 
+    //option 1
+    protected void viewOpenProjects() {
+
+    }
+
+    //option 5
     protected void submitEnquiry() {
         // go to ProjectController to get list of projects
         System.out.println("List of visible projects:");
@@ -89,6 +103,7 @@ public class ApplicantUI extends UI {
         ApplicantController.submitEnquiry(message, proj);
     }
 
+    //option 6
     protected List<Enquiry> viewEnquiry() {
         List<Enquiry> enquiryList = currentUser.getEnquiryList();
         System.out.println("Enquiries:");
@@ -102,6 +117,7 @@ public class ApplicantUI extends UI {
         return enquiryList;
     }
 
+    //option 7
     protected void editEnquiry() {
         List<Enquiry> enquiryList = this.viewEnquiry(); // get enquiry list
 
@@ -116,6 +132,7 @@ public class ApplicantUI extends UI {
         System.out.println("Message edited.");
     }
 
+    //option 8
     protected void deleteEnquiry() {
         List<Enquiry> enquiryList = this.viewEnquiry();
 

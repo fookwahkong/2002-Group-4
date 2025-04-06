@@ -11,10 +11,25 @@ import main.enums.UserRole;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ManagerUI extends UI {
     private final HDBManager currentUser;
-    private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+
+    // Menu options as constants to improve readability
+    private static final int VIEW_PROJECTS = 1;
+    private static final int CREATE_PROJECT = 2;
+    private static final int EDIT_PROJECT = 3;
+    private static final int DELETE_PROJECT = 4;
+    private static final int VIEW_ENQUIRIES = 5;
+    private static final int REPLY_ENQUIRIES = 6;
+    private static final int CHANGE_PASSWORD = 7;
+    private static final int LOGOUT = 0;
+
+    // Housing type names
+    private static final String TYPE_ONE = "2-Room";
+    private static final String TYPE_TWO = "3-Room";
 
     public ManagerUI() {
         User user = UserManager.getInstance().getCurrentUser();
@@ -34,139 +49,153 @@ public class ManagerUI extends UI {
 
             try {
                 int choice = getValidIntInput(0, 7);
-
-                switch (choice) {
-                    case 1 -> viewProjects();
-                    case 2 -> createHDBProject();
-                    case 3 -> editHDBProject();
-                    case 4 -> deleteHDBProject();
-                    case 5 -> viewAllEnquiries();
-                    case 6 -> viewAndReplyToEnquiries();
-                    case 7 -> changePasswordUI.showChangePasswordMenu();
-                    case 0 -> {
-                        UserManager.getInstance().logout();
-                        running = false;
-                        new LoginUI().startLogin();
-                    }
-                }
+                running = handleMenuChoice(choice);
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());
             }
         }
     }
 
-    private void displayMenuOptions() {
-        System.out.println("\nMANAGER UI");
-        System.out.println("==================================");
-        System.out.println("1. View projects");
-        System.out.println("2. Create HDB Project");
-        System.out.println("3. Edit HDB Project");
-        System.out.println("4. Delete HDB Project");
-        System.out.println("5. View all enquiries");
-        System.out.println("6. View and reply enquiries on projects you handle");
-        System.out.println("7. Change Password");
-        System.out.println("0. Logout");
-        System.out.print("Enter your choice: ");
-    }
-
-    private void viewProjects() {
-        int filterChoice = getIntInput("Select projects to view (1. All 2. Self): ");
-        List<Project> projectsToShow;
-
-        switch (filterChoice) {
-            case 1 -> projectsToShow = ProjectController.getProjectList();
-            case 2 -> projectsToShow = ProjectController.getManagerProjects(currentUser);
-            default -> {
-                System.out.println("Invalid choice. Returning to menu.");
-                return;
+    private boolean handleMenuChoice(int choice) {
+        switch (choice) {
+            case VIEW_PROJECTS -> viewProjects(); // option 1
+            case CREATE_PROJECT -> createHDBProject(); // option 2
+            case EDIT_PROJECT -> editHDBProject(); // option 3
+            case DELETE_PROJECT -> deleteHDBProject(); // option 4
+            case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 5
+            case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 6
+            case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 7
+            case LOGOUT -> { // option 0
+                UserManager.getInstance().logout();
+                new LoginUI().startLogin();
+                return false;
             }
         }
+        return true;
+    }
 
-        if (projectsToShow.isEmpty()) {
+    private void displayMenuOptions() {
+        System.out.print("""
+                \n========== MANAGER UI ==========
+                Please select an option:
+                ---------------------------------
+                1. View Projects
+                2. Create HDB Project
+                3. Edit HDB Project
+                4. Delete HDB Project
+                5. View All Enquiries
+                6. View and Reply to Enquiries
+                7. Change Password
+                0. Logout
+                ---------------------------------
+                Your choice: """);
+    }
+
+    // option 1
+    private void viewProjects() {
+        List<Project> projectsToShow = selectProjectList();
+
+        if (projectsToShow == null || projectsToShow.isEmpty()) {
             System.out.println("No projects to display");
             return;
         }
 
-        System.out.println("Available Projects:");
-        for (int i = 0; i < projectsToShow.size(); i++) {
-            System.out.println((i + 1) + ". " + projectsToShow.get(i).getName());
-        }
-        System.out.println("0. Return to main menu");
+        displayProjectList(projectsToShow);
 
         int projectChoice = getIntInput("\nSelect a project to view details (0 to return): ");
-        if (projectChoice == 0) {
+        if (projectChoice == 0 || projectChoice < 1 || projectChoice > projectsToShow.size()) {
+            if (projectChoice != 0) {
+                System.out.println("Invalid project selection.");
+            }
             return;
         }
 
-        if (projectChoice < 1 || projectChoice > projectsToShow.size()) {
-            System.out.println("Invalid project selection.");
-            return;
-        }
-
-        // Display detailed information about the selected project
         Project selectedProject = projectsToShow.get(projectChoice - 1);
-        displayProjectDetails(selectedProject);
+        Project.displayProjectDetails(selectedProject);
     }
 
-    private void displayProjectDetails(Project project) {
-        System.out.println("\nProject Details:");
-        System.out.println("==================================");
-        System.out.println("Name: " + project.getName());
-        System.out.println("Neighbourhood: " + project.getNeighbourhood());
-        System.out.println("Manager: " + project.getManager().getName());
+    // helper method for option 1
+    private List<Project> selectProjectList() {
+        int filterChoice = getIntInput("Select projects to view (1. All 2. Self): ");
 
-        System.out.println("\nHousing Types:");
-        System.out.println(
-                "- 2-Room: $" + project.getPriceTypeOne() + " (" + project.getNoOfUnitsTypeOne() +
-                        " units)");
-        System.out.println(
-                "- 3-Room: $" + project.getPriceTypeTwo() + " (" + project.getNoOfUnitsTypeTwo() +
-                        " units)");
-
-        System.out.println("\nApplication Period:");
-        System.out.println("Opening Date: " + project.getOpeningDate());
-        System.out.println("Closing Date: " + project.getClosingDate());
-
-        System.out.println("\nOfficer Slots: " + project.getSlots());
-
-        System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        return switch (filterChoice) {
+            case 1 -> ProjectController.getProjectList();
+            case 2 -> ProjectController.getManagerProjects(currentUser);
+            default -> {
+                System.out.println("Invalid choice. Returning to menu.");
+                yield null;
+            }
+        };
     }
 
+    // helper method
+    private void displayProjectList(List<Project> projects) {
+        System.out.println("Available Projects:");
+        for (int i = 0; i < projects.size(); i++) {
+            System.out.println((i + 1) + ". " + projects.get(i).getName());
+        }
+        System.out.println("0. Return to main menu");
+    }
+
+    // option 2
     private void createHDBProject() {
         try {
-            String projectName = getStringInput("Enter project name: ");
-            String neighbourHood = getStringInput("Enter neighbourhood: ");
+            ProjectData data = collectProjectData();
 
-            float priceOne = getFloatInput("Enter type 1 (2-Room) price: ");
-            int noOfUnitsOne = getIntInput("Enter number of units for 2-Room: ");
-
-            float priceTwo = getFloatInput("Enter type 2 (3-Room) price: ");
-            int noOfUnitsTwo = getIntInput("Enter number of units for 3-Room: ");
-
-            LocalDate openingDate = getDateInput("Enter opening date (mm/dd/yyyy): ");
-            LocalDate closingDate = getDateInput("Enter closing date (mm/dd/yyyy): ");
-
-            int slots = getIntInput("Enter number of officer slots: ");
 
             ProjectController.createProject(
-                    projectName,
-                    neighbourHood,
-                    priceOne,
-                    noOfUnitsOne,
-                    priceTwo,
-                    noOfUnitsTwo,
-                    openingDate.format(DATE_FORMATTER),
-                    closingDate.format(DATE_FORMATTER),
+                    data.name,
+                    data.neighborhood,
+                    data.priceOne,
+                    data.unitsOne,
+                    data.priceTwo,
+                    data.unitsTwo,
+                    data.openingDate.format(DATE_FORMATTER),
+                    data.closingDate.format(DATE_FORMATTER),
                     currentUser,
-                    slots);
+                    data.officerSlots);
 
-            System.out.println("HDB Project created successfully!");
+            System.out.println("\nHDB Project created successfully!");
         } catch (Exception e) {
             System.out.println("Failed to create HDB Project: " + e.getMessage());
         }
     }
 
+    // helper method for option 2
+    private ProjectData collectProjectData() {
+        ProjectData data = new ProjectData();
+
+        data.name = getStringInput("Enter project name: ");
+        data.neighborhood = getStringInput("Enter neighbourhood: ");
+
+        data.priceOne = getFloatInput("Enter type 1 (2-Room) price: ");
+        data.unitsOne = getIntInput("Enter number of units for 2-Room: ");
+
+        data.priceTwo = getFloatInput("Enter type 2 (3-Room) price: ");
+        data.unitsTwo = getIntInput("Enter number of units for 3-Room: ");
+
+        data.openingDate = getDateInput("Enter opening date (mm/dd/yyyy): ");
+        data.closingDate = getDateInput("Enter closing date (mm/dd/yyyy): ");
+
+        data.officerSlots = getIntInput("Enter number of officer slots: ");
+
+        return data;
+    }
+
+    // Helper class to store project input data (option 2)
+    private static class ProjectData {
+        String name;
+        String neighborhood;
+        float priceOne;
+        int unitsOne;
+        float priceTwo;
+        int unitsTwo;
+        LocalDate openingDate;
+        LocalDate closingDate;
+        int officerSlots;
+    }
+
+    // option 3
     private void editHDBProject() {
         List<Project> projectList = ProjectController.getProjectList();
 
@@ -175,12 +204,7 @@ public class ManagerUI extends UI {
             return;
         }
 
-        System.out.println("\nYour HDB Projects:");
-        for (int i = 0; i < projectList.size(); i++) {
-            Project project = projectList.get(i);
-            String visibilityStatus = ProjectController.isProjectVisible(project) ? "Visible" : "Hidden";
-            System.out.println((i + 1) + ". " + project.getName() + " (" + visibilityStatus + ")");
-        }
+        displayProjectListWithStatus(projectList);
 
         int projectIndex = getIntInput("\nSelect a project to edit (0 to cancel): ") - 1;
         if (projectIndex < 0 || projectIndex >= projectList.size()) {
@@ -189,84 +213,201 @@ public class ManagerUI extends UI {
         }
 
         Project selectedProject = projectList.get(projectIndex);
+        editProjectMenu(selectedProject);
+    }
+
+    // helper method for option 3
+    private void displayProjectListWithStatus(List<Project> projects) {
+        System.out.println("\nYour HDB Projects:");
+        for (int i = 0; i < projects.size(); i++) {
+            Project project = projects.get(i);
+            String visibilityStatus = ProjectController.isProjectVisible(project) ? "Visible" : "Hidden";
+            System.out.println((i + 1) + ". " + project.getName() + " (" + visibilityStatus + ")");
+        }
+    }
+
+    // helper method for option 3
+    private void editProjectMenu(Project project) {
         boolean editing = true;
 
         while (editing) {
-            System.out.println("\nEditing Project: " + selectedProject.getName());
-            System.out.println("1. Edit project name");
-            System.out.println("2. Edit neighbourhood");
-            System.out.println("3. Edit 2-Room price");
-            System.out.println("4. Edit number of 2-Room units");
-            System.out.println("5. Edit 3-Room price");
-            System.out.println("6. Edit number of 3-Room units");
-            System.out.println("7. Edit opening date");
-            System.out.println("8. Edit closing date");
-            System.out.println("9. Edit number of officer slots");
-            System.out.println("10. Toggle visibility (" +
-                    (ProjectController.isProjectVisible(selectedProject) ? "Currently Visible" :
-                            "Currently Hidden") + ")");
-            System.out.println("0. Save and return to main menu");
-
+            displayEditOptions(project);
             int choice = getValidIntInput(0, 10);
-
-            try {
-                switch (choice) {
-                    case 1 -> ProjectController.updateProjectName(selectedProject,
-                            getStringInput("Enter new project name: "));
-                    case 2 -> ProjectController.updateProjectNeighbourhood(selectedProject,
-                            getStringInput("Enter new neighbourhood: "));
-                    case 3 -> ProjectController.updateProjectPriceTypeOne(selectedProject,
-                            getFloatInput("Enter new 2-Room price: "));
-                    case 4 -> ProjectController.updateProjectNoOfUnitsTypeOne(selectedProject,
-                            getIntInput("Enter new number of 2-Room units: "));
-                    case 5 -> ProjectController.updateProjectPriceTypeTwo(selectedProject,
-                            getFloatInput("Enter new 3-Room price: "));
-                    case 6 -> ProjectController.updateProjectNoOfUnitsTypeTwo(selectedProject,
-                            getIntInput("Enter new number of 3-Room units: "));
-                    case 7 -> {
-                        LocalDate newOpeningDate = getDateInput("Enter new opening date (mm/dd/yyyy): ");
-                        ProjectController.updateProjectOpeningDate(selectedProject,
-                                newOpeningDate.format(DATE_FORMATTER));
-                    }
-                    case 8 -> {
-                        LocalDate newClosingDate = getDateInput("Enter new closing date (mm/dd/yyyy): ");
-                        ProjectController.updateProjectClosingDate(selectedProject,
-                                newClosingDate.format(DATE_FORMATTER));
-                    }
-                    case 9 -> ProjectController.updateProjectSlots(selectedProject,
-                            getIntInput("Enter new number of officer slots: "));
-                    case 10 -> {
-                        boolean currentVisibility = ProjectController.isProjectVisible(selectedProject);
-                        ProjectController.toggleProjectVisibility(selectedProject);
-                        System.out.println(
-                                "Project visibility toggled to: " + (!currentVisibility ? "Visible" : "Hidden"));
-                    }
-                    case 0 -> {
-                        System.out.println("Project updated successfully!");
-                        editing = false;
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Error updating project: " + e.getMessage());
-            }
+            editing = handleEditChoice(choice, project);
         }
     }
 
+    // helper method for option 3
+    private void displayEditOptions(Project project) {
+        System.out.println("\nEditing Project: " + project.getName());
+        System.out.println("1. Edit project name");
+        System.out.println("2. Edit neighbourhood");
+        System.out.println("3. Edit 2-Room price");
+        System.out.println("4. Edit number of 2-Room units");
+        System.out.println("5. Edit 3-Room price");
+        System.out.println("6. Edit number of 3-Room units");
+        System.out.println("7. Edit opening date");
+        System.out.println("8. Edit closing date");
+        System.out.println("9. Edit number of officer slots");
+        System.out.println("10. Toggle visibility (" +
+                (ProjectController.isProjectVisible(project) ? "Currently Visible" : "Currently Hidden") + ")");
+        System.out.println("0. Save and return to main menu");
+    }
 
+    // helper method for option 3
+    private boolean handleEditChoice(int choice, Project project) {
+        try {
+            switch (choice) {
+                case 1 -> updateProjectField(
+                        "Enter new project name: ",
+                        newName -> ProjectController.updateProjectName(project, newName));
+                case 2 -> updateProjectField(
+                        "Enter new neighbourhood: ",
+                        newNeighborhood -> ProjectController.updateProjectNeighbourhood(project, newNeighborhood));
+                case 3 -> updateHousingTypePrice(project, TYPE_ONE);
+                case 4 -> updateHousingTypeUnits(project, TYPE_ONE);
+                case 5 -> updateHousingTypePrice(project, TYPE_TWO);
+                case 6 -> updateHousingTypeUnits(project, TYPE_TWO);
+                case 7 -> updateProjectDateField(
+                        "Enter new opening date (mm/dd/yyyy): ",
+                        newDate -> ProjectController.updateProjectOpeningDate(project, newDate));
+                case 8 -> updateProjectDateField(
+                        "Enter new closing date (mm/dd/yyyy): ",
+                        newDate -> ProjectController.updateProjectClosingDate(project, newDate));
+                case 9 -> updateProjectIntField(
+                        "Enter new number of officer slots: ",
+                        newSlots -> ProjectController.updateProjectSlots(project, newSlots));
+                case 10 -> toggleProjectVisibility(project);
+                case 0 -> {
+                    System.out.println("Project updated successfully!");
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating project: " + e.getMessage());
+        }
+        return true;
+    }
+
+    /**
+     * Helper method to get the current price of a housing type
+     */
+    private float getHousingTypePrice(Project project, String typeName) {
+        try {
+            if (project.getHousingType(typeName) != null) {
+                return project.getHousingType(typeName).getSellingPrice();
+            } else {
+                System.out.println("Housing type not found.");
+                return 0.0f;
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving housing price: " + e.getMessage());
+            return 0.0f;
+        }
+    }
+
+    /**
+     * Helper method to get the current units of a housing type
+     */
+    private int getHousingTypeUnits(Project project, String typeName) {
+        try {
+            if (project.getHousingType(typeName) != null) {
+                return project.getHousingType(typeName).getNumberOfUnits();
+            } else {
+                System.out.println("Housing type not found.");
+                return 0;
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving housing units: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Helper method for option 3
+     * Updates the price of a specific housing type
+     */
+    private void updateHousingTypePrice(Project project, String typeName) {
+        // Get the current housing details to preserve units
+        float currentPrice = getHousingTypePrice(project, typeName);
+        int currentUnits = getHousingTypeUnits(project, typeName);
+
+        // Display the current price for reference
+        System.out.println("Current " + typeName + " price: " + currentPrice);
+        float newPrice = getFloatInput("Enter new " + typeName + " price: ");
+
+        ProjectController.updateHousingType(project, typeName, newPrice, currentUnits);
+        System.out.println(typeName + " price updated successfully.");
+    }
+
+    /**
+     * Helper method for option 3
+     * Updates the units of a specific housing type
+     */
+    private void updateHousingTypeUnits(Project project, String typeName) {
+        // Get the current housing details to preserve price
+        float currentPrice = getHousingTypePrice(project, typeName);
+        int currentUnits = getHousingTypeUnits(project, typeName);
+
+        // Display the current units for reference
+        System.out.println("Current number of " + typeName + " units: " + currentUnits);
+        int newUnits = getIntInput("Enter new number of " + typeName + " units: ");
+
+        ProjectController.updateHousingType(project, typeName, currentPrice, newUnits);
+        System.out.println(typeName + " units updated successfully.");
+    }
+
+    // to update project details based on the different input types
+    private void updateProjectField(String prompt, Consumer<String> updateAction) {
+        String input = getStringInput(prompt);
+        updateAction.accept(input);
+    }
+
+    private void updateProjectIntField(String prompt, Consumer<Integer> updateAction) {
+        int input = getIntInput(prompt);
+        updateAction.accept(input);
+    }
+
+    private void updateProjectFloatField(String prompt, Consumer<Float> updateAction) {
+        float input = getFloatInput(prompt);
+        updateAction.accept(input);
+    }
+
+    private void updateProjectDateField(String prompt, Consumer<String> updateAction) {
+        LocalDate date = getDateInput(prompt);
+        updateAction.accept(date.format(DATE_FORMATTER));
+    }
+
+    private void toggleProjectVisibility(Project project) {
+        boolean currentVisibility = ProjectController.isProjectVisible(project);
+        ProjectController.toggleProjectVisibility(project);
+        System.out.println(
+                "Project visibility toggled to: " + (!currentVisibility ? "Visible" : "Hidden"));
+    }
+
+    // option 4
     private void deleteHDBProject() {
         List<Project> projectList = ProjectController.getProjectList();
-        int cnt = 1;
-        for (Project p : projectList) {
-            System.out.print(cnt + ". ");
-            System.out.println(p.getName());
-            cnt += 1;
+
+        if (projectList.isEmpty()) {
+            System.out.println("No projects available to delete.");
+            return;
         }
 
-        int projIndex = getIntInput("Select the project to delete: ") - 1;
+        displayProjectList(projectList);
+
+        int projIndex = getIntInput("Select the project to delete (0 to cancel): ") - 1;
+        if (projIndex < 0 || projIndex >= projectList.size()) {
+            System.out.println("Invalid selection or cancelled. Returning to menu.");
+            return;
+        }
+
         Project proj = projectList.get(projIndex);
         ProjectController.deleteProject(proj);
+        System.out.println("Project \"" + proj.getName() + "\" deleted successfully.");
     }
 
+    // option 5
     private void viewAllEnquiries() {
         List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
 
@@ -275,15 +416,20 @@ public class ManagerUI extends UI {
             return;
         }
 
-        int cnt = 1;
-        for (Enquiry e : enquiryList) {
-            System.out.print(cnt + ". ");
-            e.viewEnquiry(currentUser.getUserRole());
-            cnt++;  // Increment the counter
+        displayEnquiryList(enquiryList);
+    }
+
+    // helper method for option 5
+    private void displayEnquiryList(List<Enquiry> enquiries) {
+        System.out.println("\nEnquiries:");
+        for (int i = 0; i < enquiries.size(); i++) {
+            System.out.print((i + 1) + ". ");
+            enquiries.get(i).viewEnquiry(currentUser.getUserRole());
             System.out.println(); // Add a newline for better formatting
         }
     }
 
+    // option 6
     private void viewAndReplyToEnquiries() {
         List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
         if (enquiries.isEmpty()) {
@@ -292,9 +438,8 @@ public class ManagerUI extends UI {
         }
 
         System.out.println("Enquiries you are handling:");
-        int index = 1;
-        for (Enquiry enquiry : enquiries) {
-            System.out.println(index++ + ". " + enquiry.getContent());
+        for (int i = 0; i < enquiries.size(); i++) {
+            System.out.println((i + 1) + ". " + enquiries.get(i).getContent());
         }
 
         int enquiryIndex = getIntInput("Select an enquiry to reply (0 to cancel): ") - 1;
@@ -308,6 +453,4 @@ public class ManagerUI extends UI {
         EnquiryController.replyToEnquiry(selectedEnquiry, reply);
         System.out.println("Reply sent successfully!");
     }
-
-
 }

@@ -3,13 +3,12 @@ package main.utils;
 import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.project.Project;
+import main.entity.project.ProjectBuilder;
 import main.entity.user.*;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
 import java.io.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class FileIOUtil {
     public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
     public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    private static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -33,67 +32,89 @@ public class FileIOUtil {
 
     public static List<Project> loadProjects() {
         List<Project> allProjects = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PROJECTS_FILE))) {
-            String line = reader.readLine(); // consume first line
+            String line = reader.readLine(); // consume header line
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                try {
+                    String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-                if (parts.length >= 13) {
-                    Project project = new Project(
-                            parts[0].trim(),  // Project Name
-                            parts[1].trim(),  // Neighborhood
-                            true  // Assuming this is always true for now
-                    );
+                    if (parts.length < 13) {
+                        System.err.println("Skipping invalid project data: " + line);
+                        continue;
+                    }
 
-                    // Set housing type one details
-                    project.setHousingTypeOne(
-                            Float.parseFloat(parts[4].trim().replace("\"", "").replace(",", "")),  // Selling price
-                            Integer.parseInt(parts[3].trim().replace("\"", "").replace(",", ""))
-                    );
+                    // Clean and parse data
+                    String projectName = parts[0].trim();
+                    String neighborhood = parts[1].trim();
 
+                    int unitsTypeOne = parseInteger(parts[3]);
+                    float priceTypeOne = parseFloat(parts[4]);
 
-                    // Set housing type two details
-                    project.setHousingTypeTwo(
-                            Float.parseFloat(parts[7].trim().replace("\"", "").replace(",", "")), // Selling price
-                            Integer.parseInt(parts[6].trim().replace("\"", "").replace(",", ""))
-                    );
+                    int unitsTypeTwo = parseInteger(parts[6]);
+                    float priceTypeTwo = parseFloat(parts[7]);
 
-                    // Set application dates
-                    project.setDate(
-                            LocalDate.parse(parts[8].trim(), formatter),
-                            LocalDate.parse(parts[9].trim(), formatter)
-                    );
+                    String openingDateStr = parts[8].trim();
+                    String closingDateStr = parts[9].trim();
 
-                    // Set manager
+                    String managerName = parts[10].trim();
+                    int officerSlots = parseInteger(parts[11]);
+
+                    // Get manager
                     HDBManager manager = (HDBManager) UserManager.getInstance()
-                            .findUserByName(parts[10].trim());
-                    project.setManagerInCharge(manager);
+                            .findUserByName(managerName);
 
-                    // Set officer slot
-                    project.setOfficerSlot(Integer.parseInt(parts[11].trim()));
+                    if (manager == null) {
+                        System.err.println("Could not find manager: " + managerName + " for project: " + projectName);
+                        continue;
+                    }
+
+                    // Create project using builder
+                    ProjectBuilder builder = new ProjectBuilder()
+                            .withName(projectName)
+                            .withNeighborhood(neighborhood)
+                            .withVisibility(true)
+                            .withApplicationPeriod(openingDateStr, closingDateStr)
+                            .withManager(manager)
+                            .withOfficerSlots(officerSlots)
+                            .addHousingType("2-Room", priceTypeOne, unitsTypeOne)
+                            .addHousingType("3-Room", priceTypeTwo, unitsTypeTwo);
+
+                    Project project = builder.build();
 
                     // Add officers
-                    String[] officers = parts[12].trim().replace("\"", "").split(",");
-                    for (String officerName : officers) {
-                        HDBOfficer officer = (HDBOfficer) UserManager.getInstance()
-                                .findUserByName(officerName.trim());
-                        project.addOfficersIncharge(officer);
-                        officer.assignProject(project);
+                    String officersString = parts[12].trim().replace("\"", "");
+                    if (!officersString.isEmpty()) {
+                        String[] officers = officersString.split(",");
+                        for (String officerName : officers) {
+                            HDBOfficer officer = (HDBOfficer) UserManager.getInstance()
+                                    .findUserByName(officerName.trim());
+
+                            if (officer != null) {
+                                project.addOfficersIncharge(officer);
+                                officer.assignProject(project);
+                            } else {
+                                System.err.println(
+                                        "Could not find officer: " + officerName + " for project: " + projectName);
+                            }
+                        }
                     }
 
                     allProjects.add(project);
+
+                } catch (Exception e) {
+                    System.err.println("Error parsing project data: " + line);
+                    System.err.println("Exception: " + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error reading projects file: " + e.getMessage());
         }
 
         return allProjects;
     }
-
 
     public static void loadEnquiries(List<Project> projects) {
         try (BufferedReader reader = new BufferedReader(new FileReader(ENQUIRIES_FILE))) {
@@ -200,5 +221,54 @@ public class FileIOUtil {
         } catch (IOException e) {
             throw new RuntimeException("Error saving users to file: " + e.getMessage());
         }
+    }
+
+    public static void saveProjectToFile(List<Project> projects, String filepath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+            writer.write("Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer");
+            writer.newLine();
+
+            for (Project project : projects) {
+                String assignedOfficers = (project.getAssignedOfficers() != null)
+                        ? String.join(",", project.getAssignedOfficers().stream()
+                                .map(User::getName)
+                                .toArray(String[]::new))
+                        : "";
+
+                String line = String.format("%s,%s,%s,%d,%.2f,%s,%d,%.2f,%s,%s,%s,%s,\"%s\"",
+                        project.getName(),
+                        project.getNeighbourhood(),
+                        project.getHousingType("2-Room").getTypeName(),
+                        project.getHousingType("2-Room").getNumberOfUnits(),
+                        project.getHousingType("2-Room").getSellingPrice(),
+                        project.getHousingType("3-Room").getTypeName(),
+                        project.getHousingType("3-Room").getNumberOfUnits(),
+                        project.getHousingType("3-Room").getSellingPrice(),
+                        project.getOpeningDate(),
+                        project.getClosingDate(),
+                        project.getManager().getName(),
+                        project.getSlots(),
+                        assignedOfficers);
+
+                writer.write(line);
+                writer.newLine();
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving project to file: " + e.getMessage());
+        }
+    }
+
+    // Helper methods for parsing values
+    private static int parseInteger(String value) {
+        return Integer.parseInt(value.trim()
+                .replace("\"", "")
+                .replace(",", ""));
+    }
+
+    private static float parseFloat(String value) {
+        return Float.parseFloat(value.trim()
+                .replace("\"", "")
+                .replace(",", ""));
     }
 }

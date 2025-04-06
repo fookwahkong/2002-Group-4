@@ -9,6 +9,10 @@ public class Housing {
         this.type = type;
     }
 
+    public String getTypeName() {
+        return this.type;
+    }
+
     public int getNumberOfUnits() {
         return this.numberOfUnits;
     }

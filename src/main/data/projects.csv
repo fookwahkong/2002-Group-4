@@ -1,2 +1,3 @@
 Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer
-Acacia Breeze,Yishun,2-Room,2,350000,3-Room,3,450000,2/15/2025,3/20/2025,Jessica,3,"Daniel,Emily"
+Acacia Breeze,Yishun,2-Room,2,350000.00,3-Room,3,450000.00,2025-02-15,2025-03-20,Jessica,3,"Daniel,Emily"
+Orachrd toad,orachrd,2-Room,13213,13132.00,3-Room,12313,123132.00,2025-01-17,2025-05-17,Jessica,1,""

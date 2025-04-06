@@ -1,11 +1,13 @@
 package main.controller.project;
 
 import main.entity.project.Project;
+import main.entity.project.ProjectBuilder;
 import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.utils.FileIOUtil;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,19 +24,22 @@ public class ProjectController {
         projects = FileIOUtil.loadProjects();
     }
 
-    //get ALL the projects
+    // get ALL the projects
     public static List<Project> getProjectList() {
         return projects;
     }
 
-    //get projects managed by manager
+    // get projects managed by manager
     public static List<Project> getManagerProjects(HDBManager user) {
         return ProjectController.getProjectList().stream()
-                .filter(project -> project.getManager().equals(user))
+                .filter(project -> {
+                    System.out.println("Comparing managers: " + project.getManager() + " and " + user);
+                    return project.getManager().equals(user);
+                })
                 .toList();
     }
 
-    //get projects managed by officer
+    // get projects managed by officer
     public static List<Project> getOfficerProjects(HDBOfficer officer) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> project.getAssignedOfficers().contains(officer))
@@ -47,41 +52,25 @@ public class ProjectController {
                 .toList();
     }
 
-
     public static void createProject(String projectName, String neighbourhood, float priceOne,
-                                     int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
-                                     String openingDate, String closingDate, HDBManager manager,
-                                     int officerSlots) {
-
-
-        Project project = new Project(
-                projectName,
-                neighbourhood,
-                true // Assuming this is always true for now
-        );
-
-        // Set housing type one details
-        project.setHousingTypeOne(
-                priceOne, // Selling price
-                numberOfUnitsOne);
-
-        // Set housing type two details
-        project.setHousingTypeTwo(
-                priceTwo, // Selling price
-                numberOfUnitsTwo);
-
-        // Set application dates
-        project.setDate(
-                LocalDate.parse(openingDate.trim(), formatter),
-                LocalDate.parse(closingDate.trim(), formatter));
-
-        project.setManagerInCharge(manager);
-
-        // Set officer slot
-        project.setOfficerSlot(officerSlots);
-
+            int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
+            String openingDate, String closingDate, HDBManager manager,
+            int officerSlots) {
+            
+            ProjectBuilder projectBuilder = new ProjectBuilder();
+            Project project = projectBuilder
+                .withName(projectName)
+                .withNeighborhood(neighbourhood)
+                .withVisibility(true)
+                .addHousingType("2-Room", priceOne, numberOfUnitsOne)
+                .addHousingType("3-Room", priceTwo, numberOfUnitsTwo)
+                .withApplicationPeriod(openingDate, closingDate)
+                .withManager(manager)
+                .withOfficerSlots(officerSlots)
+                .build();
+    
         projects.add(project);
-
+        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 
     public static void deleteProject(Project project) {
@@ -104,22 +93,6 @@ public class ProjectController {
         project.setNeighbourhood(neighbourhood);
     }
 
-    public static void updateProjectPriceTypeOne(Project project, float price) {
-        project.setPriceTypeOne(price);
-    }
-
-    public static void updateProjectNoOfUnitsTypeOne(Project project, int units) {
-        project.setNoOfUnitsTypeOne(units);
-    }
-
-    public static void updateProjectPriceTypeTwo(Project project, float price) {
-        project.setPriceTypeTwo(price);
-    }
-
-    public static void updateProjectNoOfUnitsTypeTwo(Project project, int units) {
-        project.setNoOfUnitsTypeTwo(units);
-    }
-
     public static void updateProjectOpeningDate(Project project, String openingDate) {
         project.setOpeningDate(LocalDate.parse(openingDate.trim(), formatter));
     }
@@ -131,5 +104,8 @@ public class ProjectController {
     public static void updateProjectSlots(Project project, int slots) {
         project.setOfficerSlot(slots);
     }
-
+    
+    public static void updateHousingType(Project project, String typeName, float sellingPrice, int numberOfUnits) {
+        project.setHousingType(typeName, sellingPrice, numberOfUnits);
+    }
 }

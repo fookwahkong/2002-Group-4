@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class UI {
     protected static final Scanner scanner = new Scanner(System.in);
     protected static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public UI() {
     }
@@ -46,7 +46,7 @@ public class UI {
                 System.out.print(prompt);
                 return LocalDate.parse(scanner.nextLine(), DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use mm/dd/yyyy.");
+                System.out.println("Invalid date format. Please use yyyy-MM-dd.");
             }
         }
     }

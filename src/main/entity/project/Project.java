@@ -107,7 +107,7 @@ public class Project {
         StringBuilder details = new StringBuilder();
 
         // Format dates nicely
-        DateTimeFormatter displayFormat = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        DateTimeFormatter displayFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String openingDate = project.getOpeningDate() != null ? project.getOpeningDate().format(displayFormat)
                 : "Not set";
         String closingDate = project.getClosingDate() != null ? project.getClosingDate().format(displayFormat)
@@ -204,6 +204,7 @@ public class Project {
 
         details.append("\n");
         details.append("=".repeat(60)).append("\n");
+
 
         return details.toString();
     }

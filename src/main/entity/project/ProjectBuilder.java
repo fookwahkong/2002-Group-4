@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProjectBuilder {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private String name;
     private String neighborhood;

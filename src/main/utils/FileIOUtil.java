@@ -13,14 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileIOUtil {
-    // To extend functionality once proper user classes are added
     static final String CLASSPATH = System.getProperty("java.class.path");
 
     public static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
     public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
     public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+    public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -32,7 +31,6 @@ public class FileIOUtil {
 
     public static List<Project> loadProjects() {
         List<Project> allProjects = new ArrayList<>();
-        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(PROJECTS_FILE))) {
             String line = reader.readLine(); // consume header line

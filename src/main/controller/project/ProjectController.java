@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectController {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static List<Project> projects = new ArrayList<>();
 
     public ProjectController() {

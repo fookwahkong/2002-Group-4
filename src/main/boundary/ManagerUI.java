@@ -111,7 +111,7 @@ public class ManagerUI extends UI {
         }
 
         Project selectedProject = projectsToShow.get(projectChoice - 1);
-        Project.displayProjectDetails(selectedProject);
+        System.out.println(Project.displayProjectDetails(selectedProject));
     }
 
     // helper method for option 1
@@ -174,8 +174,8 @@ public class ManagerUI extends UI {
         data.priceTwo = getFloatInput("Enter type 2 (3-Room) price: ");
         data.unitsTwo = getIntInput("Enter number of units for 3-Room: ");
 
-        data.openingDate = getDateInput("Enter opening date (mm/dd/yyyy): ");
-        data.closingDate = getDateInput("Enter closing date (mm/dd/yyyy): ");
+        data.openingDate = getDateInput("Enter opening date (yyyy-MM-dd): ");
+        data.closingDate = getDateInput("Enter closing date (yyyy-MM-dd): ");
 
         data.officerSlots = getIntInput("Enter number of officer slots: ");
 

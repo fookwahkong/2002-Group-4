@@ -36,6 +36,7 @@ public class ApplicantUI extends UI {
 
                 switch (choice) {
                     case 1 -> viewOpenProjects();
+                    case 3 -> viewAppliedProjects();
                     case 5 -> submitEnquiry();
                     case 6 -> viewEnquiry();
                     case 7 -> editEnquiry();
@@ -60,6 +61,7 @@ public class ApplicantUI extends UI {
             "APPLICANT UI",
             "==================================",
             "1. View the list of open Projects",
+            "3. View the projects you applied for",
             "5. Submit Enquiry",
             "6. View Submitted Enquiry",
             "7. Edit Submitted Enquiry",
@@ -77,6 +79,27 @@ public class ApplicantUI extends UI {
 
     //option 1
     protected void viewOpenProjects() {
+        System.out.println("List of Open Projects: ");
+        List<Project> projectList = ProjectController.getApplicantProjects(currentUser);
+
+        if (!projectList.isEmpty()) {
+            int cnt = 1;
+            for (Project p : projectList) {
+                System.out.print(cnt + ". ");
+                System.out.println(p.getName());
+                cnt += 1;
+            }
+    
+            int projIndex = getIntInput("Select the project to view details for: ") - 1;
+            Project proj = projectList.get(projIndex);
+            System.out.print(proj.toString());
+        } else {
+            System.out.println("No visible projects to view!");
+        }
+    }
+
+    //option 3
+    protected void viewAppliedProjects() {
 
     }
 

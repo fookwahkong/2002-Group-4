@@ -9,8 +9,11 @@ import main.enums.MaritalStatus;
 import main.enums.UserRole;
 
 import java.io.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.xml.sax.HandlerBase;
 
 public class FileIOUtil {
     static final String CLASSPATH = System.getProperty("java.class.path");
@@ -19,7 +22,7 @@ public class FileIOUtil {
     public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
     public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -47,18 +50,18 @@ public class FileIOUtil {
                     // Clean and parse data
                     String projectName = parts[0].trim();
                     String neighborhood = parts[1].trim();
+                    Boolean visibility = Boolean.parseBoolean(parts[2].trim());
 
-                    int unitsTypeOne = parseInteger(parts[3]);
-                    float priceTypeOne = parseFloat(parts[4]);
+                    String openingDateStr = parts[3].trim();
+                    String closingDateStr = parts[4].trim();
 
-                    int unitsTypeTwo = parseInteger(parts[6]);
-                    float priceTypeTwo = parseFloat(parts[7]);
-
-                    String openingDateStr = parts[8].trim();
-                    String closingDateStr = parts[9].trim();
-
-                    String managerName = parts[10].trim();
-                    int officerSlots = parseInteger(parts[11]);
+                    int unitsTypeOne = parts[6].trim().isEmpty() ? 0 : parseInteger(parts[6]);
+                    float priceTypeOne = parts[7].trim().isEmpty() ? 0 : parseFloat(parts[7]);
+                    
+                    int unitsTypeTwo = parts[9].trim().isEmpty() ? 0 : parseInteger(parts[9]);
+                    float priceTypeTwo = parts[10].trim().isEmpty() ? 0 : parseFloat(parts[10]);
+                    
+                    String managerName = parts[12].trim();
 
                     // Get manager
                     HDBManager manager = (HDBManager) UserManager.getInstance()
@@ -69,21 +72,48 @@ public class FileIOUtil {
                         continue;
                     }
 
+                    // Get officers slots
+                    int officerSlots = parseInteger(parts[13]);
+
                     // Create project using builder
                     ProjectBuilder builder = new ProjectBuilder()
                             .withName(projectName)
                             .withNeighborhood(neighborhood)
-                            .withVisibility(true)
+                            .withVisibility(visibility)
                             .withApplicationPeriod(openingDateStr, closingDateStr)
                             .withManager(manager)
-                            .withOfficerSlots(officerSlots)
-                            .addHousingType("2-Room", priceTypeOne, unitsTypeOne)
-                            .addHousingType("3-Room", priceTypeTwo, unitsTypeTwo);
+                            .withOfficerSlots(officerSlots);
+
+                    // Only add 2-Room if data exists
+                    if (unitsTypeOne > 0 || priceTypeOne > 0) {
+                        builder.addHousingType("2-Room", priceTypeOne, unitsTypeOne);
+                    }
+
+                    // Only add 3-Room if data exists
+                    if (unitsTypeTwo > 0 || priceTypeTwo > 0) {
+                        builder.addHousingType("3-Room", priceTypeTwo, unitsTypeTwo);
+                    }
 
                     Project project = builder.build();
 
+                    // Add applicants
+                    String applicantString = parts[11].trim().replace("\"", "");
+                    if (!applicantString.isEmpty()) {
+                        String[] applicants = applicantString.split(",");
+                        for (String applicantName : applicants) {
+                            Applicant applicant = (Applicant) UserManager.getInstance()
+                                    .findUserByName(applicantName.trim());
+
+                            if (applicant != null) {
+                                project.addApplicants(applicant);
+                            } else {
+                                System.err.println(
+                                        "Could not find applicant: " + applicantName + " for project: " + projectName);
+                            }
+                        }
+                    }
                     // Add officers
-                    String officersString = parts[12].trim().replace("\"", "");
+                    String officersString = parts[14].trim().replace("\"", "");
                     if (!officersString.isEmpty()) {
                         String[] officers = officersString.split(",");
                         for (String officerName : officers) {
@@ -223,27 +253,42 @@ public class FileIOUtil {
 
     public static void saveProjectToFile(List<Project> projects, String filepath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
-            writer.write("Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer");
+            writer.write(String.join(",",
+                    "Project Name", "Neighborhood", "Visibility",
+                    "Application opening date", "Application closing date",
+                    "Type 1", "Number of units for Type 1", "Selling price for Type 1",
+                    "Type 2", "Number of units for Type 2", "Selling price for Type 2",
+                    "Applicants", "Manager", "Officer Slot", "Officer"));
+
             writer.newLine();
 
             for (Project project : projects) {
+                String applicants = (project.getApplicants() != null)
+                        ? String.join(",", project.getApplicants().stream()
+                                .map(User::getName)
+                                .toArray(String[]::new))
+                        : "";
                 String assignedOfficers = (project.getAssignedOfficers() != null)
                         ? String.join(",", project.getAssignedOfficers().stream()
                                 .map(User::getName)
                                 .toArray(String[]::new))
                         : "";
 
-                String line = String.format("%s,%s,%s,%d,%.2f,%s,%d,%.2f,%s,%s,%s,%s,\"%s\"",
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                String line = String.format("%s,%s,%s,%s,%s,%s,%d,%.2f,%s,%d,%.2f,\"%s\",%s,%d,\"%s\"",
                         project.getName(),
                         project.getNeighbourhood(),
+                        project.getVisibility(),
+                        project.getOpeningDate().format(formatter),
+                        project.getClosingDate().format(formatter),
                         project.getHousingType("2-Room").getTypeName(),
                         project.getHousingType("2-Room").getNumberOfUnits(),
                         project.getHousingType("2-Room").getSellingPrice(),
                         project.getHousingType("3-Room").getTypeName(),
                         project.getHousingType("3-Room").getNumberOfUnits(),
                         project.getHousingType("3-Room").getSellingPrice(),
-                        project.getOpeningDate(),
-                        project.getClosingDate(),
+                        applicants,
                         project.getManager().getName(),
                         project.getSlots(),
                         assignedOfficers);

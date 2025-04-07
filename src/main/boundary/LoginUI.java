@@ -19,7 +19,7 @@ public class LoginUI extends UI {
         while (!exit) {
             System.out.println("""
                     ==================================
-                       BTO MANAGEMENT SYSTEM LOGIN   
+                        BTO MANAGEMENT SYSTEM LOGIN   
                     ==================================
                     1. Login with your Singpass account
                     2. Exit

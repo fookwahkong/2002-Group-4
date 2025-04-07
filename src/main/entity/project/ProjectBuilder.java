@@ -1,7 +1,9 @@
 package main.entity.project;
 
 import main.entity.Housing;
+import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
+import main.entity.user.HDBOfficer;
 import main.utils.FileIOUtil;
 
 import java.time.LocalDate;
@@ -18,6 +20,7 @@ public class ProjectBuilder {
     private boolean visible = true;
     private LocalDate openingDate;
     private LocalDate closingDate;
+    private List<Applicant> applicants;
     private HDBManager manager;
     private int officerSlots = 10;
     private Map<String, Housing> housingTypes = new HashMap<>();
@@ -73,6 +76,11 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder withApplicant(List<Applicant> applicants) {
+        this.applicants = applicants;
+        return this;
+    }
+
     public ProjectBuilder withManager(HDBManager manager) {
         this.manager = manager;
         return this;
@@ -101,6 +109,7 @@ public class ProjectBuilder {
             project.setDate(openingDate, closingDate);
         }
         
+
         // Set manager
         if (manager != null) {
             project.setManagerInCharge(manager);

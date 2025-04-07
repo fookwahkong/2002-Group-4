@@ -16,17 +16,14 @@ public class Applicant extends User {
         super(userID, password, name, age, maritalStatus, userRole);
     }
 
-    public List<Enquiry> getEnquiryList() {
-        return enquiryList;
-    }
-
-    public List<Project> getProjectList() {
-        return projectList;
-    }
-
     public String getName() {
         return super.getName();
     }
+
+    public int getAge() {
+        return super.getAge();
+    }
+
 
     public void addEnquiry(Enquiry e) {
         enquiryList.add(e);
@@ -36,49 +33,58 @@ public class Applicant extends User {
         enquiryList.remove(e);
     }
 
-    public List<Project> viewOpenProjects(List<Project> allProjects) {
-        List<Project> openProjects = new ArrayList<>();
-        for (Project project : allProjects) {
-            if (project.getVisibility()) {
-                openProjects.add(project);
-            }
-        }
-        return openProjects;
-
+    
+    public List<Enquiry> getEnquiryList() {
+        return enquiryList;
     }
 
-    public List<Project> viewAppliedProjects() {
-        return new ArrayList<>(projectList);
+    public List<Project> getProjectList() {
+        return projectList;
     }
 
-    public boolean applyForProject(Project project) {
-        if (project.getVisibility() && !projectList.contains(project)) {
-            projectList.add(project);
-            return true;
-        }
-        return false;
-    }
+    // public List<Project> viewOpenProjects(List<Project> allProjects) {
+    //     List<Project> openProjects = new ArrayList<>();
+    //     for (Project project : allProjects) {
+    //         if (project.getVisibility()) {
+    //             openProjects.add(project);
+    //         }
+    //     }
+    //     return openProjects;
 
-    private boolean flatBooked = false;
+    // }
 
-    public boolean bookFlat() {
-        if (!flatBooked) {
-            flatBooked = true;
-            return true;
-        }
-        return false;
-    }
+    // public List<Project> viewAppliedProjects() {
+    //     return new ArrayList<>(projectList);
+    // }
 
-    public boolean withdrawFromProject(Project project) {
-        return projectList.remove(project);
-    }
+    // public boolean applyForProject(Project project) {
+    //     if (project.getVisibility() && !projectList.contains(project)) {
+    //         projectList.add(project);
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
-    public boolean withdrawFromFlat() {
-        if (flatBooked) {
-            flatBooked = false;
-            return true;
-        }
-        return false;
-    }
+    // private boolean flatBooked = false;
+
+    // public boolean bookFlat() {
+    //     if (!flatBooked) {
+    //         flatBooked = true;
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    // public boolean withdrawFromProject(Project project) {
+    //     return projectList.remove(project);
+    // }
+
+    // public boolean withdrawFromFlat() {
+    //     if (flatBooked) {
+    //         flatBooked = false;
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
 }

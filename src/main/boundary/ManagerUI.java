@@ -111,7 +111,7 @@ public class ManagerUI extends UI {
         }
 
         Project selectedProject = projectsToShow.get(projectChoice - 1);
-        System.out.println(Project.displayProjectDetails(selectedProject));
+        System.out.println(ProjectController.displayProjectDetails(selectedProject));
     }
 
     // helper method for option 1

@@ -22,7 +22,7 @@ public class FileIOUtil {
     public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
     public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
     public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+    public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();

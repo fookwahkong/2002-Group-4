@@ -122,7 +122,6 @@ public class FileIOUtil {
 
                             if (officer != null) {
                                 project.addOfficersIncharge(officer);
-                                officer.assignProject(project);
                             } else {
                                 System.err.println(
                                         "Could not find officer: " + officerName + " for project: " + projectName);

@@ -9,6 +9,7 @@ import main.entity.user.Applicant;
 import main.entity.user.User;
 import main.enums.UserRole;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicantUI extends UI {
@@ -127,22 +128,34 @@ public class ApplicantUI extends UI {
     }
 
     //option 6
-    protected List<Enquiry> viewEnquiry() {
-        List<Enquiry> enquiryList = currentUser.getEnquiryList();
-        System.out.println("Enquiries:");
+    // protected List<Enquiry> viewEnquiry() {
+    //     List<Enquiry> enquiryList = currentUser.getEnquiryList();
+    //     System.out.println("Enquiries:");
+    //     int cnt = 0;
+    //     for (Enquiry e : enquiryList) {
+    //         cnt += 1;
+    //         System.out.print(cnt + ". ");
+    //         e.viewEnquiry(currentUser.getUserRole());
+    //     }
+    //     System.out.println();
+    //     return enquiryList;
+    // }
+    protected void viewEnquiry() {
+        List<Enquiry> enquiryList = ApplicantController.getEnquiries();
+
         int cnt = 0;
-        for (Enquiry e : enquiryList) {
+        for (Enquiry e: enquiryList) {
             cnt += 1;
             System.out.print(cnt + ". ");
             e.viewEnquiry(currentUser.getUserRole());
         }
         System.out.println();
-        return enquiryList;
     }
 
     //option 7
     protected void editEnquiry() {
-        List<Enquiry> enquiryList = this.viewEnquiry(); // get enquiry list
+        List<Enquiry> enquiryList = ApplicantController.getEnquiries(); // get enquiry list
+        this.viewEnquiry(); // print the enquiry list
 
         // get the enquiry to edit
         int enquiryIndex = getIntInput("Select the enquiry to edit: ") - 1;
@@ -157,7 +170,8 @@ public class ApplicantUI extends UI {
 
     //option 8
     protected void deleteEnquiry() {
-        List<Enquiry> enquiryList = this.viewEnquiry();
+        List<Enquiry> enquiryList = ApplicantController.getEnquiries();
+        this.viewEnquiry(); // print the enquiry list
 
         // get the qnquiry to delete
         int enquiryIndex = getIntInput("Select the enquiry to delete: ") - 1;

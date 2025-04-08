@@ -154,6 +154,8 @@ public class OfficerUI extends ApplicantUI {
             if (decisionJoinProject == 1) {
                 OfficerController.submitRegistration(selectedProject);
                 selectedProject.getPendingOfficers().add(currentUser);
+                System.out.println();
+                return;
             }
             System.out.println();
         }
@@ -161,7 +163,9 @@ public class OfficerUI extends ApplicantUI {
 
     // View Registration Status
     private void viewReigstrationStatus() {
-        List<Registration> registrationList = currentUser.getRegistrationList();
+        // get registration List
+        List<Registration> registrationList = OfficerController.getRegistrationList();
+
         System.out.println("Registrations:");
         for (Registration r: registrationList) {
             System.out.println("Project: " + r.getProject().getName());

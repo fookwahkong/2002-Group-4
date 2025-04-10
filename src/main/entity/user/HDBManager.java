@@ -13,6 +13,7 @@ public class HDBManager extends User {
         super(userID, password, name, age, maritalStatus, userRole);
     }
 
+    //do we need this
     public void setCurrentProject(Project project) {
         this.currentProject = project;
     }
@@ -20,6 +21,7 @@ public class HDBManager extends User {
     public Project getCurrentProject() {
         return this.currentProject;
     }
+
 
     public String getId() {
         return super.getUserID();

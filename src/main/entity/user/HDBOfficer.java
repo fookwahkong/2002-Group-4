@@ -5,17 +5,16 @@ import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
-import main.entity.Registration;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class HDBOfficer extends Applicant {
+public class HDBOfficer extends User {
 
     public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
     }
 
+    //do we need this
     public static void replyToEnquiry(Enquiry enquiry, String response) {
         if (enquiry == null) {
             System.out.println("Invalid enquiry.");

@@ -1,9 +1,10 @@
 package main.enums;
 
 public enum ProjectStatus {
-    DRAFT(false, "Project is in draft mode and not visible to applicants"),
-    PUBLISHED(true, "Project is published and visible to applicants"),
-    CLOSED(false, "Project application period has closed");
+    PENDING(false, "Project application is still pending."),
+    SUCCESSFUL(true, "Project is application is successful."),
+    UNSUCCESSFUL(false, "Project application is unsuccessful"),
+    BOOKED(true, "Project has been applied and flat has been booked.");
     
     private final boolean visible;
     private final String description;

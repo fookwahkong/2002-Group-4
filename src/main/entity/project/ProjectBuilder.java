@@ -3,7 +3,6 @@ package main.entity.project;
 import main.entity.Housing;
 import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
-import main.entity.user.HDBOfficer;
 import main.utils.FileIOUtil;
 
 import java.time.LocalDate;
@@ -106,7 +105,8 @@ public class ProjectBuilder {
 
         // Set dates
         if (openingDate != null && closingDate != null) {
-            project.setDate(openingDate, closingDate);
+            project.setOpeningDate(openingDate);
+            project.setClosingDate(closingDate);
         }
         
 

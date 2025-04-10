@@ -1,16 +1,24 @@
 package main.entity.user;
 
-import java.util.ArrayList;
-import java.util.List;
-import main.entity.Enquiry;
+import java.util.HashMap;
+import java.util.Map;
+
 import main.entity.project.Project;
 import main.enums.MaritalStatus;
 import main.enums.UserRole;
+import main.enums.ProjectStatus;
 
 public class Applicant extends User {
+    Map<Project, ProjectStatus> appliedProjects;
+    private String rawAppliedProjectStr;
 
-    public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
+    public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
+            UserRole userRole, Map<Project, ProjectStatus> appliedProjects) {
         super(userID, password, name, age, maritalStatus, userRole);
+        
+        System.out.println("Debug: applicant "+ super.getName() + "appliedProjects initialized with existing projects." + appliedProjects);
+        
+        this.appliedProjects = appliedProjects != null ? appliedProjects : new HashMap<>();
     }
 
     public String getName() {
@@ -21,49 +29,19 @@ public class Applicant extends User {
         return super.getAge();
     }
 
-    // public List<Project> viewOpenProjects(List<Project> allProjects) {
-    //     List<Project> openProjects = new ArrayList<>();
-    //     for (Project project : allProjects) {
-    //         if (project.getVisibility()) {
-    //             openProjects.add(project);
-    //         }
-    //     }
-    //     return openProjects;
+    public Map<Project, ProjectStatus> getAppliedProjects() {
+        return this.appliedProjects;
+    }
 
-    // }
+    public void addAppliedProject(Project project) {
+        appliedProjects.put(project, ProjectStatus.PENDING); //by default, put PENDING unless officers changed it
+    }
 
-    // public List<Project> viewAppliedProjects() {
-    //     return new ArrayList<>(projectList);
-    // }
+    public void setRawAppliedProjectsStr(String rawStr) {
+        this.rawAppliedProjectStr = rawStr;
+    }
 
-    // public boolean applyForProject(Project project) {
-    //     if (project.getVisibility() && !projectList.contains(project)) {
-    //         projectList.add(project);
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
-    // private boolean flatBooked = false;
-
-    // public boolean bookFlat() {
-    //     if (!flatBooked) {
-    //         flatBooked = true;
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
-    // public boolean withdrawFromProject(Project project) {
-    //     return projectList.remove(project);
-    // }
-
-    // public boolean withdrawFromFlat() {
-    //     if (flatBooked) {
-    //         flatBooked = false;
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
+    public String getRawAppliedProjectStr() {
+        return this.rawAppliedProjectStr;
+    }
 }

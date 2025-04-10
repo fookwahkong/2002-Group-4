@@ -1,5 +1,6 @@
 package main.controller.project;
 
+import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.Housing;
 import main.entity.Registration;
@@ -11,7 +12,6 @@ import main.entity.user.HDBOfficer;
 import main.enums.MaritalStatus;
 import main.utils.FileIOUtil;
 
-import java.io.File;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,8 +26,37 @@ public class ProjectController {
     public ProjectController() {
     }
 
-    public static void load() {
-        projects = FileIOUtil.loadProjects();
+    public static void loadRawData() {
+        projects = FileIOUtil.loadProjects();   //load projects without resolving references 
+        System.out.println("Loaded " + projects.size() + " projects.");
+    }
+
+    public static void resolveReferences() {
+        for (Project project: projects) {
+            //resolve manager
+            if (project.getManager() == null) {
+                HDBManager manager = (HDBManager) UserManager.getInstance().findUserByName(project.getManager().getName()); 
+
+                if (manager != null) {
+                    project.setManagerInCharge(manager);
+                } else {
+                    System.err.println("Warning: Manager not found for project: " + project.getName());
+                }
+            }
+
+            List<Applicant> resolvedApplicants = new ArrayList<>();
+            for (Applicant applicant: project.getApplicants()) {
+                Applicant resolvedApplicant = (Applicant) UserManager.getInstance().findUserByName(applicant.getName());
+
+                if (resolvedApplicant != null) {
+                    resolvedApplicants.add(resolvedApplicant);
+                } else {
+                    System.err.println("Warning: Applicant not found for project:" + project.getName());
+                } 
+            }
+            project.getApplicants().clear(); //to clear the previously allocated applicants when loading Raw Data
+            project.getApplicants().addAll(resolvedApplicants);
+        }
     }
 
     // get ALL the projects
@@ -52,7 +81,7 @@ public class ProjectController {
                 .toList();
     }
 
-    //get all the projects that applicants can see
+    //get all the projects that applicant from each group can see
     public static List<Project> getApplicantProjects(Applicant applicant) {
         if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
             return ProjectController.getProjectList().stream()
@@ -73,14 +102,23 @@ public class ProjectController {
                 .toList();
     }
 
-    
+    public static Project findProjectByName(String projectName) {
+        List<Project> projectList = getProjectList();
+        for (Project p: projectList) {
+            if (p.getName().equals(projectName)) { 
+                return p;
+            }
+        }
+        return null; // Return null if no project is found (bug is here if not found)
+    }
+
     /**
      * Displays all details of a project in a formatted manner.
      * Can be used in a console or for generating reports.
      */
-    public static String displayProjectDetails(Project project) {
+    public static void displayProjectDetails(Project project) {
         if (project == null) {
-            return "Project not found.";
+            System.out.println("Project not found."); 
         }
 
         StringBuilder details = new StringBuilder();
@@ -104,7 +142,6 @@ public class ProjectController {
         details.append("BASIC INFORMATION\n");
         details.append("-".repeat(30)).append("\n");
         details.append(String.format("Neighborhood: %s\n", project.getNeighbourhood()));
-        details.append(String.format("Status: %s\n", project.getStatus()));
         details.append(String.format("Visibility: %s\n",
                 project.getVisibility() ? "Visible to applicants" : "Hidden from applicants"));
         details.append(String.format("Application Period: %s to %s\n", openingDate, closingDate));
@@ -184,8 +221,7 @@ public class ProjectController {
         details.append("\n");
         details.append("=".repeat(60)).append("\n");
 
-
-        return details.toString();
+        System.out.println(details.toString());
     }
     
     public static void createProject(String projectName, String neighbourhood, float priceOne,
@@ -244,4 +280,9 @@ public class ProjectController {
     public static void updateHousingType(Project project, String typeName, float sellingPrice, int numberOfUnits) {
         project.setHousingType(typeName, sellingPrice, numberOfUnits);
     }
+
+    public static void addApplicants(Project project, Applicant applicant) {
+        project.addApplicants(applicant);
+        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
+    } 
 }

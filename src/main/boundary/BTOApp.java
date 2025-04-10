@@ -7,8 +7,13 @@ import main.controller.user.UserManager;
 public class BTOApp {
     public static void start() {
 
-        UserManager.load();
-        ProjectController.load();
+        //not sure if there is better ways
+        UserManager.loadRawUsers();
+        ProjectController.loadRawData();
+
+        UserManager.resolveReferences();
+        ProjectController.resolveReferences();
+        
         EnquiryController.load();
 
         LoginUI loginUI = new LoginUI();

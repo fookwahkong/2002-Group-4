@@ -1,8 +1,6 @@
 package main.entity.project;
 
-import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +12,6 @@ import main.entity.Registration;
 import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
-import main.enums.ProjectStatus;
 
 public class Project {
 
@@ -171,11 +168,6 @@ public class Project {
         this.closingDate = closingDate;
     }
 
-    public void setDate(LocalDate openingDate, LocalDate closingDate) {
-        this.openingDate = openingDate;
-        this.closingDate = closingDate;
-    }
-
     public void setHousingType(String typeName, float sellingPrice, int numberOfUnits) {
         Housing housing = new Housing(typeName);
         housing.setSellingPrice(sellingPrice);
@@ -207,20 +199,6 @@ public class Project {
 
     public void addApplicants(Applicant applicant) {
         this.applicants.add(applicant);
-    }
-
-    // Utility method to get project status
-    public ProjectStatus getStatus() {
-        if (!visible) {
-            return ProjectStatus.DRAFT;
-        }
-
-        LocalDate today = LocalDate.now();
-        if (closingDate != null && today.isAfter(closingDate)) {
-            return ProjectStatus.CLOSED;
-        }
-
-        return ProjectStatus.PUBLISHED;
     }
 
     @Override

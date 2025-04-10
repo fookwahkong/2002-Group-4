@@ -11,18 +11,19 @@ import main.enums.UserRole;
 import java.io.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import org.xml.sax.HandlerBase;
 
 public class FileIOUtil {
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    public static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
-    public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
-    public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
-    public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    public static final String APPLICANTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/applicants.csv";
+    public static final String MANAGERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/managers.csv";
+    public static final String OFFICERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/officers.csv";
+    public static final String ENQUIRIES_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/enquiries.csv";
+    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -130,7 +131,7 @@ public class FileIOUtil {
                     }
 
                     allProjects.add(project);
-
+                    System.out.println("Debug: ProjectList after loadProjects(): " + allProjects);
                 } catch (Exception e) {
                     System.err.println("Error parsing project data: " + line);
                     System.err.println("Exception: " + e.getMessage());
@@ -217,7 +218,17 @@ public class FileIOUtil {
                 }
 
                 String password = parts[4];
-                users.add(UserFactory.createUser(userID, password, name, age, maritalStatus, userRole));
+                String appliedProjectsStr = "";
+                if (userRole == UserRole.APPLICANT && parts.length > 5) {
+                    appliedProjectsStr = parts[5];
+                }
+
+                User user = UserFactory.createUser(userID, password, name, age, maritalStatus, userRole, new HashMap<>());
+                users.add(user);
+
+                if(user instanceof Applicant && !appliedProjectsStr.isEmpty()) {
+                    ((Applicant) user).setRawAppliedProjectsStr(appliedProjectsStr);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -228,19 +239,35 @@ public class FileIOUtil {
     public static void saveUsersToFile(List<User> userList, String filepath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
             // Write header
-            writer.write("Name,UserID,Age,MaritalStatus,Password");
+            String header = "Name,UserID,Age,MaritalStatus,Password";
+            if (filepath == APPLICANTS_FILE) {
+                header += ",Applied Projects";
+            }
+            writer.write(header);
             writer.newLine();
 
             // Write each user
             for (User user : userList) {
                 String maritalStatusStr = (user.getMaritalStatus() == MaritalStatus.SINGLE) ? "Single" : "Married";
-
+                
+                String appliedProjectsStr = "";
+                if (user instanceof Applicant applicant) {
+                    appliedProjectsStr = applicant.getAppliedProjects().entrySet().stream()
+                            .map(entry -> entry.getKey().getName() + ":" + entry.getValue())
+                            .reduce((a, b) -> a + "," + b)
+                            .orElse("");
+                }
+                
                 String line = String.format("%s,%s,%d,%s,%s",
                         user.getName(),
                         user.getUserID(),
                         user.getAge(),
                         maritalStatusStr,
                         user.getPassword());
+
+                if (user instanceof Applicant) {
+                    line += "," + (appliedProjectsStr.isEmpty() ? "\"\"" : "\"" + appliedProjectsStr + "\"");
+                }
 
                 writer.write(line);
                 writer.newLine();
@@ -281,12 +308,12 @@ public class FileIOUtil {
                         project.getVisibility(),
                         project.getOpeningDate().format(formatter),
                         project.getClosingDate().format(formatter),
-                        project.getHousingType("2-Room").getTypeName(),
-                        project.getHousingType("2-Room").getNumberOfUnits(),
-                        project.getHousingType("2-Room").getSellingPrice(),
-                        project.getHousingType("3-Room").getTypeName(),
-                        project.getHousingType("3-Room").getNumberOfUnits(),
-                        project.getHousingType("3-Room").getSellingPrice(),
+                        project.getHousingType("2-Room") != null ? project.getHousingType("2-Room").getTypeName() : "",
+                        project.getHousingType("2-Room") != null ? project.getHousingType("2-Room").getNumberOfUnits() : 0,
+                        project.getHousingType("2-Room") != null ? project.getHousingType("2-Room").getSellingPrice() : 0.0f,
+                        project.getHousingType("3-Room") != null ? project.getHousingType("3-Room").getTypeName() : "",
+                        project.getHousingType("3-Room") != null ? project.getHousingType("3-Room").getNumberOfUnits() : 0,
+                        project.getHousingType("3-Room") != null ? project.getHousingType("3-Room").getSellingPrice() : 0.0f,
                         applicants,
                         project.getManager().getName(),
                         project.getSlots(),

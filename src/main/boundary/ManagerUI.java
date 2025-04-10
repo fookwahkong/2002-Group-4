@@ -22,9 +22,14 @@ public class ManagerUI extends UI {
     private static final int CREATE_PROJECT = 2;
     private static final int EDIT_PROJECT = 3;
     private static final int DELETE_PROJECT = 4;
-    private static final int VIEW_ENQUIRIES = 5;
-    private static final int REPLY_ENQUIRIES = 6;
-    private static final int CHANGE_PASSWORD = 7;
+    private static final int VIEW_OFFICER_REGISTRATION_LIST = 5;
+    private static final int APPROVE_REJECT_OFFICER = 6;
+    private static final int APPROVE_REJECT_APPLICATION = 7;
+    private static final int APPROVE_REJECT_WITHDRAWAL = 8;
+    private static final int GENERATE_REPORTS = 9;
+    private static final int VIEW_ENQUIRIES = 10;
+    private static final int REPLY_ENQUIRIES = 11;
+    private static final int CHANGE_PASSWORD = 12;
     private static final int LOGOUT = 0;
 
     // Housing type names
@@ -62,9 +67,14 @@ public class ManagerUI extends UI {
             case CREATE_PROJECT -> createHDBProject(); // option 2
             case EDIT_PROJECT -> editHDBProject(); // option 3
             case DELETE_PROJECT -> deleteHDBProject(); // option 4
-            case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 5
-            case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 6
-            case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 7
+            case VIEW_OFFICER_REGISTRATION_LIST -> {System.out.println("Option 5 not implemented yet");} //option 5
+            case APPROVE_REJECT_OFFICER -> {System.out.println("Option 6 not implemented yet");} //option 6
+            case APPROVE_REJECT_APPLICATION -> {System.out.println("Option 7 not implemented yet");} //option 7
+            case APPROVE_REJECT_WITHDRAWAL -> {System.out.println("Option 8 not implemented yet");} //option 8
+            case GENERATE_REPORTS -> {System.out.println("Option 9 not implemented yet");} //option 9
+            case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 10
+            case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 11
+            case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 12
             case LOGOUT -> { // option 0
                 UserManager.getInstance().logout();
                 new LoginUI().startLogin();
@@ -75,20 +85,29 @@ public class ManagerUI extends UI {
     }
 
     private void displayMenuOptions() {
-        System.out.print("""
-                \n========== MANAGER UI ==========
-                Please select an option:
-                ---------------------------------
-                1. View Projects
-                2. Create HDB Project
-                3. Edit HDB Project
-                4. Delete HDB Project
-                5. View All Enquiries
-                6. View and Reply to Enquiries
-                7. Change Password
-                0. Logout
-                ---------------------------------
-                Your choice: """);
+        String[] menuOptions = {
+            "MANAGER UI",
+            "===============================",
+            "1. View Projects",
+            "2. Create HDB Project",
+            "3. Edit HDB Project",
+            "4. Delete HDB Project",
+            "5. (Reserved) View Pending and Approved HDB Officer Registration",
+            "6. (Reserved) Approve / Reject HDB Officer Registration",
+            "7. (Reserved) Approve / Reject BTO Application",
+            "8. (Reserved) Approve / Reject Application Withdrawal",
+            "9. (Reserved) Generate Reports",
+            "10. View All Enquiries",
+            "11. View and Reply to Enquiries",
+            "12. Change Password",
+            "0. Logout",
+            "===============================",
+            "Enter your choice: "
+        };
+        
+        for (String option : menuOptions) {
+            System.out.println(option);
+        }
     }
 
     // option 1
@@ -289,9 +308,7 @@ public class ManagerUI extends UI {
         return true;
     }
 
-    /**
-     * Helper method to get the current price of a housing type
-     */
+    //Helper method to get the current price of a housing type
     private float getHousingTypePrice(Project project, String typeName) {
         try {
             if (project.getHousingType(typeName) != null) {
@@ -306,9 +323,7 @@ public class ManagerUI extends UI {
         }
     }
 
-    /**
-     * Helper method to get the current units of a housing type
-     */
+    //Helper method to get the current units of a housing type
     private int getHousingTypeUnits(Project project, String typeName) {
         try {
             if (project.getHousingType(typeName) != null) {

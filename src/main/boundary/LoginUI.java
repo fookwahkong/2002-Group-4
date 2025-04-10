@@ -24,8 +24,7 @@ public class LoginUI extends UI {
                     1. Login with your Singpass account
                     2. Exit
                     ==================================
-                    Enter your choice:  
-                    """);
+                    Enter your choice:  """);
 
             int choice = getValidIntInput(1, 2);
 

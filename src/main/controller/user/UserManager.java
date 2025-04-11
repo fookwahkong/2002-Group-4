@@ -89,6 +89,7 @@ public class UserManager {
     }
 
     public void logout() {
+        // save project
         currentUser = null;
     }
 

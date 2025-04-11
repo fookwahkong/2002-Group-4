@@ -32,7 +32,6 @@ public class UserManager {
 
     public static void loadRawUsers() {
         users = FileIOUtil.loadUsers();  //load users without resolving refereces (AppliedProjects Ref)
-        System.out.println("Debug: Loaded " + users.size() + "users.");
     }
 
     public static void resolveReferences() {
@@ -40,12 +39,10 @@ public class UserManager {
         for (User user: users) {
             if (user instanceof Applicant applicant) {
                 String rawStr = applicant.getRawAppliedProjectStr();
-                System.out.println("Debug: rawStr: " + rawStr);
 
                 if (rawStr != null && !rawStr.isEmpty()) {
                     Map<Project, ProjectStatus> resolvedProjects = parseAppliedProjects(rawStr);
                     applicant.getAppliedProjects().putAll(resolvedProjects);
-                    System.out.println("Debug: applicant: " + applicant);
                 }               
             }
         }
@@ -114,7 +111,6 @@ public class UserManager {
     
     private static Map<Project, ProjectStatus> parseAppliedProjects(String appliedProjects) {
         Map<Project, ProjectStatus> projectStatusMap = new HashMap<>();
-        System.out.println("Debug: Parsing appliedProjects: " + appliedProjects);
         if (appliedProjects != null && !appliedProjects.isEmpty()) {
             String[] projectEntries = appliedProjects.split(",");
             for (String entry : projectEntries) {
@@ -123,7 +119,6 @@ public class UserManager {
                     String projectName = parts[0].trim().replace("\"","");
                     String status = parts[1].trim().replace("\"","");
 
-                    System.out.println("Debug: Name of the project " + projectName);
                     Project project = ProjectController.findProjectByName(projectName);
                     if (project != null) {
                         try {

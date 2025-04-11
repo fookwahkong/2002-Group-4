@@ -17,9 +17,7 @@ public class Applicant extends User {
     public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
             UserRole userRole, Map<Project, ProjectStatus> appliedProjects) {
         super(userID, password, name, age, maritalStatus, userRole);
-        
-        System.out.println("Debug: applicant "+ super.getName() + "appliedProjects initialized with existing projects." + appliedProjects);
-        
+                
         this.appliedProjects = appliedProjects != null ? appliedProjects : new HashMap<>();
     }
 
@@ -36,7 +34,7 @@ public class Applicant extends User {
     }
 
     public void addAppliedProject(Project project) {
-        appliedProjects.put(project, ProjectStatus.PENDING); //by default, put PENDING unless officers changed it
+        appliedProjects.put(project, ProjectStatus.PENDING); //by default, put PENDING unless manager changes it
     }
 
     public void setRawAppliedProjectsStr(String rawStr) {

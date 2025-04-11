@@ -28,7 +28,6 @@ public class ProjectController {
 
     public static void loadRawData() {
         projects = FileIOUtil.loadProjects();   //load projects without resolving references 
-        System.out.println("Loaded " + projects.size() + " projects.");
     }
 
     public static void resolveReferences() {

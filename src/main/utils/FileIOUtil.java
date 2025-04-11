@@ -129,9 +129,7 @@ public class FileIOUtil {
                             }
                         }
                     }
-
                     allProjects.add(project);
-                    System.out.println("Debug: ProjectList after loadProjects(): " + allProjects);
                 } catch (Exception e) {
                     System.err.println("Error parsing project data: " + line);
                     System.err.println("Exception: " + e.getMessage());
@@ -187,8 +185,6 @@ public class FileIOUtil {
                     }
                     enquiry.setReplied(replied);
                     project.addEnquiry(enquiry);
-                    System.out.println("Added enquiry to project " + projectName);
-
                 }
             }
         } catch (IOException e) {

@@ -83,16 +83,25 @@ public class ProjectController {
 
     //get all the projects that applicant from each group can see
     public static List<Project> getApplicantProjects(Applicant applicant) {
-        if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
-            return ProjectController.getProjectList().stream()
+        // if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
+        //     return ProjectController.getProjectList().stream()
+        //     .filter(project -> project.getAllHousingTypes().get("2-Room") != null)
+        //     .filter(project -> project.getVisibility() == true)
+        //     .toList();
+        // } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
+        //     return getOpenProjects(applicant);
+        // } 
+        // return new ArrayList<>();  //return empty list if the applicant is neither conditions are met
+        // //(possible bug if reached here)
+                
+        List<Project> openProjects = getOpenProjects(applicant);
+        if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
+            return openProjects;
+        } else {
+            return openProjects.stream()
             .filter(project -> project.getAllHousingTypes().get("2-Room") != null)
-            .filter(project -> project.getVisibility() == true)
             .toList();
-        } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
-            return getOpenProjects(applicant);
-        } 
-        return new ArrayList<>();  //return empty list if the applicant is neither conditions are met
-        //(possible bug if reached here)
+        }
     }
 
     //get open projects

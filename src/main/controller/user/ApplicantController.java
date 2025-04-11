@@ -45,6 +45,8 @@ public class ApplicantController {
         
         return false;
     }
+
+    // --------------------------------------------------------------------------------------------------
     
     // Checks if an applicant has any active projects (SUCCESSFUL, BOOKED, or PENDING)
     public static boolean hasActiveProject(Applicant applicant) {
@@ -106,6 +108,8 @@ public class ApplicantController {
         
         return null;
     }
+
+    // -------------------------------------------------------------------------------------------------
 
     //Submits a new enquiry from the current user
     public static void submitEnquiry(String message, Project project) {

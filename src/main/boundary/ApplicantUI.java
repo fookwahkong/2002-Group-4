@@ -242,7 +242,7 @@ public class ApplicantUI extends UI {
                     int choice = getValidIntInput(1, 2);
                     if (choice == 1) {
                         System.out.println("Withdrawal request forwarded.");
-                        ProjectController.updateApplicantStatus(p, getApplicantUser(), ProjectStatus.UNSUCCESSFUL);
+                        ProjectController.updateApplicantStatus(p, getApplicantUser(), ProjectStatus.REQUEST_WITHDRAW);
                     } else {
                         System.out.println("Withdrawal not confirmed.");
                     }

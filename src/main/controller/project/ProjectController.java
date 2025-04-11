@@ -301,4 +301,16 @@ public class ProjectController {
         project.getApplicantswithStatus().put(applicant, status);
     }
 
+    public static Map<Applicant, ProjectStatus> getApplicationsByStatus(Project project, ProjectStatus status) {
+        Map<Applicant, ProjectStatus> applications = new HashMap<>();
+
+        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantswithStatus().entrySet()) {
+            if (entry.getValue() == status) {
+                applications.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return applications;
+    }
+
+
 }

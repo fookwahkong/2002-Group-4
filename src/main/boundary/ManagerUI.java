@@ -58,7 +58,7 @@ public class ManagerUI extends UI {
             displayMenuOptions();
 
             try {
-                int choice = getValidIntInput(0, 7);
+                int choice = getValidIntInput(0, 12);
                 running = handleMenuChoice(choice);
             } catch (Exception e) {
                 System.out.println("An error occurred: " + e.getMessage());
@@ -75,7 +75,7 @@ public class ManagerUI extends UI {
             case VIEW_OFFICER_REGISTRATION_LIST -> viewOfficerRegistration(); //option 5
             case APPROVE_REJECT_OFFICER -> approveRejectOfficer(); //option 6
             case APPROVE_REJECT_APPLICATION -> approveOrRejectApplication(); //option 7
-            case APPROVE_REJECT_WITHDRAWAL -> {System.out.println("Option 8 not implemented yet");} //option 8
+            case APPROVE_REJECT_WITHDRAWAL -> approveOrRejectWithdrawal(); //option 8
             case GENERATE_REPORTS -> {System.out.println("Option 9 not implemented yet");} //option 9
             case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 10
             case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 11
@@ -498,22 +498,33 @@ public class ManagerUI extends UI {
         }
 
         Project selectedProject = projectList.get(projIndex);
-        displayApplicantListWithStatus(selectedProject);
+
+        // Get only applicants with PENDING status
+        Map<Applicant, ProjectStatus> pendingApplicantsMap =
+                ProjectController.getApplicationsByStatus(selectedProject, ProjectStatus.PENDING);
+
+        if (pendingApplicantsMap.isEmpty()) {
+            System.out.println("No pending applications for this project.");
+            return;
+        }
+
+        // Convert keys to a list to support index selection
+        List<Applicant> pendingApplicants = new ArrayList<>(pendingApplicantsMap.keySet());
+
+        displayApplicantListWithStatus(pendingApplicantsMap);
 
         int appIndex = getIntInput("Select the applicant to approve/reject (0 to cancel): ") - 1;
-        if (appIndex < 0 || appIndex >= selectedProject.getApplicantswithStatus().size()) {
+        if (appIndex < 0 || appIndex >= pendingApplicants.size()) {
             System.out.println("Invalid selection or cancelled. Returning to menu.");
             return;
         }
 
-        List<Applicant> applicants = selectedProject.getApplicants();
-        Applicant selectedApplicant = applicants.get(appIndex);
-
+        Applicant selectedApplicant = pendingApplicants.get(appIndex);
         ProjectStatus currentStatus = selectedProject.getApplicantStatus(selectedApplicant);
         System.out.println("Current status for " + selectedApplicant.getName() + ": " + currentStatus);
 
-        String newStatusStr = getStringInput("Enter new status for the applicant (approve/reject): ").toLowerCase();
-        ProjectStatus newStatus = null;
+        String newStatusStr = getStringInput("Enter new status for the application (approve/reject): ").toLowerCase();
+        ProjectStatus newStatus;
 
         if ("approve".equals(newStatusStr)) {
             newStatus = ProjectStatus.SUCCESSFUL;
@@ -523,15 +534,18 @@ public class ManagerUI extends UI {
             System.out.println("Invalid status. Returning to menu.");
             return;
         }
+
         ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
+        System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
     }
 
+
     // helper method
-    private void displayApplicantListWithStatus(Project project) {
+    private void displayApplicantListWithStatus(Map<Applicant, ProjectStatus> applicantsWithStatus) {
         System.out.println("Applications:");
 
         int index = 1;
-        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantswithStatus().entrySet()) {
+        for (Map.Entry<Applicant, ProjectStatus> entry : applicantsWithStatus.entrySet()) {
             Applicant applicant = entry.getKey();
             ProjectStatus status = entry.getValue();
 
@@ -539,7 +553,63 @@ public class ManagerUI extends UI {
             index++;
         }
 
+        if (index == 1) {
+            System.out.println("No applicants found with the selected status.");
+        }
+
         System.out.println("0. Return to main menu");
+    }
+
+    private void approveOrRejectWithdrawal() {
+        List<Project> projectList = ProjectController.getManagerProjects(currentUser);
+        displayProjectList(projectList);
+
+        int projIndex = getIntInput("Select the project to view (0 to cancel): ") - 1;
+        if (projIndex < 0 || projIndex >= projectList.size()) {
+            System.out.println("Invalid selection or cancelled. Returning to menu.");
+            return;
+        }
+
+        Project selectedProject = projectList.get(projIndex);
+
+        Map<Applicant, ProjectStatus> withdrawingApplicantsMap =
+                ProjectController.getApplicationsByStatus(selectedProject, ProjectStatus.REQUEST_WITHDRAW);
+
+        if (withdrawingApplicantsMap.isEmpty()) {
+            System.out.println("No pending withdrawals for this project.");
+            return;
+        }
+
+        List<Applicant> pendingApplicants = new ArrayList<>(withdrawingApplicantsMap.keySet());
+
+        displayApplicantListWithStatus(withdrawingApplicantsMap);
+
+        int appIndex = getIntInput("Select the withdrawal to approve (0 to cancel): ") - 1;
+        if (appIndex < 0 || appIndex >= pendingApplicants.size()) {
+            System.out.println("Invalid selection or cancelled. Returning to menu.");
+            return;
+        }
+
+        Applicant selectedApplicant = pendingApplicants.get(appIndex);
+        ProjectStatus currentStatus = selectedProject.getApplicantStatus(selectedApplicant);
+        System.out.println("Current status for " + selectedApplicant.getName() + ": " + currentStatus);
+
+        String newStatusStr = getStringInput("Confirm withdrawal (y/n): ").toLowerCase();
+        ProjectStatus newStatus;
+
+        if ("y".equals(newStatusStr)) {
+            newStatus = ProjectStatus.UNSUCCESSFUL;
+        } else if ("n".equals(newStatusStr)) {
+            System.out.println("No changes made. Returning to menu.");
+            return;
+        } else {
+            System.out.println("Invalid choice. Returning to menu.");
+            return;
+        }
+
+        ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
+        System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
+
     }
     
 

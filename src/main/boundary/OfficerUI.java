@@ -14,7 +14,6 @@ import main.enums.UserRole;
 import java.util.List;
 
 public class OfficerUI extends ApplicantUI {
-    private final HDBOfficer currentUser;
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     private static final int VIEW_PROJECTS = 1;
@@ -32,19 +31,20 @@ public class OfficerUI extends ApplicantUI {
     private static final int LOGOUT = 0;
 
     public OfficerUI() {
-        User user = UserManager.getInstance().getCurrentUser();
-
-        //downcasting from user to officer
-        if (isValidUser(user)) {
-            this.currentUser = (HDBOfficer) user;
-        } else {
-            throw new IllegalStateException("Current user is not an HDB Officer");
-        }
+        // The parent constructor will set currentUser
+        // No need to cast here
     }
 
     @Override
     protected boolean isValidUser(User user) {
         return user != null && user.getUserRole() == UserRole.HDB_OFFICER;
+    }
+
+    protected HDBOfficer getOfficerUser() {
+        if (currentUser instanceof HDBOfficer) {
+            return (HDBOfficer) currentUser;
+        }
+        throw new IllegalStateException("Current user is not an HDB Officer");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class OfficerUI extends ApplicantUI {
         while (running) {
             displayMenuOptions();
             try {
-                int choice = getValidIntInput(0, 9);
+                int choice = getValidIntInput(0, 12);
                 switch (choice) {
                     case VIEW_PROJECTS -> viewProjects(); //option 1
                     case VIEW_AND_REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); //option 2
@@ -61,7 +61,7 @@ public class OfficerUI extends ApplicantUI {
                     case VIEW_REGISTRATION_STATUS -> viewReigstrationStatus(); //option 4
                     case APPROVE_BOOKING -> {System.out.println("Option 5 not implemented yet.");} //option 5
                     case GENERATE_RECEIPTS -> {System.out.println("Option 6 not implemented yet");} // option 6
-                    case APPLY_PROJECT -> {System.out.println("Option 6 not implemented yet");} //option 7
+                    case APPLY_PROJECT -> {System.out.println("Option 7 not implemented yet");} //option 7
                     case SUBMIT_ENQUIRY -> super.submitEnquiry();  //option 8
                     case VIEW_ENQUIRY -> super.viewEnquiry(); //option 9
                     case EDIT_ENQUIRY -> super.editEnquiry(); //option 10
@@ -106,10 +106,10 @@ public class OfficerUI extends ApplicantUI {
         }
     }
 
-
     // Option 1
     private void viewProjects() {
-        List<Project> projectList = ProjectController.getOfficerProjects(currentUser);
+        HDBOfficer officer = getOfficerUser();
+        List<Project> projectList = ProjectController.getOfficerProjects(officer);
         if (projectList.isEmpty()) {
             System.out.println("You are not assigned to any projects.");
             return;
@@ -133,7 +133,8 @@ public class OfficerUI extends ApplicantUI {
 
     //Option 2
     private void viewAndReplyToEnquiries() {
-        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(currentUser);
+        HDBOfficer officer = getOfficerUser();
+        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(officer);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");
             return;
@@ -159,15 +160,14 @@ public class OfficerUI extends ApplicantUI {
 
     // Option 3
     private void registerJoinProject() {
+        HDBOfficer officer = getOfficerUser();
         List<Project> projectList = ProjectController.getProjectList();
         
         boolean exit = false;
         while (!exit) {
             // print all projects
             System.out.println("List of Projects:");
-            for (int i=0; i<projectList.size(); i++) {
-                System.out.println((i+1) + ": " + projectList.get(i).getName());
-            }
+            displayProjectList(projectList);
             System.out.println("0: Exit\n");
             int projectIndex = getIntInput("Select the project to join: ");
             System.out.println();
@@ -195,7 +195,7 @@ public class OfficerUI extends ApplicantUI {
             int decisionJoinProject = getValidIntInput(1,2);
             if (decisionJoinProject == 1) {
                 OfficerController.submitRegistration(selectedProject);
-                selectedProject.getPendingOfficers().add(currentUser);
+                selectedProject.getPendingOfficers().add(officer);
                 System.out.println();
                 return;
             }
@@ -215,9 +215,26 @@ public class OfficerUI extends ApplicantUI {
         }
     }
 
-    //option 5
+    //option 5 - Override the parent method with empty implementation
     @Override
     protected void applyProject() {
-
+        System.out.println("Option not implemented yet");
+    }
+    
+    // Override parent methods that use getApplicantUser to prevent ClassCastException
+    @Override
+    protected void viewOpenProjects() {
+        System.out.println("This functionality is not available for HDB Officers in that capacity.");
+        System.out.println("Please use Option 1 to view projects you're handling.");
+    }
+    
+    @Override
+    protected void viewAppliedProjects() {
+        System.out.println("This functionality is not available for HDB Officers in that capacity.");
+    }
+    
+    @Override
+    protected void flatBooking() {
+        System.out.println("This functionality is not available for HDB Officers in that capacity.");
     }
 }

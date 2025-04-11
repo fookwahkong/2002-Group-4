@@ -2,7 +2,6 @@ package main.boundary;
 
 import main.controller.project.ProjectController;
 import main.controller.user.ApplicantController;
-import main.controller.user.OfficerController;
 import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.project.Project;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ApplicantUI extends UI {
-    private final Applicant currentUser;
+    protected final User currentUser;
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     private static final int VIEW_OPEN_PROJECTS = 1;
@@ -34,9 +33,8 @@ public class ApplicantUI extends UI {
     public ApplicantUI() {
         User user = UserManager.getInstance().getCurrentUser();
 
-        // downcasting user to applicant
         if (isValidUser(user)) {
-            this.currentUser = (Applicant) user;
+            this.currentUser = user;
         } else {
             throw new IllegalStateException("Current user is not an Applicant");
         }
@@ -45,6 +43,13 @@ public class ApplicantUI extends UI {
     // method to validate the user, can be overriden by subclass (OfficerUI)
     protected boolean isValidUser(User user) {
         return user != null && user.getUserRole() == UserRole.APPLICANT;
+    }
+
+    protected Applicant getApplicantUser() {
+        if (currentUser instanceof Applicant) {
+            return (Applicant) currentUser;
+        }
+        throw new IllegalStateException("Current user is not an Applicant");
     }
 
     public void showMenu() {
@@ -111,7 +116,7 @@ public class ApplicantUI extends UI {
     // option 1
     protected void viewOpenProjects() {
         System.out.println("List of Open Projects: ");
-        List<Project> projectList = ProjectController.getApplicantProjects(currentUser);
+        List<Project> projectList = ProjectController.getApplicantProjects(getApplicantUser());
 
         if (projectList.isEmpty()) {
             System.out.println("No visible project to view");
@@ -133,13 +138,14 @@ public class ApplicantUI extends UI {
     // option 2
     protected void applyProject() {
         try {
-            boolean validForApply = ApplicantController.checkValidity(currentUser);
+            Applicant applicant = getApplicantUser();
+            boolean validForApply = ApplicantController.checkValidity(applicant);
             if (!validForApply) {
                 System.out.println("You are not eligible to apply for a project at this time.");
                 return;
             }
 
-            List<Project> projectList = ProjectController.getApplicantProjects(currentUser);
+            List<Project> projectList = ProjectController.getApplicantProjects(applicant);
 
             if (projectList == null || projectList.isEmpty()) {
                 System.out.println("Sorry. Currently no projects available for you to apply for.");
@@ -168,7 +174,7 @@ public class ApplicantUI extends UI {
                 return;
             }
 
-            ProjectController.addApplicants(proj, currentUser);
+            ProjectController.addApplicants(proj, applicant);
             ApplicantController.addAppliedProject(proj);
             System.out.println("Application successful!");
         } catch (Exception e) {
@@ -179,7 +185,8 @@ public class ApplicantUI extends UI {
     // option 3
     protected void viewAppliedProjects() {
         try {
-            Map<Project, ProjectStatus> projectSet = currentUser.getAppliedProjects();
+            Applicant applicant = getApplicantUser();
+            Map<Project, ProjectStatus> projectSet = applicant.getAppliedProjects();
 
             if (projectSet == null || projectSet.isEmpty()) {
                 System.out.println("You haven't applied for any projects yet!");
@@ -207,14 +214,15 @@ public class ApplicantUI extends UI {
     // Option 4
     protected void flatBooking() {
         try {
-            int successfulCount = ApplicantController.countSuccessfulProject(currentUser);
+            Applicant applicant = getApplicantUser();
+            int successfulCount = ApplicantController.countSuccessfulProject(applicant);
 
             if (successfulCount == 0) {
                 System.out.println("You have no successful application yet!");
                 return;
             }
 
-            Project project = ApplicantController.getSuccessfulProject(currentUser);
+            Project project = ApplicantController.getSuccessfulProject(applicant);
 
             System.out.println("Project: " + project.getName() + " is available for booking.");
             int choice = getIntInput("1 to book, 0 to cancel");
@@ -383,7 +391,7 @@ public class ApplicantUI extends UI {
     }
 
     // Helper method to display a list of projects
-    private void displayProjectList(List<Project> projectList) {
+    protected void displayProjectList(List<Project> projectList) {
         if (projectList == null || projectList.isEmpty()) {
             System.out.println("No projects to display.");
             return;
@@ -398,5 +406,4 @@ public class ApplicantUI extends UI {
             }
         }
     }
-
 }

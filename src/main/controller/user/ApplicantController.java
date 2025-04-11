@@ -75,7 +75,7 @@ public class ApplicantController {
 
     public static boolean hasActiveProject(Applicant applicant) {
         int activeProjectCount = 0;
-        Map<Applicant, ProjectStatus> applicantProjectMap = ProjectController.getApplicantProjectMap();
+        Map<Applicant, ProjectStatus> applicantProjectMap = ProjectController.getApplicantsProjectStatus();
         for (Map.Entry<Applicant, ProjectStatus> entry : applicantProjectMap.entrySet()) {
             if (entry.getKey().getName().equals(applicant.getName()) && 
             (entry.getValue() == ProjectStatus.SUCCESSFUL || 

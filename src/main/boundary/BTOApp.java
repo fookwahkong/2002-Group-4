@@ -7,10 +7,8 @@ import main.controller.user.UserManager;
 public class BTOApp {
     public static void start() {
 
-        //not sure if there is better ways
-        UserManager.loadRawUsers();
+        UserManager.load();
         ProjectController.loadRawData();
-
         ProjectController.resolveReferences();
         
         EnquiryController.load();

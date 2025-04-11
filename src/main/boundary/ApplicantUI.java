@@ -63,9 +63,7 @@ public class ApplicantUI extends UI {
                 switch (choice) {
                     case VIEW_OPEN_PROJECTS -> viewOpenProjects();
                     case APPLY_PROJECT -> applyProject();
-                    case VIEW_APPLIED_PROJECTS -> {
-                        System.out.println("Option 4 is not implemented yet");
-                    }
+                    case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
                     case FLAT_BOOKING -> {
                         System.out.println("Option 4 is not implemented yet");
                     } // flatBooking();
@@ -183,8 +181,31 @@ public class ApplicantUI extends UI {
         }
     }
 
+    
+    //option 3
+    protected void viewAppliedProjects() {
+        Map<Project, ProjectStatus> appliedProject = ProjectController.getApplicantAppliedProject(getApplicantUser());
 
+        if (appliedProject == null || appliedProject.isEmpty()) {
+            System.out.println("You have not applied for any projects.");
+            return;
+        }
 
+        System.out.println("Your Applied Projects:");
+        for (Map.Entry<Project, ProjectStatus> entry : appliedProject.entrySet()) {
+            Project project = entry.getKey();
+            ProjectStatus status = entry.getValue();
+
+            if (project != null && status != null) {
+            System.out.println("Project: " + project.getName() + " | Status: " + status);
+            } else {
+            System.out.println("Error: Invalid project or status encountered.");
+            }
+        }
+    }
+
+    //option 4
+    
     // option 6
     protected void submitEnquiry() {
         try {

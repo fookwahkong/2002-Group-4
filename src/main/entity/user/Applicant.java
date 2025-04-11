@@ -9,10 +9,6 @@ import main.enums.UserRole;
 import main.enums.ProjectStatus;
 
 public class Applicant extends User {
-    // --------------------------------------------------------------------------------
-    Map<Project, ProjectStatus> appliedProjects;
-    private String rawAppliedProjectStr;
-    // -----------------------------------------------------------------------------------
 
     public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
             UserRole userRole ) {
@@ -25,13 +21,5 @@ public class Applicant extends User {
 
     public int getAge() {
         return super.getAge();
-    }
-
-    public void setRawAppliedProjectsStr(String rawStr) {
-        this.rawAppliedProjectStr = rawStr;
-    }
-
-    public String getRawAppliedProjectStr() {
-        return this.rawAppliedProjectStr;
     }
 }

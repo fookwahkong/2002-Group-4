@@ -25,7 +25,6 @@ public class Project {
     private Map<Applicant, ProjectStatus> applicants; //applicants who applied for the project
     private HDBManager manager;
     private List<HDBOfficer> officers;
-    private List<HDBOfficer> pendingOfficers;
     private int officerSlot = 10;
     private List<Enquiry> enquiries;
     private List<Registration> registrations;
@@ -37,40 +36,9 @@ public class Project {
         this.registrations = new ArrayList<>();
         this.housingTypes = new HashMap<>();
         this.applicants = new HashMap<>();
-        this.pendingOfficers = new ArrayList<>();
         this.officers = new ArrayList<>();
         this.enquiries = new ArrayList<>();
         this.registrations = new ArrayList<>();
-    }
-
-    public void updatePendingOfficer(HDBOfficer officer) {
-        if (this.pendingOfficers == null) {
-            this.pendingOfficers = new ArrayList<>();
-        }
-        this.pendingOfficers.add(officer);
-    }
-
-    public void updateOfficer(HDBOfficer officer, int update) {
-        if (update == 1) {
-            if (this.officerSlot <= this.officers.size()) {
-                throw new IllegalStateException("No more officer slots available");
-            }
-            if (this.pendingOfficers.contains(officer)) {
-                this.pendingOfficers.remove(officer);
-                this.officers.add(officer);
-            } else {
-                throw new IllegalArgumentException("Officer not in pending list");
-            }
-        } else if (update == -1) {
-            if (this.pendingOfficers.contains(officer)) {
-                this.pendingOfficers.remove(officer);
-            } else {
-                throw new IllegalArgumentException("Officer not in pending list");
-            }
-        } else {
-            throw new IllegalArgumentException("Update is either 1 (Approve Officer) or -1 (Reject Offier)");
-        }
-        
     }
 
     public void addEnquiry(Enquiry enquiry) {
@@ -116,10 +84,6 @@ public class Project {
 
     public List<HDBOfficer> getAssignedOfficers() {
         return this.officers;
-    }
-
-    public List<HDBOfficer> getPendingOfficers() {
-        return this.pendingOfficers;
     }
 
     public List<Enquiry> getEnquiries() {
@@ -208,6 +172,10 @@ public class Project {
 
     public void addApplicant(Applicant applicant, ProjectStatus projStatus) {
         this.applicants.put(applicant, projStatus);
+    }
+
+    public void addOfficer(HDBOfficer officer) {
+        this.officers.add(officer);
     }
 
     @Override

@@ -1,13 +1,17 @@
 package main.controller.registration;
 
+import main.controller.project.ProjectController;
 import main.entity.Registration;
 import main.entity.project.Project;
 import main.entity.user.HDBOfficer;
+import main.utils.FileIOUtil;
 
 import java.util.List;
 
 public class RegistrationController {
-    public static void load() {}
+    public static void load() {
+        FileIOUtil.loadRegistration(ProjectController.getProjectList());
+    }
 
     // get registration by project
     public static List<Registration> getRegistrationList(Project project) {

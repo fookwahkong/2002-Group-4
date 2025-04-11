@@ -31,24 +31,9 @@ public class UserManager {
     }
 
     public static void loadRawUsers() {
-        users = FileIOUtil.loadUsers();  //load users without resolving refereces (AppliedProjects Ref)
+        users = FileIOUtil.loadUsers();  //load users without resolving references (AppliedProjects Ref)
     }
 
-    public static void resolveReferences() {
-        //Resolve references (AppliedProjects for Applicants)
-        for (User user: users) {
-            if (user instanceof Applicant applicant) {
-                String rawStr = applicant.getRawAppliedProjectStr();
-
-                if (rawStr != null && !rawStr.isEmpty()) {
-                    Map<Project, ProjectStatus> resolvedProjects = parseAppliedProjects(rawStr);
-                    applicant.getAppliedProjects().putAll(resolvedProjects);
-                }               
-            }
-        }
-    }
-    
-    
     public static void save() {
         List<User> applicants = new ArrayList<>();
         List<User> officers = new ArrayList<>();
@@ -108,31 +93,4 @@ public class UserManager {
         currentUser = null;
     }
 
-    
-    private static Map<Project, ProjectStatus> parseAppliedProjects(String appliedProjects) {
-        Map<Project, ProjectStatus> projectStatusMap = new HashMap<>();
-        if (appliedProjects != null && !appliedProjects.isEmpty()) {
-            String[] projectEntries = appliedProjects.split(",");
-            for (String entry : projectEntries) {
-                String[] parts = entry.split(":");
-                if (parts.length == 2) {
-                    String projectName = parts[0].trim().replace("\"","");
-                    String status = parts[1].trim().replace("\"","");
-
-                    Project project = ProjectController.findProjectByName(projectName);
-                    if (project != null) {
-                        try {
-                            ProjectStatus projectStatus = ProjectStatus.valueOf(status.toUpperCase());
-                            projectStatusMap.put(project, projectStatus);
-                        } catch (IllegalArgumentException e) {
-                            System.err.println("Invalid project status: " + status);
-                        }
-                    } else {
-                        System.err.println("Project not found: " + projectName);
-                    }
-                }
-            }
-        }
-        return projectStatusMap;
-    }
 }

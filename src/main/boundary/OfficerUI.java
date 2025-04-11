@@ -30,11 +30,6 @@ public class OfficerUI extends ApplicantUI {
     private static final int CHANGE_PASSWORD = 12;
     private static final int LOGOUT = 0;
 
-    public OfficerUI() {
-        // The parent constructor will set currentUser
-        // No need to cast here
-    }
-
     @Override
     protected boolean isValidUser(User user) {
         return user != null && user.getUserRole() == UserRole.HDB_OFFICER;
@@ -215,7 +210,7 @@ public class OfficerUI extends ApplicantUI {
         }
     }
 
-    //option 5 - Override the parent method with empty implementation
+    //option 5
     @Override
     protected void applyProject() {
         System.out.println("Option not implemented yet");
@@ -226,15 +221,5 @@ public class OfficerUI extends ApplicantUI {
     protected void viewOpenProjects() {
         System.out.println("This functionality is not available for HDB Officers in that capacity.");
         System.out.println("Please use Option 1 to view projects you're handling.");
-    }
-    
-    @Override
-    protected void viewAppliedProjects() {
-        System.out.println("This functionality is not available for HDB Officers in that capacity.");
-    }
-    
-    @Override
-    protected void flatBooking() {
-        System.out.println("This functionality is not available for HDB Officers in that capacity.");
     }
 }

@@ -1,6 +1,6 @@
-Name,UserID,Age,MaritalStatus,Password,Applied Projects
-John,S1234567A,35,Single,P@ssword!1234,"Acacia Breeze:PENDING"
-Sarah,T7654321B,40,Married,password,""
-Grace,S9876543C,37,Married,password,""
-James,T2345678D,30,Married,password,""
-Rachel,S3456789E,25,Single,password,""
+Name,UserID,Age,MaritalStatus,Password
+John,S1234567A,35,Single,P@ssword!1234
+Sarah,T7654321B,40,Married,password
+Grace,S9876543C,37,Married,password
+James,T2345678D,30,Married,password
+Rachel,S3456789E,25,Single,password

@@ -1,11 +1,13 @@
 package main.utils;
 
+import main.controller.project.ProjectController;
 import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.project.Project;
 import main.entity.project.ProjectBuilder;
 import main.entity.user.*;
 import main.enums.MaritalStatus;
+import main.enums.ProjectStatus;
 import main.enums.UserRole;
 
 import java.io.*;
@@ -13,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class FileIOUtil {
@@ -103,22 +106,15 @@ public class FileIOUtil {
 
                     Project project = builder.build();
 
-                    // Add applicants
+                    // Add applicants with project status
                     String applicantString = parts[11].trim().replace("\"", "");
                     if (!applicantString.isEmpty()) {
-                        String[] applicants = applicantString.split(",");
-                        for (String applicantName : applicants) {
-                            Applicant applicant = (Applicant) UserManager.getInstance()
-                                    .findUserByName(applicantName.trim());
-
-                            if (applicant != null) {
-                                project.addApplicants(applicant);
-                            } else {
-                                System.err.println(
-                                        "Could not find applicant: " + applicantName + " for project: " + projectName);
-                            }
+                        Map<Applicant, ProjectStatus> applicantProjectStatusMap = parseApplicantProjects(applicantString);
+                        for (Map.Entry<Applicant, ProjectStatus> entry : applicantProjectStatusMap.entrySet()) {
+                            project.addApplicant(entry.getKey(), entry.getValue());
                         }
                     }
+
                     // Add officers
                     String officersString = parts[14].trim().replace("\"", "");
                     if (!officersString.isEmpty()) {
@@ -220,17 +216,10 @@ public class FileIOUtil {
                 }
 
                 String password = parts[4];
-                String appliedProjectsStr = "";
-                if (userRole == UserRole.APPLICANT && parts.length > 5) {
-                    appliedProjectsStr = parts[5];
-                }
 
-                User user = UserFactory.createUser(userID, password, name, age, maritalStatus, userRole, new HashMap<>());
+                User user = UserFactory.createUser(userID, password, name, age, maritalStatus, userRole);
                 users.add(user);
 
-                if(user instanceof Applicant && !appliedProjectsStr.isEmpty()) {
-                    ((Applicant) user).setRawAppliedProjectsStr(appliedProjectsStr);
-                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -242,9 +231,6 @@ public class FileIOUtil {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
             // Write header
             String header = "Name,UserID,Age,MaritalStatus,Password";
-            if (filepath == APPLICANTS_FILE) {
-                header += ",Applied Projects";
-            }
             writer.write(header);
             writer.newLine();
 
@@ -252,24 +238,12 @@ public class FileIOUtil {
             for (User user : userList) {
                 String maritalStatusStr = (user.getMaritalStatus() == MaritalStatus.SINGLE) ? "Single" : "Married";
                 
-                String appliedProjectsStr = "";
-                if (user instanceof Applicant applicant) {
-                    appliedProjectsStr = applicant.getAppliedProjects().entrySet().stream()
-                            .map(entry -> entry.getKey().getName() + ":" + entry.getValue())
-                            .reduce((a, b) -> a + "," + b)
-                            .orElse("");
-                }
-                
                 String line = String.format("%s,%s,%d,%s,%s",
                         user.getName(),
                         user.getUserID(),
                         user.getAge(),
                         maritalStatusStr,
                         user.getPassword());
-
-                if (user instanceof Applicant) {
-                    line += "," + (appliedProjectsStr.isEmpty() ? "\"\"" : "\"" + appliedProjectsStr + "\"");
-                }
 
                 writer.write(line);
                 writer.newLine();
@@ -291,11 +265,13 @@ public class FileIOUtil {
             writer.newLine();
 
             for (Project project : projects) {
-                String applicants = (project.getApplicants() != null)
-                        ? String.join(",", project.getApplicants().stream()
-                                .map(User::getName)
-                                .toArray(String[]::new))
+                String applicants = (project.getApplicantswithProjectStatus() != null)
+                        ? project.getApplicantswithProjectStatus().entrySet().stream()
+                                .map(entry -> entry.getKey().getName() + ":" + entry.getValue().name())
+                                .reduce((a, b) -> a + "," + b)
+                                .orElse("")
                         : "";
+                        
                 String assignedOfficers = (project.getAssignedOfficers() != null)
                         ? String.join(",", project.getAssignedOfficers().stream()
                                 .map(User::getName)
@@ -342,4 +318,34 @@ public class FileIOUtil {
                 .replace("\"", "")
                 .replace(",", ""));
     }
+    
+    private static Map<Applicant, ProjectStatus> parseApplicantProjects(String applicantProjects) {
+        Map<Applicant, ProjectStatus> applicantProjectStatusMap = new HashMap<>();
+        if (applicantProjects != null && !applicantProjects.isEmpty()) {
+            String[] projectEntries = applicantProjects.split(",");
+            for (String entry : projectEntries) {
+                String[] parts = entry.split(":");
+                if (parts.length == 2) {
+                    String applicantName = parts[0].trim().replace("\"","");
+                    String status = parts[1].trim().replace("\"","");
+
+                    User user = UserManager.getInstance().findUserByName(applicantName);
+                    if (user != null) {
+                        try {
+                            Applicant applicant = (Applicant) user;
+                            ProjectStatus projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                            applicantProjectStatusMap.put(applicant, projectStatus);
+                        } catch (IllegalArgumentException e) {
+                            System.err.println("Invalid project status: " + status);
+                        }
+                    } else {
+                        System.err.println("Applicant not found: " + applicantName);
+                    }
+                }
+            }
+        }
+        return applicantProjectStatusMap;
+    }
 }
+
+

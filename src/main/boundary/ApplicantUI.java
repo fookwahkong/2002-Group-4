@@ -63,7 +63,9 @@ public class ApplicantUI extends UI {
                 switch (choice) {
                     case VIEW_OPEN_PROJECTS -> viewOpenProjects();
                     case APPLY_PROJECT -> applyProject();
-                    case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
+                    case VIEW_APPLIED_PROJECTS -> {
+                        System.out.println("Option 4 is not implemented yet");
+                    }
                     case FLAT_BOOKING -> {
                         System.out.println("Option 4 is not implemented yet");
                     } // flatBooking();
@@ -175,64 +177,13 @@ public class ApplicantUI extends UI {
             }
 
             ProjectController.addApplicants(proj, applicant);
-            ApplicantController.addAppliedProject(proj);
             System.out.println("Application successful!");
         } catch (Exception e) {
             System.out.println("Error applying for project: " + e.getMessage());
         }
     }
 
-    // option 3
-    protected void viewAppliedProjects() {
-        try {
-            Applicant applicant = getApplicantUser();
-            Map<Project, ProjectStatus> projectSet = applicant.getAppliedProjects();
 
-            if (projectSet == null || projectSet.isEmpty()) {
-                System.out.println("You haven't applied for any projects yet!");
-                return;
-            }
-
-            List<Project> projectList = new ArrayList<>(projectSet.keySet());
-            System.out.println("List of Projects you have applied for: ");
-            int cnt = 1;
-            for (Project p : projectList) {
-                if (p != null) {
-                    System.out.print(cnt + ". ");
-                    ProjectStatus status = projectSet.get(p);
-                    String statusStr = (status != null) ? status.toString() : "UNKNOWN";
-                    String visibility = (p.getVisibility() == true) ? "Open" : "Closed";
-                    System.out.println(p.getName() + ": " + statusStr + ", Visibility: " + visibility);
-                    cnt += 1;
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error viewing applied projects: " + e.getMessage());
-        }
-    }
-
-    // Option 4
-    protected void flatBooking() {
-        try {
-            Applicant applicant = getApplicantUser();
-            int successfulCount = ApplicantController.countSuccessfulProject(applicant);
-
-            if (successfulCount == 0) {
-                System.out.println("You have no successful application yet!");
-                return;
-            }
-
-            Project project = ApplicantController.getSuccessfulProject(applicant);
-
-            System.out.println("Project: " + project.getName() + " is available for booking.");
-            int choice = getIntInput("1 to book, 0 to cancel");
-
-            // booking logic is here
-
-        } catch (Exception e) {
-            System.out.println("Error with flat booking: " + e.getMessage());
-        }
-    }
 
     // option 6
     protected void submitEnquiry() {

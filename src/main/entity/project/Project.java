@@ -12,6 +12,7 @@ import main.entity.Registration;
 import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
+import main.enums.ProjectStatus;
 
 public class Project {
 
@@ -21,7 +22,7 @@ public class Project {
     private LocalDate openingDate;
     private LocalDate closingDate;
     private Map<String, Housing> housingTypes;
-    private List<Applicant> applicants; //applicants who applied for the project
+    private Map<Applicant, ProjectStatus> applicants; //applicants who applied for the project
     private HDBManager manager;
     private List<HDBOfficer> officers;
     private List<HDBOfficer> pendingOfficers;
@@ -35,7 +36,7 @@ public class Project {
         this.visible = visible;
         this.registrations = new ArrayList<>();
         this.housingTypes = new HashMap<>();
-        this.applicants = new ArrayList<>();
+        this.applicants = new HashMap<>();
         this.pendingOfficers = new ArrayList<>();
         this.officers = new ArrayList<>();
         this.enquiries = new ArrayList<>();
@@ -137,7 +138,15 @@ public class Project {
         return this.housingTypes.get(typeName);
     }
 
+    public ProjectStatus getApplicantStatus(Applicant applicant) {
+        return this.applicants.get(applicant);
+    }
+
     public List<Applicant> getApplicants() {
+        return new ArrayList<>(this.applicants.keySet());
+    }
+
+    public Map<Applicant, ProjectStatus> getApplicantswithProjectStatus() {
         return this.applicants;
     }
 
@@ -197,8 +206,8 @@ public class Project {
         this.registrations.add(registration);
     }
 
-    public void addApplicants(Applicant applicant) {
-        this.applicants.add(applicant);
+    public void addApplicant(Applicant applicant, ProjectStatus projStatus) {
+        this.applicants.put(applicant, projStatus); //by default, put PENDING unless manager changes it
     }
 
     @Override

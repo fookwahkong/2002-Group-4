@@ -11,7 +11,6 @@ public class BTOApp {
         UserManager.loadRawUsers();
         ProjectController.loadRawData();
 
-        UserManager.resolveReferences();
         ProjectController.resolveReferences();
         
         EnquiryController.load();

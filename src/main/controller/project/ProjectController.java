@@ -10,12 +10,14 @@ import main.entity.user.Applicant;
 import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.enums.MaritalStatus;
+import main.enums.ProjectStatus;
 import main.utils.FileIOUtil;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +110,19 @@ public class ProjectController {
         return ProjectController.getProjectList().stream()
                 .filter(project -> project.getVisibility() == true)
                 .toList();
+    }
+
+    //get projects applied by applicant
+    public static Map<Applicant,ProjectStatus> getApplicantProjectMap() {
+        Map<Applicant, ProjectStatus> result = new HashMap<>();
+        for (Project project : projects) {
+            for (Applicant applicant : project.getApplicants()) {
+                if (!result.containsKey(applicant)) {
+                    result.put(applicant, project.getApplicantStatus(applicant));
+                }
+            }
+        }
+        return result;
     }
 
     public static Project findProjectByName(String projectName) {
@@ -290,7 +305,7 @@ public class ProjectController {
     }
 
     public static void addApplicants(Project project, Applicant applicant) {
-        project.addApplicants(applicant);
+        project.addApplicant(applicant, ProjectStatus.PENDING); //default pending, unless changed my manager
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     } 
 }

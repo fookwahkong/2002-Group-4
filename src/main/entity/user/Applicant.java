@@ -13,10 +13,8 @@ public class Applicant extends User {
     private String rawAppliedProjectStr;
 
     public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
-            UserRole userRole, Map<Project, ProjectStatus> appliedProjects) {
+            UserRole userRole ) {
         super(userID, password, name, age, maritalStatus, userRole);
-                
-        this.appliedProjects = appliedProjects != null ? appliedProjects : new HashMap<>();
     }
 
     public String getName() {
@@ -25,14 +23,6 @@ public class Applicant extends User {
 
     public int getAge() {
         return super.getAge();
-    }
-
-    public Map<Project, ProjectStatus> getAppliedProjects() {
-        return this.appliedProjects;
-    }
-
-    public void addAppliedProject(Project project) {
-        appliedProjects.put(project, ProjectStatus.PENDING); //by default, put PENDING unless manager changes it
     }
 
     public void setRawAppliedProjectsStr(String rawStr) {

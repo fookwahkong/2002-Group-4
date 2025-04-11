@@ -4,12 +4,14 @@ import main.controller.enquiry.EnquiryController;
 import main.controller.project.ProjectController;
 import main.controller.user.UserManager;
 import main.entity.Enquiry;
+import main.entity.Registration;
 import main.entity.project.Project;
 import main.entity.user.HDBManager;
 import main.entity.user.User;
 import main.enums.UserRole;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -67,8 +69,8 @@ public class ManagerUI extends UI {
             case CREATE_PROJECT -> createHDBProject(); // option 2
             case EDIT_PROJECT -> editHDBProject(); // option 3
             case DELETE_PROJECT -> deleteHDBProject(); // option 4
-            case VIEW_OFFICER_REGISTRATION_LIST -> {System.out.println("Option 5 not implemented yet");} //option 5
-            case APPROVE_REJECT_OFFICER -> {System.out.println("Option 6 not implemented yet");} //option 6
+            case VIEW_OFFICER_REGISTRATION_LIST -> viewOfficerRegistration(); //option 5
+            case APPROVE_REJECT_OFFICER -> approveRejectOfficer(); //option 6
             case APPROVE_REJECT_APPLICATION -> {System.out.println("Option 7 not implemented yet");} //option 7
             case APPROVE_REJECT_WITHDRAWAL -> {System.out.println("Option 8 not implemented yet");} //option 8
             case GENERATE_REPORTS -> {System.out.println("Option 9 not implemented yet");} //option 9
@@ -422,7 +424,67 @@ public class ManagerUI extends UI {
         System.out.println("Project \"" + proj.getName() + "\" deleted successfully.");
     }
 
+    // helper function for 5,6
+    private List<Registration> getRegistrationList() {
+        List<Registration> registrationList = new ArrayList<>();
+        List<Project> projectList = ProjectController.getManagerProjects(currentUser);
+        for (Project p: projectList) {
+            registrationList.addAll(p.getRegistrationList());
+        }
+        return registrationList;
+    }
+
     // option 5
+    private void viewOfficerRegistration() {
+        List<Registration> registrationList = getRegistrationList();
+
+        int i = 0;
+        System.out.println("Registration List:");
+        System.out.println("=========================");
+        for (Registration r: registrationList) {
+            i += 1;
+            System.out.print(i + ". ");
+            r.viewRegistration();
+            System.out.println();
+        }
+    }
+
+    // option 6
+    private void approveRejectOfficer() {
+        viewOfficerRegistration(); // print registration list
+        List<Registration> registrationList = getRegistrationList();
+
+        System.out.print("Which Registration do you want to Approve/Reject?  ");
+        int index = getValidIntInput(1, registrationList.size()) - 1;
+
+        // print registration selected
+        Registration r = registrationList.get(index);
+        r.viewRegistration();
+        System.out.println("1. Approve");
+        System.out.println("2. Reject");
+        System.out.println("3. Cancel");
+        System.out.print("Enter your choice: ");
+        int choice = getValidIntInput(1, 3);
+
+        switch (choice) {
+            case 1: {
+                r.approveRegistration();
+                System.out.println("Registration Approved.");
+                return;
+            }
+            case 2: {
+                r.rejectRegistration();
+                System.out.println("Registration Rejected.");
+                return;
+            }
+            default: {
+                return;
+            }
+        }
+    }
+    
+
+    // option 10
     private void viewAllEnquiries() {
         List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
 
@@ -434,7 +496,7 @@ public class ManagerUI extends UI {
         displayEnquiryList(enquiryList);
     }
 
-    // helper method for option 5
+    // helper method for option 10
     private void displayEnquiryList(List<Enquiry> enquiries) {
         System.out.println("\nEnquiries:");
         for (int i = 0; i < enquiries.size(); i++) {
@@ -444,7 +506,7 @@ public class ManagerUI extends UI {
         }
     }
 
-    // option 6
+    // option 11
     private void viewAndReplyToEnquiries() {
         List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
         if (enquiries.isEmpty()) {

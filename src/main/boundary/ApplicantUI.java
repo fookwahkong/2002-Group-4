@@ -10,9 +10,7 @@ import main.entity.user.User;
 import main.enums.ProjectStatus;
 import main.enums.UserRole;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ApplicantUI extends UI {
     protected final User currentUser;
@@ -64,12 +62,8 @@ public class ApplicantUI extends UI {
                     case VIEW_OPEN_PROJECTS -> viewOpenProjects();
                     case APPLY_PROJECT -> applyProject();
                     case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
-                    case FLAT_BOOKING -> {
-                        System.out.println("Option 4 is not implemented yet");
-                    } // flatBooking();
-                    case RESERVED_OPTION -> {
-                        System.out.println("Option 5 is not implemented yet");
-                    }
+                    case FLAT_BOOKING -> bookFlat(); // flatBooking();
+                    case RESERVED_OPTION -> System.out.println("Option 5 is not implemented yet");
                     case SUBMIT_ENQUIRY -> submitEnquiry();
                     case VIEW_ENQUIRY -> viewEnquiry();
                     case EDIT_ENQUIRY -> editEnquiry();

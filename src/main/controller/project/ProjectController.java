@@ -318,4 +318,8 @@ public class ProjectController {
         project.addApplicant(applicant, ProjectStatus.PENDING); // default pending, unless changed my manager
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
+
+    public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
+        project.getApplicantsWithStatus().put(applicant, status);
+    }
 }

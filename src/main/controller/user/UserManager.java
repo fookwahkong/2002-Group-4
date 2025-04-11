@@ -88,6 +88,10 @@ public class UserManager {
         return currentUser;
     }
 
+    public static List<User> getUsers() {
+        return users;
+    }
+
     public void logout() {
         // save project
         currentUser = null;

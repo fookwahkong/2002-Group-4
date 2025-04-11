@@ -1,6 +1,5 @@
 package main.controller.project;
 
-import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.Housing;
 import main.entity.Registration;
@@ -11,6 +10,7 @@ import main.entity.user.HDBManager;
 import main.entity.user.HDBOfficer;
 import main.enums.MaritalStatus;
 import main.enums.ProjectStatus;
+import main.enums.RegistrationStatus;
 import main.utils.FileIOUtil;
 
 import java.text.NumberFormat;
@@ -32,6 +32,9 @@ public class ProjectController {
         projects = FileIOUtil.loadProjects(); // load projects without resolving references
     }
 
+    public static void save() {
+        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
+    }
 
     // get ALL the projects
     public static List<Project> getProjectList() {
@@ -54,6 +57,20 @@ public class ProjectController {
                 .filter(project -> project.getAssignedOfficers().contains(officer))
                 .toList();
     }
+
+    // get projects yet to be managed/applied by officer
+    public static List<Project> canRegisterProjects(HDBOfficer officer) {
+        return ProjectController.getProjectList().stream()
+                .filter(project ->
+                // check if officer is not in assigned officers list
+                !project.getAssignedOfficers().contains(officer)
+                        &&
+                        // check if officer registered for the project
+                        project.getRegistrationList().stream()
+                                .noneMatch(registration -> registration.getOfficer().equals(officer)))
+                .toList();
+    }
+
     // get open projects
     public static List<Project> getOpenProjects(Applicant applicant) {
         return ProjectController.getProjectList().stream()
@@ -81,11 +98,11 @@ public class ProjectController {
             Map<Applicant, ProjectStatus> applicantStatusMap = p.getApplicantswithStatus();
             for (Applicant a : applicantStatusMap.keySet()) {
                 ProjectStatus status = applicantStatusMap.get(a);
-                if (a == applicant && (status == ProjectStatus.PENDING || 
-                                       status == ProjectStatus.SUCCESSFUL || 
-                                       status == ProjectStatus.BOOKED || 
-                                       status == ProjectStatus.REQUEST_BOOK ||
-                                       status == ProjectStatus.REQUEST_WITHDRAW)) {
+                if (a == applicant && (status == ProjectStatus.PENDING ||
+                        status == ProjectStatus.SUCCESSFUL ||
+                        status == ProjectStatus.BOOKED ||
+                        status == ProjectStatus.REQUEST_BOOK ||
+                        status == ProjectStatus.REQUEST_WITHDRAW)) {
                     Map<Project, ProjectStatus> result = new HashMap<>();
                     result.put(p, status);
                     return result;
@@ -178,12 +195,14 @@ public class ProjectController {
         details.append("\n");
 
         // Pending officer requests
-        List<HDBOfficer> pendingOfficers = project.getPendingOfficers();
-        if (pendingOfficers != null && !pendingOfficers.isEmpty()) {
-            details.append("Pending Officer Requests:\n");
+        List<Registration> pendingRegistrations = project.getRegistrationList();
+        if (pendingRegistrations != null && !pendingRegistrations.isEmpty()) {
+            details.append("Pending Registrations:\n");
             int count = 1;
-            for (HDBOfficer officer : pendingOfficers) {
-                details.append(String.format("  %d. %s\n", count++, officer.getName()));
+            for (Registration registration : pendingRegistrations) {
+                if (registration.getRegistrationStatus() == RegistrationStatus.PENDING) {
+                    details.append(String.format("  %d. %s\n", count++, registration.getOfficer().getName()));
+                }
             }
             details.append("\n");
         }
@@ -235,7 +254,7 @@ public class ProjectController {
                 .build();
 
         projects.add(project);
-        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
+        save();
     }
 
     public static void deleteProject(Project project) {
@@ -274,13 +293,12 @@ public class ProjectController {
         project.setHousingType(typeName, sellingPrice, numberOfUnits);
     }
 
-    public static void addApplicants(Project project, Applicant applicant) {
+    public static void addApplicant(Project project, Applicant applicant) {
         project.addApplicant(applicant, ProjectStatus.PENDING); // default pending, unless changed my manager
-        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
         project.getApplicantswithStatus().put(applicant, status);
-        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
+
 }

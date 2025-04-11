@@ -7,11 +7,12 @@ import main.enums.RegistrationStatus;
 public class Registration {
     HDBOfficer officer;
     Project project;
-    RegistrationStatus status = RegistrationStatus.PENDING;
+    RegistrationStatus status;
 
-    public Registration(HDBOfficer officer, Project project) {
+    public Registration(HDBOfficer officer, Project project, RegistrationStatus status) {
         this.officer = officer;
         this.project = project;
+        this.status = status;
     }
 
     public void viewRegistration() {
@@ -38,11 +39,7 @@ public class Registration {
         return this.officer;
     }
 
-    public RegistrationStatus getreRegistrationStatus() {
+    public RegistrationStatus getRegistrationStatus() {
         return status;
-    }
-
-    public void setRegistrationStatus(RegistrationStatus newStatus) {
-        this.status = newStatus;
     }
 }

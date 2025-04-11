@@ -10,8 +10,23 @@ import main.entity.project.Project;
 import main.entity.user.Applicant;
 import main.enums.MaritalStatus;
 import main.enums.ProjectStatus;
+import main.utils.FileIOUtil;
 
 public class ApplicantController {
+
+    public static void updateProfile(Project project, String housingType) {
+        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
+
+        applicant.setBookingDetails(project, housingType);
+        FileIOUtil.saveBookingDetails(UserManager.getUsers());
+    }
+    
+    public static boolean checkSingle(Applicant applicant) {
+        if (applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
+            return true;
+        } 
+        return false;
+    }
 
     /**
      * Checks if an applicant is eligible to apply for a new project
@@ -21,7 +36,9 @@ public class ApplicantController {
      * AND
      * 3. Applicant has no active projects
      */
-    public static boolean checkValidity(Applicant applicant) {
+    public static boolean checkValidity() {
+        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
+
         // Check age and marital status first
         if (((applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) ||
                 (applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED)) &&

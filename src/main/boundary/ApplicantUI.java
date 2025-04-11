@@ -134,7 +134,7 @@ public class ApplicantUI extends UI {
     protected void applyProject() {
         try {
             Applicant applicant = getApplicantUser();
-            boolean validForApply = ApplicantController.checkValidity(applicant);
+            boolean validForApply = ApplicantController.checkValidity();
             if (!validForApply) {
                 System.out.println("You are not eligible to apply for a project at this time.");
                 return;
@@ -169,8 +169,10 @@ public class ApplicantUI extends UI {
                 return;
             }
 
-            ProjectController.addApplicants(proj, applicant);
+            ProjectController.addApplicant(proj, applicant);
+            ProjectController.save();
             System.out.println("Application successful!");
+            
         } catch (Exception e) {
             System.out.println("Error applying for project: " + e.getMessage());
         }

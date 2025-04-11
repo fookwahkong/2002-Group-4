@@ -10,9 +10,7 @@ import main.entity.user.User;
 import main.enums.ProjectStatus;
 import main.enums.UserRole;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ApplicantUI extends UI {
     protected final User currentUser;
@@ -63,14 +61,9 @@ public class ApplicantUI extends UI {
                 switch (choice) {
                     case VIEW_OPEN_PROJECTS -> viewOpenProjects();
                     case APPLY_PROJECT -> applyProject();
-                    case VIEW_APPLIED_PROJECTS -> {viewAppliedProjects();
-                    }
-                    case FLAT_BOOKING -> {
-                        System.out.println("Option 4 is not implemented yet");
-                    } // flatBooking();
-                    case RESERVED_OPTION -> {
-                        System.out.println("Option 5 is not implemented yet");
-                    }
+                    case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
+                    case FLAT_BOOKING -> bookFlat(); // flatBooking();
+                    case RESERVED_OPTION -> System.out.println("Option 5 is not implemented yet");
                     case SUBMIT_ENQUIRY -> submitEnquiry();
                     case VIEW_ENQUIRY -> viewEnquiry();
                     case EDIT_ENQUIRY -> editEnquiry();
@@ -185,6 +178,38 @@ public class ApplicantUI extends UI {
     // Option 3
     protected void viewAppliedProjects() {
         System.out.println(ApplicantController.getAppliedProject(getApplicantUser()));
+    }
+
+    // Option 4
+    protected void bookFlat() {
+        // first check if there is a SUCCESSFUL project that user
+        // can book a flat in
+        // if there is, then allow the applicant to request to
+        // book the flat. flat will be set
+        Project toBook = ApplicantController.getAppliedProject(getApplicantUser());
+        if (toBook == null) {
+            System.out.println("No project was applied for!");
+            return;
+        }
+
+        ProjectStatus status = toBook.getApplicantStatus(getApplicantUser());
+
+        switch (status) {
+            case SUCCESSFUL -> {
+                System.out.println("Request to book flat in " + toBook.getName() + "? (1. Yes 2. No)");
+                int choice = getValidIntInput(1, 2);
+                if (choice == 1) {
+                    System.out.println("Booking request forwarded.");
+                    ProjectController.updateApplicantStatus(toBook, getApplicantUser(), ProjectStatus.REQUEST_BOOK);
+                } else {
+                    System.out.println("Booking not confirmed.");
+                }
+            }
+            case BOOKED -> System.out.println("Flat already booked for " + toBook.getName());
+            case PENDING -> System.out.println("Application is still pending approval.");
+            case REQUEST_BOOK -> System.out.println("Booking for " + toBook.getName() + " already requested for.");
+            case UNSUCCESSFUL -> System.out.println("Application unsuccessful. No project to book.");
+        }
     }
 
 

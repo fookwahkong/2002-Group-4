@@ -7,11 +7,15 @@ import main.controller.user.UserManager;
 import main.entity.Enquiry;
 import main.entity.Registration;
 import main.entity.project.Project;
+import main.entity.user.Applicant;
 import main.entity.user.HDBOfficer;
 import main.entity.user.User;
+import main.enums.ProjectStatus;
 import main.enums.UserRole;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class OfficerUI extends ApplicantUI {
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
@@ -54,7 +58,7 @@ public class OfficerUI extends ApplicantUI {
                     case VIEW_AND_REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); //option 2
                     case REGISTER_JOIN_PROJECT -> registerJoinProject(); //option 3
                     case VIEW_REGISTRATION_STATUS -> viewReigstrationStatus(); //option 4
-                    case APPROVE_BOOKING -> {System.out.println("Option 5 not implemented yet.");} //option 5
+                    case APPROVE_BOOKING -> approveOrRejectBooking(); //option 5
                     case GENERATE_RECEIPTS -> {System.out.println("Option 6 not implemented yet");} // option 6
                     case APPLY_PROJECT -> {System.out.println("Option 7 not implemented yet");} //option 7
                     case SUBMIT_ENQUIRY -> super.submitEnquiry();  //option 8
@@ -211,11 +215,84 @@ public class OfficerUI extends ApplicantUI {
     }
 
     //option 5
-    @Override
-    protected void applyProject() {
-        System.out.println("Option not implemented yet");
+    protected void approveOrRejectBooking() {
+        /*
+        the logic here is wrong and should be corrected. i dont think
+        PENDING_BOOK is needed at all, since officer might just
+        need to enter the NRIC to change the status accordingly.
+        please remove as needed.
+         */
+        List<Project> projectList = ProjectController.getOfficerProjects(getOfficerUser());
+        displayProjectList(projectList);
+
+        int projIndex = getIntInput("Select the project to view (0 to cancel): ") - 1;
+        if (projIndex < 0 || projIndex >= projectList.size()) {
+            System.out.println("Invalid selection or cancelled. Returning to menu.");
+            return;
+        }
+
+        Project selectedProject = projectList.get(projIndex);
+
+        // Filter applicants with PENDING_BOOK status
+        List<Applicant> pendingApplicants = new ArrayList<>();
+        for (Applicant applicant : selectedProject.getApplicants()) {
+            if (selectedProject.getApplicantStatus(applicant) == ProjectStatus.REQUEST_BOOK) {
+                pendingApplicants.add(applicant);
+            }
+        }
+
+        if (pendingApplicants.isEmpty()) {
+            System.out.println("No applicants with PENDING_BOOK status for this project.");
+            return;
+        }
+
+        // Display only pending applicants
+        for (int i = 0; i < pendingApplicants.size(); i++) {
+            Applicant applicant = pendingApplicants.get(i);
+            System.out.println((i + 1) + ". " + applicant.getName() + " - " + selectedProject.getApplicantStatus(applicant));
+        }
+
+        int appIndex = getIntInput("Select the booking to approve/reject (0 to cancel): ") - 1;
+        if (appIndex < 0 || appIndex >= pendingApplicants.size()) {
+            System.out.println("Invalid selection or cancelled. Returning to menu.");
+            return;
+        }
+
+        Applicant selectedApplicant = pendingApplicants.get(appIndex);
+        ProjectStatus currentStatus = selectedProject.getApplicantStatus(selectedApplicant);
+        System.out.println("Current status for " + selectedApplicant.getName() + ": " + currentStatus);
+
+        String newStatusStr = getStringInput("Enter new status for the applicant (approve/reject): ").toLowerCase();
+        ProjectStatus newStatus = null;
+
+        if ("approve".equals(newStatusStr)) {
+            newStatus = ProjectStatus.BOOKED;
+        } else if ("reject".equals(newStatusStr)) {
+            return;
+        } else {
+            System.out.println("Invalid status. Returning to menu.");
+            return;
+        }
+
+        ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
     }
-    
+
+
+    private void displayApplicantListWithStatus(Project project) {
+        System.out.println("Applications:");
+
+        int index = 1;
+        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantsWithStatus().entrySet()) {
+            Applicant applicant = entry.getKey();
+            ProjectStatus status = entry.getValue();
+
+            System.out.println(index + ". " + applicant.getName() + " (" + status + ")");
+            index++;
+        }
+
+        System.out.println("0. Return to main menu");
+    }
+
     // Override parent methods that use getApplicantUser to prevent ClassCastException
     @Override
     protected void viewOpenProjects() {

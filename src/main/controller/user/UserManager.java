@@ -30,8 +30,8 @@ public class UserManager {
         return instance;
     }
 
-    public static void loadRawUsers() {
-        users = FileIOUtil.loadUsers();  //load users without resolving references (AppliedProjects Ref)
+    public static void load() {
+        users = FileIOUtil.loadUsers();  
     }
 
     public static void save() {

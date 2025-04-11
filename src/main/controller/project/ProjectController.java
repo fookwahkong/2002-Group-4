@@ -28,37 +28,10 @@ public class ProjectController {
     public ProjectController() {
     }
 
-    public static void loadRawData() {
-        projects = FileIOUtil.loadProjects();   //load projects without resolving references 
+    public static void load() {
+        projects = FileIOUtil.loadProjects(); // load projects without resolving references
     }
 
-    public static void resolveReferences() {
-        for (Project project: projects) {
-            //resolve manager
-            if (project.getManager() == null) {
-                HDBManager manager = (HDBManager) UserManager.getInstance().findUserByName(project.getManager().getName()); 
-
-                if (manager != null) {
-                    project.setManagerInCharge(manager);
-                } else {
-                    System.err.println("Warning: Manager not found for project: " + project.getName());
-                }
-            }
-
-            List<Applicant> resolvedApplicants = new ArrayList<>();
-            for (Applicant applicant: project.getApplicants()) {
-                Applicant resolvedApplicant = (Applicant) UserManager.getInstance().findUserByName(applicant.getName());
-
-                if (resolvedApplicant != null) {
-                    resolvedApplicants.add(resolvedApplicant);
-                } else {
-                    System.err.println("Warning: Applicant not found for project:" + project.getName());
-                } 
-            }
-            project.getApplicants().clear(); //to clear the previously allocated applicants when loading Raw Data
-            project.getApplicants().addAll(resolvedApplicants);
-        }
-    }
 
     // get ALL the projects
     public static List<Project> getProjectList() {
@@ -81,54 +54,51 @@ public class ProjectController {
                 .filter(project -> project.getAssignedOfficers().contains(officer))
                 .toList();
     }
-
-    //get all the projects that applicant from each group can see
-    public static List<Project> getApplicantProjects(Applicant applicant) {
-        // if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
-        //     return ProjectController.getProjectList().stream()
-        //     .filter(project -> project.getAllHousingTypes().get("2-Room") != null)
-        //     .filter(project -> project.getVisibility() == true)
-        //     .toList();
-        // } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
-        //     return getOpenProjects(applicant);
-        // } 
-        // return new ArrayList<>();  //return empty list if the applicant is neither conditions are met
-        // //(possible bug if reached here)
-                
-        List<Project> openProjects = getOpenProjects(applicant);
-        if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
-            return openProjects;
-        } else {
-            return openProjects.stream()
-            .filter(project -> project.getAllHousingTypes().get("2-Room") != null)
-            .toList();
-        }
-    }
-
-    //get open projects
+    // get open projects
     public static List<Project> getOpenProjects(Applicant applicant) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> project.getVisibility() == true)
                 .toList();
     }
 
-    // get projects applied by applicant
-    public static Map<Applicant,ProjectStatus> getApplicantProjectMap() {
-        Map<Applicant, ProjectStatus> result = new HashMap<>();
-        for (Project project : projects) {
-            for (Applicant applicant : project.getApplicants()) {
-                if (!result.containsKey(applicant)) {
-                    result.put(applicant, project.getApplicantStatus(applicant));
+    // get all the projects that applicant from each group can see and apply
+    public static List<Project> getApplicantProjects(Applicant applicant) {
+        if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
+            return ProjectController.getProjectList().stream()
+                    .filter(project -> project.getAllHousingTypes().get("2-Room") != null)
+                    .filter(project -> project.getVisibility() == true)
+                    .toList();
+        } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
+            return getOpenProjects(applicant);
+        }
+        return new ArrayList<>(); // return empty list if the applicant is neither conditions are met
+        // (possible bug if reached here)
+    }
+
+    // get the active project applied by the applicant
+    public static Map<Project, ProjectStatus> getApplicantActiveProject(Applicant applicant) {
+        for (Project p : projects) {
+            Map<Applicant, ProjectStatus> applicantStatusMap = p.getApplicantswithStatus();
+            for (Applicant a : applicantStatusMap.keySet()) {
+                ProjectStatus status = applicantStatusMap.get(a);
+                if (a == applicant && (status == ProjectStatus.PENDING || 
+                                       status == ProjectStatus.SUCCESSFUL || 
+                                       status == ProjectStatus.BOOKED || 
+                                       status == ProjectStatus.REQUEST_BOOK ||
+                                       status == ProjectStatus.REQUEST_WITHDRAW)) {
+                    Map<Project, ProjectStatus> result = new HashMap<>();
+                    result.put(p, status);
+                    return result;
                 }
             }
         }
-        return result;
+        return null; // Return null if no applied project is found
     }
 
     public static Project findProjectByName(String projectName) {
         List<Project> projectList = getProjectList();
-        for (Project p: projectList) {
-            if (p.getName().equals(projectName)) { 
+        for (Project p : projectList) {
+            if (p.getName().equals(projectName)) {
                 return p;
             }
         }
@@ -141,7 +111,7 @@ public class ProjectController {
      */
     public static void displayProjectDetails(Project project) {
         if (project == null) {
-            System.out.println("Project not found."); 
+            System.out.println("Project not found.");
         }
 
         StringBuilder details = new StringBuilder();
@@ -184,7 +154,7 @@ public class ProjectController {
                 details.append(String.format("  Available Units: %d\n", housing.getNumberOfUnits()));
                 details.append("\n");
             }
-        } 
+        }
 
         // Management information
         details.append("MANAGEMENT\n");
@@ -246,24 +216,24 @@ public class ProjectController {
 
         System.out.println(details.toString());
     }
-    
+
     public static void createProject(String projectName, String neighbourhood, float priceOne,
             int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
             String openingDate, String closingDate, HDBManager manager,
             int officerSlots) {
-            
-            ProjectBuilder projectBuilder = new ProjectBuilder();
-            Project project = projectBuilder
+
+        ProjectBuilder projectBuilder = new ProjectBuilder();
+        Project project = projectBuilder
                 .withName(projectName)
                 .withNeighborhood(neighbourhood)
-                .withVisibility(true)  //default set to true 
+                .withVisibility(true) // default set to true
                 .addHousingType("2-Room", priceOne, numberOfUnitsOne)
                 .addHousingType("3-Room", priceTwo, numberOfUnitsTwo)
                 .withApplicationPeriod(openingDate, closingDate)
                 .withManager(manager)
                 .withOfficerSlots(officerSlots)
                 .build();
-    
+
         projects.add(project);
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
@@ -299,17 +269,18 @@ public class ProjectController {
     public static void updateProjectSlots(Project project, int slots) {
         project.setOfficerSlot(slots);
     }
-    
+
     public static void updateHousingType(Project project, String typeName, float sellingPrice, int numberOfUnits) {
         project.setHousingType(typeName, sellingPrice, numberOfUnits);
     }
 
     public static void addApplicants(Project project, Applicant applicant) {
-        project.addApplicant(applicant, ProjectStatus.PENDING); //default pending, unless changed my manager
+        project.addApplicant(applicant, ProjectStatus.PENDING); // default pending, unless changed my manager
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
-        project.getApplicantsWithStatus().put(applicant, status);
+        project.getApplicantswithStatus().put(applicant, status);
+        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 }

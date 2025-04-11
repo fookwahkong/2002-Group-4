@@ -146,11 +146,7 @@ public class Project {
         return new ArrayList<>(this.applicants.keySet());
     }
 
-    public Map<Applicant, ProjectStatus> getApplicantsWithStatus() {
-        return this.applicants;
-    }
-
-    public Map<Applicant, ProjectStatus> getApplicantswithProjectStatus() {
+    public Map<Applicant, ProjectStatus> getApplicantswithStatus() {
         return this.applicants;
     }
 
@@ -211,7 +207,7 @@ public class Project {
     }
 
     public void addApplicant(Applicant applicant, ProjectStatus projStatus) {
-        this.applicants.put(applicant, projStatus); //by default, put PENDING unless manager changes it
+        this.applicants.put(applicant, projStatus);
     }
 
     @Override

@@ -501,7 +501,7 @@ public class ManagerUI extends UI {
         displayApplicantListWithStatus(selectedProject);
 
         int appIndex = getIntInput("Select the applicant to approve/reject (0 to cancel): ") - 1;
-        if (appIndex < 0 || appIndex >= selectedProject.getApplicantsWithStatus().size()) {
+        if (appIndex < 0 || appIndex >= selectedProject.getApplicantswithStatus().size()) {
             System.out.println("Invalid selection or cancelled. Returning to menu.");
             return;
         }
@@ -531,7 +531,7 @@ public class ManagerUI extends UI {
         System.out.println("Applications:");
 
         int index = 1;
-        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantsWithStatus().entrySet()) {
+        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantswithStatus().entrySet()) {
             Applicant applicant = entry.getKey();
             ProjectStatus status = entry.getValue();
 

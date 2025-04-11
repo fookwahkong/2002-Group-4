@@ -26,7 +26,7 @@ public class ApplicantController {
         // Check age and marital status first
         if (((applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) ||
             (applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED)) && 
-            !hasActiveProject(applicant)) {
+            getAppliedProject(applicant) == null) {
             return true;
         }
         
@@ -73,17 +73,12 @@ public class ApplicantController {
         System.out.println("Enquiry updated.");
     }
 
-    public static boolean hasActiveProject(Applicant applicant) {
-        int activeProjectCount = 0;
-        Map<Applicant, ProjectStatus> applicantProjectMap = ProjectController.getApplicantProjectMap();
-        for (Map.Entry<Applicant, ProjectStatus> entry : applicantProjectMap.entrySet()) {
-            if (entry.getKey().getName().equals(applicant.getName()) && 
-            (entry.getValue() == ProjectStatus.SUCCESSFUL || 
-            entry.getValue() == ProjectStatus.BOOKED || 
-            entry.getValue() == ProjectStatus.PENDING)) {
-            activeProjectCount++;
+    public static Project getAppliedProject(Applicant applicant) {
+        for (Project p: ProjectController.getProjectList()) {
+            if (p.getApplicants().contains(applicant)) {
+                return p;
             }
         }
-        return activeProjectCount > 0;
+        return null;
     }
 }

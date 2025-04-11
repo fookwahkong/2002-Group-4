@@ -112,7 +112,7 @@ public class ProjectController {
                 .toList();
     }
 
-    //get projects applied by applicant
+    // get projects applied by applicant
     public static Map<Applicant,ProjectStatus> getApplicantProjectMap() {
         Map<Applicant, ProjectStatus> result = new HashMap<>();
         for (Project project : projects) {
@@ -307,5 +307,9 @@ public class ProjectController {
     public static void addApplicants(Project project, Applicant applicant) {
         project.addApplicant(applicant, ProjectStatus.PENDING); //default pending, unless changed my manager
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
-    } 
+    }
+
+    public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
+        project.getApplicantsWithStatus().put(applicant, status);
+    }
 }

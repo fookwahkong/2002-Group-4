@@ -63,8 +63,7 @@ public class ApplicantUI extends UI {
                 switch (choice) {
                     case VIEW_OPEN_PROJECTS -> viewOpenProjects();
                     case APPLY_PROJECT -> applyProject();
-                    case VIEW_APPLIED_PROJECTS -> {
-                        System.out.println("Option 4 is not implemented yet");
+                    case VIEW_APPLIED_PROJECTS -> {viewAppliedProjects();
                     }
                     case FLAT_BOOKING -> {
                         System.out.println("Option 4 is not implemented yet");
@@ -181,6 +180,11 @@ public class ApplicantUI extends UI {
         } catch (Exception e) {
             System.out.println("Error applying for project: " + e.getMessage());
         }
+    }
+
+    // Option 3
+    protected void viewAppliedProjects() {
+        System.out.println(ApplicantController.getAppliedProject(getApplicantUser()));
     }
 
 

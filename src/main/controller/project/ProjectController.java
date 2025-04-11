@@ -28,38 +28,10 @@ public class ProjectController {
     public ProjectController() {
     }
 
-    public static void loadRawData() {
+    public static void load() {
         projects = FileIOUtil.loadProjects(); // load projects without resolving references
     }
 
-    public static void resolveReferences() {
-        for (Project project : projects) {
-            // resolve manager
-            if (project.getManager() == null) {
-                HDBManager manager = (HDBManager) UserManager.getInstance()
-                        .findUserByName(project.getManager().getName());
-
-                if (manager != null) {
-                    project.setManagerInCharge(manager);
-                } else {
-                    System.err.println("Warning: Manager not found for project: " + project.getName());
-                }
-            }
-
-            List<Applicant> resolvedApplicants = new ArrayList<>();
-            for (Applicant applicant : project.getApplicants()) {
-                Applicant resolvedApplicant = (Applicant) UserManager.getInstance().findUserByName(applicant.getName());
-
-                if (resolvedApplicant != null) {
-                    resolvedApplicants.add(resolvedApplicant);
-                } else {
-                    System.err.println("Warning: Applicant not found for project:" + project.getName());
-                }
-            }
-            project.getApplicants().clear(); // to clear the previously allocated applicants when loading Raw Data
-            project.getApplicants().addAll(resolvedApplicants);
-        }
-    }
 
     // get ALL the projects
     public static List<Project> getProjectList() {
@@ -82,8 +54,14 @@ public class ProjectController {
                 .filter(project -> project.getAssignedOfficers().contains(officer))
                 .toList();
     }
+    // get open projects
+    public static List<Project> getOpenProjects(Applicant applicant) {
+        return ProjectController.getProjectList().stream()
+                .filter(project -> project.getVisibility() == true)
+                .toList();
+    }
 
-    // get all the projects that applicant from each group can see
+    // get all the projects that applicant from each group can see and apply
     public static List<Project> getApplicantProjects(Applicant applicant) {
         if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
             return ProjectController.getProjectList().stream()
@@ -97,35 +75,17 @@ public class ProjectController {
         // (possible bug if reached here)
     }
 
-    // get open projects
-    public static List<Project> getOpenProjects(Applicant applicant) {
-        return ProjectController.getProjectList().stream()
-                .filter(project -> project.getVisibility() == true)
-                .toList();
-    }
-
-    // get project status for all applicants
-    public static Map<Applicant, ProjectStatus> getApplicantsProjectStatus() {
-        Map<Applicant, ProjectStatus> result = new HashMap<>();
-        for (Project project : projects) {
-            for (Applicant applicant : project.getApplicants()) {
-                if (!result.containsKey(applicant)) {
-                    result.put(applicant, project.getApplicantStatus(applicant));
-                }
-            }
-        }
-        return result;
-    }
-
     // get the active project applied by the applicant
-    public static Map<Project,ProjectStatus> getApplicantAppliedProject(Applicant applicant) {
+    public static Map<Project, ProjectStatus> getApplicantActiveProject(Applicant applicant) {
         for (Project p : projects) {
-            Map<Applicant, ProjectStatus> applicantStatusMap = p.getApplicantswithProjectStatus();
+            Map<Applicant, ProjectStatus> applicantStatusMap = p.getApplicantswithStatus();
             for (Applicant a : applicantStatusMap.keySet()) {
                 ProjectStatus status = applicantStatusMap.get(a);
                 if (a == applicant && (status == ProjectStatus.PENDING || 
                                        status == ProjectStatus.SUCCESSFUL || 
-                                       status == ProjectStatus.BOOKED)) {
+                                       status == ProjectStatus.BOOKED || 
+                                       status == ProjectStatus.REQUEST_BOOK ||
+                                       status == ProjectStatus.REQUEST_WITHDRAW)) {
                     Map<Project, ProjectStatus> result = new HashMap<>();
                     result.put(p, status);
                     return result;
@@ -320,6 +280,7 @@ public class ProjectController {
     }
 
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
-        project.getApplicantsWithStatus().put(applicant, status);
+        project.getApplicantswithStatus().put(applicant, status);
+        FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 }

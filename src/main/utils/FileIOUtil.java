@@ -21,17 +21,17 @@ import java.util.Map;
 public class FileIOUtil {
     static final String CLASSPATH = System.getProperty("java.class.path");
 
-    public static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
-    public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
-    public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
-    public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
-    public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
+    // public static final String APPLICANTS_FILE = CLASSPATH + "/main/data/applicants.csv";
+    // public static final String MANAGERS_FILE = CLASSPATH + "/main/data/managers.csv";
+    // public static final String OFFICERS_FILE = CLASSPATH + "/main/data/officers.csv";
+    // public static final String ENQUIRIES_FILE = CLASSPATH + "/main/data/enquiries.csv";
+    // public static final String PROJECTS_FILE = CLASSPATH + "/main/data/projects.csv";
     
-    // public static final String APPLICANTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/applicants.csv";
-    // public static final String MANAGERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/managers.csv";
-    // public static final String OFFICERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/officers.csv";
-    // public static final String ENQUIRIES_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/enquiries.csv";
-    // public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
+    public static final String APPLICANTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/applicants.csv";
+    public static final String MANAGERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/managers.csv";
+    public static final String OFFICERS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/officers.csv";
+    public static final String ENQUIRIES_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/enquiries.csv";
+    public static final String PROJECTS_FILE = "C:/Users/fwkon/Documents/Uni stuff/Capstone Project/2002-Group-4/src/main/data/projects.csv";
 
 
     public static List<User> loadUsers() {
@@ -265,8 +265,8 @@ public class FileIOUtil {
             writer.newLine();
 
             for (Project project : projects) {
-                String applicants = (project.getApplicantswithProjectStatus() != null)
-                        ? project.getApplicantswithProjectStatus().entrySet().stream()
+                String applicants = (project.getApplicantswithStatus() != null)
+                        ? project.getApplicantswithStatus().entrySet().stream()
                                 .map(entry -> entry.getKey().getName() + ":" + entry.getValue().name())
                                 .reduce((a, b) -> a + "," + b)
                                 .orElse("")

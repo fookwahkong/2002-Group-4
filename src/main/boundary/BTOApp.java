@@ -8,8 +8,8 @@ public class BTOApp {
     public static void start() {
 
         UserManager.load();
-        ProjectController.loadRawData();
-        ProjectController.resolveReferences();
+        ProjectController.load();
+
         
         EnquiryController.load();
 

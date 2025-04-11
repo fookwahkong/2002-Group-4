@@ -12,29 +12,39 @@ import main.enums.MaritalStatus;
 import main.enums.ProjectStatus;
 
 public class ApplicantController {
-        
-    // Active project statuses
+
     /**
      * Checks if an applicant is eligible to apply for a new project
      * Eligibility criteria:
      * 1. Applicant is 35+ and single, OR
-     * 2. Applicant is 21+ and married, 
+     * 2. Applicant is 21+ and married,
      * AND
      * 3. Applicant has no active projects
      */
     public static boolean checkValidity(Applicant applicant) {
         // Check age and marital status first
         if (((applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) ||
-            (applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED)) && 
-            !hasActiveProject(applicant)) {
+                (applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED)) &&
+                !hasActiveProject(applicant)) {
             return true;
         }
-        
+
         return false;
     }
 
+    // get projects that associates with the applicant
+    public static List<Project> getAppliedProject() {
+        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
+        List<Project> projectList = new ArrayList<>();
+        for (Project p : ProjectController.getProjectList()) {
+            if (p.getApplicants().contains(applicant)) {
+                projectList.add(p);
+            }
+        }
+        return projectList;
+    }
 
-    //Submits a new enquiry from the current user
+    // Submits a new enquiry from the current user
     public static void submitEnquiry(String message, Project project) {
         Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
         Enquiry enquiry = new Enquiry(currentUser, project, message);
@@ -42,15 +52,14 @@ public class ApplicantController {
         System.out.println("Enquiry Submitted.");
     }
 
-    //Deletes an enquiry
-    
+    // Deletes an enquiry
+
     public static void deleteEnquiry(Enquiry enquiry) {
         Project project = enquiry.getProject();
         project.deleteEnquiry(enquiry);
     }
 
-    //Gets all enquiries for the current user
-    
+    // Gets all enquiries for the current user
     public static List<Enquiry> getEnquiries() {
         Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
         List<Enquiry> returnList = new ArrayList<>();
@@ -63,25 +72,28 @@ public class ApplicantController {
                 }
             }
         }
-        
+
         return returnList;
     }
 
-    //Modifies an existing enquiry
+    // Modifies an existing enquiry
     public static void modifyEnquiry(Enquiry enquiry, String newMessage) {
         enquiry.setMessage(newMessage);
         System.out.println("Enquiry updated.");
     }
 
+    // helper method to check if there is active project
     public static boolean hasActiveProject(Applicant applicant) {
         int activeProjectCount = 0;
-        Map<Applicant, ProjectStatus> applicantProjectMap = ProjectController.getApplicantsProjectStatus();
-        for (Map.Entry<Applicant, ProjectStatus> entry : applicantProjectMap.entrySet()) {
-            if (entry.getKey().getName().equals(applicant.getName()) && 
-            (entry.getValue() == ProjectStatus.SUCCESSFUL || 
-            entry.getValue() == ProjectStatus.BOOKED || 
-            entry.getValue() == ProjectStatus.PENDING)) {
-            activeProjectCount++;
+        Map<Project, ProjectStatus> applicantActiveProject = ProjectController.getApplicantActiveProject(applicant);
+        if (applicantActiveProject == null) {
+            return false;
+        }
+        for (Map.Entry<Project, ProjectStatus> entry : applicantActiveProject.entrySet()) {
+            if (entry.getValue() == ProjectStatus.SUCCESSFUL ||
+                    entry.getValue() == ProjectStatus.BOOKED ||
+                    entry.getValue() == ProjectStatus.PENDING) {
+                activeProjectCount++;
             }
         }
         return activeProjectCount > 0;

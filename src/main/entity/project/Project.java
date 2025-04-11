@@ -146,11 +146,7 @@ public class Project {
         return new ArrayList<>(this.applicants.keySet());
     }
 
-    public Map<Applicant, ProjectStatus> getApplicantsWithStatus() {
-        return this.applicants;
-    }
-
-    public Map<Applicant, ProjectStatus> getApplicantswithProjectStatus() {
+    public Map<Applicant, ProjectStatus> getApplicantswithStatus() {
         return this.applicants;
     }
 

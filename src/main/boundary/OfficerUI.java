@@ -282,7 +282,7 @@ public class OfficerUI extends ApplicantUI {
         System.out.println("Applications:");
 
         int index = 1;
-        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantsWithStatus().entrySet()) {
+        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantswithStatus().entrySet()) {
             Applicant applicant = entry.getKey();
             ProjectStatus status = entry.getValue();
 

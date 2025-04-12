@@ -97,6 +97,7 @@ public class ApplicantUI extends UI {
                 "7. View Submitted Enquiry",
                 "8. Edit Enquiry",
                 "9. Delete Enquiry",
+                "==================================",
                 "10. Change Password",
                 "0. Logout",
                 "==================================",

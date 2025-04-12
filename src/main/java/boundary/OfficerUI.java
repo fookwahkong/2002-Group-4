@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OfficerUI extends ApplicantUI {
     private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
@@ -27,12 +28,19 @@ public class OfficerUI extends ApplicantUI {
     private static final int VIEW_REGISTRATION_STATUS = 4;
     private static final int APPROVE_BOOKING = 5;
     private static final int GENERATE_RECEIPTS = 6;
-    private static final int APPLY_PROJECT = 7;
-    private static final int SUBMIT_ENQUIRY = 8;
-    private static final int VIEW_ENQUIRY = 9;
-    private static final int EDIT_ENQUIRY = 10;
-    private static final int DELETE_ENQUIRY = 11;
-    private static final int CHANGE_PASSWORD = 12;
+    
+    // Applicant Functions
+    private static final int VIEW_OPEN_PROJECTS = 7;
+    private static final int APPLY_PROJECT = 8;
+    private static final int VIEW_APPLIED_PROJECTS = 9;
+    private static final int FLAT_BOOKING = 10;
+    private static final int WITHDRAW_BOOKING = 11;
+    private static final int SUBMIT_ENQUIRY = 12;
+    private static final int VIEW_ENQUIRY = 13;
+    private static final int EDIT_ENQUIRY = 14;
+    private static final int DELETE_ENQUIRY = 15;
+
+    private static final int CHANGE_PASSWORD = 16;
     private static final int LOGOUT = 0;
 
     @Override
@@ -61,14 +69,19 @@ public class OfficerUI extends ApplicantUI {
                     case VIEW_REGISTRATION_STATUS -> viewReigstrationStatus(); // option 4
                     case APPROVE_BOOKING -> approveOrRejectBooking(); // option 5
                     case GENERATE_RECEIPTS -> generateReceipts(); //option 6
-                    case APPLY_PROJECT -> {
-                        System.out.println("Option 7 not implemented yet");
-                    } // option 7
-                    case SUBMIT_ENQUIRY -> super.submitEnquiry(); // option 8
-                    case VIEW_ENQUIRY -> super.viewEnquiry(); // option 9
-                    case EDIT_ENQUIRY -> super.editEnquiry(); // option 10
-                    case DELETE_ENQUIRY -> super.deleteEnquiry(); // option 11
-                    case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 12
+
+                    // Applicant functions
+                    case VIEW_OPEN_PROJECTS -> viewOpenProjects(); // option 7 overwrite applicant
+                    case APPLY_PROJECT -> super.applyProject(); // option 8
+                    case VIEW_APPLIED_PROJECTS -> super.viewAppliedProjects(); // option 9
+                    case FLAT_BOOKING -> super.flatBooking(); // option 10
+                    case WITHDRAW_BOOKING -> super.withdrawBooking(); // option 11
+                    case SUBMIT_ENQUIRY -> super.submitEnquiry(); // option 12
+                    case VIEW_ENQUIRY -> super.viewEnquiry(); // option 13
+                    case EDIT_ENQUIRY -> super.editEnquiry(); // option 14
+                    case DELETE_ENQUIRY -> super.deleteEnquiry(); // option 15
+
+                    case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 16
                     case LOGOUT -> { // option 0
                         UserManager.getInstance().logout();
                         running = false;
@@ -92,14 +105,19 @@ public class OfficerUI extends ApplicantUI {
                 "5. (Yet to be tested) Approve / Reject Applicants' flat booking",
                 "6. Generate receipts",
                 "=================================",
-                "OFFICER AS AN APPLICANT",
-                "7. (Reserved) Apply for Project",
-                "8. Submit Enquiry",
-                "9. View Submitted Enquiry",
-                "10. Edit Enquiry",
-                "11. Delete Enquiry",
+                "OFFICER UI (APPLICANT)",
+                "=================================",
+                "7. View Open Projects",
+                "8. Apply Project",
+                "9. View Applied Projects",
+                "10. Book flat through HDB Officer",
+                "11. Flat Booking Withdrawal",
+                "12. Submit Enquiry",
+                "13. View Submitted Enquiry",
+                "14. Edit Enquiry",
+                "15. Delete Enquiry",
                 "==================================",
-                "12. Change Password",
+                "16. Change Password",
                 "0. Logout",
                 "=================================",
                 "Enter your choice: " };
@@ -404,7 +422,35 @@ public class OfficerUI extends ApplicantUI {
     // ClassCastException
     @Override
     protected void viewOpenProjects() {
-        System.out.println("This functionality is not available for HDB Officers in that capacity.");
+        System.out.println("This functionality is only for viewing Projects open for Application as Applicant only..");
         System.out.println("Please use Option 1 to view projects you're handling.");
+
+        System.out.println("List of Open Projects: ");
+        List<Project> projectList = ProjectController.getApplicantProjects(getOfficerUser());
+
+        // get officer project
+        List<Project> officerProject = ProjectController.getOfficerProjects(getOfficerUser());
+
+        // get project registering as officer
+        List<Project> registrationProject = OfficerController.getRegistrationList()
+            .stream()
+            .map(Registration::getProject)
+            .collect(Collectors.toList());
+
+        projectList.stream()
+            .filter(p -> !officerProject.contains(p) && !registrationProject.contains(p))
+            .collect(Collectors.toList());
+
+        displayProjectList(projectList);
+        try {
+            int projIndex = getIntInput("Select the project to view details for: ") - 1;
+            Project project = projectList.get(projIndex);
+
+            if (project != null) {
+                ProjectController.displayProjectDetails(project);
+            }
+        } catch (Exception e) {
+            System.out.println("Error viewing project: " + e.getMessage());
+        }
     }
 }

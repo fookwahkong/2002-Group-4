@@ -24,13 +24,15 @@ import java.util.Map;
 
 public class FileIOUtil {
 
-    public static final String APPLICANTS_FILE = FileIOUtil.class.getClassLoader().getResource("data/applicants.csv").getPath();
-    public static final String MANAGERS_FILE = FileIOUtil.class.getClassLoader().getResource("data/managers.csv").getPath();
-    public static final String OFFICERS_FILE = FileIOUtil.class.getClassLoader().getResource("data/officers.csv").getPath();
-    public static final String ENQUIRIES_FILE = FileIOUtil.class.getClassLoader().getResource("data/enquiries.csv").getPath();
-    public static final String PROJECTS_FILE = FileIOUtil.class.getClassLoader().getResource("data/projects.csv").getPath();
-    public static final String BOOKING_FILE = FileIOUtil.class.getClassLoader().getResource("data/bookings.csv").getPath();
-    public static final String REGISTRATIONS_FILE = FileIOUtil.class.getClassLoader().getResource("data/registrations.csv").getPath();
+    private static final String DATA_DIR = "src/main/resources/data/";
+
+    public static final String APPLICANTS_FILE = DATA_DIR + "applicants.csv";
+    public static final String MANAGERS_FILE = DATA_DIR + "managers.csv";
+    public static final String OFFICERS_FILE = DATA_DIR + "officers.csv";
+    public static final String ENQUIRIES_FILE = DATA_DIR + "enquiries.csv";
+    public static final String PROJECTS_FILE = DATA_DIR + "projects.csv";
+    public static final String BOOKING_FILE = DATA_DIR + "bookings.csv";
+    public static final String REGISTRATIONS_FILE = DATA_DIR + "registrations.csv";
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -199,10 +201,11 @@ public class FileIOUtil {
 
     public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {
         List<User> users = new ArrayList<>();
+        
+        File file = new File(filepath);
 
-        try (CSVReader reader = new CSVReader(new FileReader(filepath))) {
-
-            reader.readNext();
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            reader.readNext(); // Skip header
 
             String[] line;
             while ((line = reader.readNext()) != null) {
@@ -230,8 +233,9 @@ public class FileIOUtil {
     }
 
     public static void loadRegistration(List<Project> projects) {
-        try (CSVReader reader = new CSVReader(new FileReader(REGISTRATIONS_FILE))) {
-
+        File file = new File(REGISTRATIONS_FILE);
+        
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             reader.readNext();
 
             String[] line;
@@ -241,18 +245,15 @@ public class FileIOUtil {
                     continue;
                 }
 
-
                 String officerName = line[0].trim();
                 String projectName = line[1].trim();
                 String registrationStatusStr = line[2].trim();
-
 
                 User officerUser = UserManager.getInstance().findUserByName(officerName);
                 if (!(officerUser instanceof HDBOfficer officer)) {
                     System.err.println("Officer not found or invalid: " + officerName);
                     continue;
                 }
-
 
                 Project project = projects.stream()
                         .filter(p -> p.getName().equalsIgnoreCase(projectName))
@@ -263,11 +264,9 @@ public class FileIOUtil {
                     continue;
                 }
 
-
                 try {
                     RegistrationStatus registrationStatus = RegistrationStatus
                             .valueOf(registrationStatusStr.toUpperCase());
-
 
                     Registration registration = new Registration(officer, project, registrationStatus);
                     project.addRegistration(registration);
@@ -280,9 +279,12 @@ public class FileIOUtil {
         }
     }
 
-    public static void loadBookingDetails(List<Project> projects) {
-        try (CSVReader reader = new CSVReader(new FileReader(BOOKING_FILE))) {
+    
 
+    public static void loadBookingDetails(List<Project> projects) {
+        File file = new File(BOOKING_FILE);
+
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             reader.readNext();
 
             String[] line;
@@ -296,13 +298,11 @@ public class FileIOUtil {
                 String projectName = line[1].trim();
                 String housingType = line[2].trim();
 
-
                 User applicantUser = UserManager.getInstance().findUserByID(applicantID);
                 if (!(applicantUser instanceof Applicant applicant)) {
                     System.err.println("Applicant not found or invalid: " + applicantID);
                     continue;
                 }
-
 
                 Project project = projects.stream()
                         .filter(p -> p.getName().equalsIgnoreCase(projectName))
@@ -313,13 +313,13 @@ public class FileIOUtil {
                     continue;
                 }
 
-
                 applicant.setBookingDetails(project, housingType);
             }
         } catch (IOException | CsvValidationException e) {
             System.err.println("Error reading booking details file: " + e.getMessage());
         }
     }
+
 
     public static void saveBookingDetails(List<User> users) {
         List<Applicant> applicants = new ArrayList<>();
@@ -329,11 +329,16 @@ public class FileIOUtil {
             }
         }
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(BOOKING_FILE))) {
+        // Ensure directory exists
+        File file = new File(BOOKING_FILE);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
 
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
             String[] header = {"ApplicantID", "ProjectName", "HousingType"};
             writer.writeNext(header);
-
 
             for (Applicant applicant : applicants) {
                 Map<Project, String> bookingDetails = applicant.getBookingDetails();
@@ -358,11 +363,16 @@ public class FileIOUtil {
     }
 
     public static void saveUsersToFile(List<User> userList, String filepath) {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(filepath))) {
-
+        // Ensure directory exists
+        File file = new File(filepath);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
             String[] header = {"Name", "UserID", "Age", "MaritalStatus", "Password"};
             writer.writeNext(header);
-
 
             for (User user : userList) {
                 String maritalStatusStr = (user.getMaritalStatus() == MaritalStatus.SINGLE) ? "Single" : "Married";
@@ -383,8 +393,14 @@ public class FileIOUtil {
     }
 
     public static void saveProjectToFile(List<Project> projects, String filepath) {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(filepath))) {
-
+        // Ensure directory exists
+        File file = new File(filepath);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
             String[] header = {
                     "Project Name", "Neighborhood", "Visibility",
                     "Application opening date", "Application closing date",

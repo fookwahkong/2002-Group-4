@@ -71,8 +71,9 @@ public class OfficerUI extends ApplicantUI {
                     case GENERATE_RECEIPTS -> generateReceipts(); //option 6
 
                     // Applicant functions
-                    case VIEW_OPEN_PROJECTS -> viewOpenProjects(); // option 7 overwrite applicant
-                    case APPLY_PROJECT -> super.applyProject(); // option 8
+                    case VIEW_OPEN_PROJECTS -> viewOpenProjects(); // option 7 (projectList override)
+                    // case VIEW_OPEN_PROJECTS -> super.viewOpenProjects(); // option 7 use applicant one directly (remove the two additional print lines)
+                    case APPLY_PROJECT -> super.applyProject(); // option 8 (projectList override)
                     case VIEW_APPLIED_PROJECTS -> super.viewAppliedProjects(); // option 9
                     case FLAT_BOOKING -> super.flatBooking(); // option 10
                     case WITHDRAW_BOOKING -> super.withdrawBooking(); // option 11
@@ -425,32 +426,20 @@ public class OfficerUI extends ApplicantUI {
         System.out.println("This functionality is only for viewing Projects open for Application as Applicant only..");
         System.out.println("Please use Option 1 to view projects you're handling.");
 
-        System.out.println("List of Open Projects: ");
-        List<Project> projectList = ProjectController.getApplicantProjects(getOfficerUser());
+        super.viewOpenProjects();
+    }
 
-        // get officer project
-        List<Project> officerProject = ProjectController.getOfficerProjects(getOfficerUser());
-
-        // get project registering as officer
-        List<Project> registrationProject = OfficerController.getRegistrationList()
-            .stream()
-            .map(Registration::getProject)
-            .collect(Collectors.toList());
-
-        projectList.stream()
-            .filter(p -> !officerProject.contains(p) && !registrationProject.contains(p))
-            .collect(Collectors.toList());
-
-        displayProjectList(projectList);
-        try {
-            int projIndex = getIntInput("Select the project to view details for: ") - 1;
-            Project project = projectList.get(projIndex);
-
-            if (project != null) {
-                ProjectController.displayProjectDetails(project);
-            }
-        } catch (Exception e) {
-            System.out.println("Error viewing project: " + e.getMessage());
-        }
+    // override projectList for view and apply as Applicant
+    @Override
+    protected List<Project> getApplyProjectList() {
+        return ProjectController.getProjectList().stream()
+                .filter(project ->
+                // check if officer is not in assigned officers list
+                !project.getAssignedOfficers().contains(getOfficerUser())
+                        &&
+                        // check if officer registered for the project
+                        project.getRegistrationList().stream()
+                                .noneMatch(registration -> registration.getOfficer().equals(getOfficerUser())))
+                .toList();
     }
 }

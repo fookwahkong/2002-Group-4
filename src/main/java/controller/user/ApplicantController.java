@@ -115,4 +115,38 @@ public class ApplicantController {
         }
         return activeProjectCount > 0;
     }
+    
+    public static boolean requestFlatBooking(Project project, Applicant applicant) {
+        Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(applicant);
+        if (activeProject == null || activeProject.isEmpty()) {
+            return false;
+        }
+        
+        ProjectStatus status = activeProject.get(project);
+        if (status == ProjectStatus.SUCCESSFUL) {
+            ProjectController.updateApplicantStatus(project, applicant, ProjectStatus.REQUEST_BOOK);
+            return true;
+        }
+        
+        return false;
+    }
+
+    public static boolean requestBookingWithdrawal(Project project, Applicant applicant) {
+        Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(applicant);
+        if (activeProject == null || activeProject.isEmpty()) {
+            return false;
+        }
+        
+        ProjectStatus status = activeProject.get(project);
+        if (status == ProjectStatus.BOOKED || status == ProjectStatus.REQUEST_BOOK) {
+            ProjectController.updateApplicantStatus(project, applicant, ProjectStatus.REQUEST_WITHDRAW);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public static Map<Project, ProjectStatus> getActiveProjectStatus(Applicant applicant) {
+        return ProjectController.getApplicantActiveProject(applicant);
+    }
 }

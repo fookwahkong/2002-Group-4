@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class ApplicantUI extends UI {
     protected final User currentUser;
-    private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     private static final int VIEW_OPEN_PROJECTS = 1;
     private static final int APPLY_PROJECT = 2;
@@ -123,13 +123,16 @@ public class ApplicantUI extends UI {
             System.out.println("No visible project to view");
             return;
         }
+        
         displayProjectList(projectList);
+        
         try {
             int projIndex = getIntInput("Select the project to view details for: ") - 1;
-            Project project = projectList.get(projIndex);
-
-            if (project != null) {
+            if (projIndex >= 0 && projIndex < projectList.size()) {
+                Project project = projectList.get(projIndex);
                 ProjectController.displayProjectDetails(project);
+            } else {
+                System.out.println("Invalid project selection.");
             }
         } catch (Exception e) {
             System.out.println("Error viewing project: " + e.getMessage());
@@ -140,14 +143,12 @@ public class ApplicantUI extends UI {
     protected void applyProject() {
         try {
             Applicant applicant = getApplicantUser();
-            boolean validForApply = ApplicantController.checkValidity();
-            if (!validForApply) {
+            if (!ApplicantController.checkValidity()) {
                 System.out.println("You are not eligible to apply for a project at this time.");
                 return;
             }
 
             List<Project> projectList = getApplyProjectList();
-
             if (projectList == null || projectList.isEmpty()) {
                 System.out.println("Sorry. Currently no projects available for you to apply for.");
                 return;
@@ -158,7 +159,6 @@ public class ApplicantUI extends UI {
             displayProjectList(projectList);
 
             int projIndex = getIntInput("Select the project you want to apply for (0 to cancel): ") - 1;
-
             if (projIndex == -1) {
                 System.out.println("Application cancelled.");
                 return;
@@ -170,11 +170,6 @@ public class ApplicantUI extends UI {
             }
 
             Project proj = projectList.get(projIndex);
-            if (proj == null) {
-                System.out.println("Error: Selected project is null.");
-                return;
-            }
-
             ProjectController.addApplicant(proj, applicant);
             ProjectController.save();
             System.out.println("Application successful!");
@@ -187,6 +182,10 @@ public class ApplicantUI extends UI {
     //option 3
     protected void viewAppliedProjects() {
         List<Project> projectList = ApplicantController.getAppliedProject();
+        if (projectList == null || projectList.isEmpty()) {
+            System.out.println("You haven't applied for any projects yet.");
+            return;
+        }
 
         for (Project p : projectList) {
             try {
@@ -200,9 +199,8 @@ public class ApplicantUI extends UI {
 
     //option 4
     protected void flatBooking() {
-
-        Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(getApplicantUser());
-        if (activeProject == null) {
+        Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
+        if (activeProject == null || activeProject.isEmpty()) {
             System.out.println("No project was applied for!");
             return;
         }
@@ -216,8 +214,11 @@ public class ApplicantUI extends UI {
                     System.out.println("Request to book flat in " + p.getName() + "? (1. Yes 2. No)");
                     int choice = getValidIntInput(1, 2);
                     if (choice == 1) {
-                        System.out.println("Booking request forwarded.");
-                        ProjectController.updateApplicantStatus(p, getApplicantUser(), ProjectStatus.REQUEST_BOOK);
+                        if (ApplicantController.requestFlatBooking(p, getApplicantUser())) {
+                            System.out.println("Booking request forwarded.");
+                        } else {
+                            System.out.println("Booking request failed.");
+                        }
                     } else {
                         System.out.println("Booking not confirmed.");
                     }
@@ -232,8 +233,8 @@ public class ApplicantUI extends UI {
 
     //option 5
     protected void withdrawBooking() {
-        Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(getApplicantUser());
-        if (activeProject == null) {
+        Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
+        if (activeProject == null || activeProject.isEmpty()) {
             System.out.println("No booking was applied for!");
             return;
         }
@@ -243,12 +244,15 @@ public class ApplicantUI extends UI {
             ProjectStatus status = entry.getValue();
 
             switch (status) {
-                case BOOKED,REQUEST_BOOK -> {
+                case BOOKED, REQUEST_BOOK -> {
                     System.out.println("Withdrawal from flat in " + p.getName() + "? (1. Yes 2. No)");
                     int choice = getValidIntInput(1, 2);
                     if (choice == 1) {
-                        System.out.println("Withdrawal request forwarded.");
-                        ProjectController.updateApplicantStatus(p, getApplicantUser(), ProjectStatus.REQUEST_WITHDRAW);
+                        if (ApplicantController.requestBookingWithdrawal(p, getApplicantUser())) {
+                            System.out.println("Withdrawal request forwarded.");
+                        } else {
+                            System.out.println("Withdrawal request failed.");
+                        }
                     } else {
                         System.out.println("Withdrawal not confirmed.");
                     }
@@ -274,7 +278,6 @@ public class ApplicantUI extends UI {
             displayProjectList(projectList);
 
             int projIndex = getIntInput("Select the project to submit enquiry for (0 to cancel): ") - 1;
-
             if (projIndex == -1) {
                 System.out.println("Enquiry submission cancelled.");
                 return;
@@ -286,7 +289,6 @@ public class ApplicantUI extends UI {
             }
 
             Project proj = projectList.get(projIndex);
-
             System.out.print("Enter enquiry message: ");
             String message = scanner.nextLine();
 
@@ -296,6 +298,7 @@ public class ApplicantUI extends UI {
             }
 
             ApplicantController.submitEnquiry(message, proj);
+            System.out.println("Enquiry submitted successfully.");
         } catch (Exception e) {
             System.out.println("Error submitting enquiry: " + e.getMessage());
         }
@@ -312,15 +315,7 @@ public class ApplicantUI extends UI {
             }
 
             System.out.println("Your Enquiries:");
-            int cnt = 0;
-            for (Enquiry e : enquiryList) {
-                if (e != null) {
-                    cnt += 1;
-                    System.out.print(cnt + ". ");
-                    e.viewEnquiry(currentUser.getUserRole());
-                }
-            }
-            System.out.println();
+            displayEnquiryList(enquiryList);
         } catch (Exception e) {
             System.out.println("Error viewing enquiries: " + e.getMessage());
         }
@@ -337,18 +332,9 @@ public class ApplicantUI extends UI {
             }
 
             System.out.println("Your Enquiries:");
-            int cnt = 0;
-            for (Enquiry e : enquiryList) {
-                if (e != null) {
-                    cnt += 1;
-                    System.out.print(cnt + ". ");
-                    e.viewEnquiry(currentUser.getUserRole());
-                }
-            }
-            System.out.println();
+            displayEnquiryList(enquiryList);
 
             int enquiryIndex = getIntInput("Select the enquiry to edit (0 to cancel): ") - 1;
-
             if (enquiryIndex == -1) {
                 System.out.println("Edit operation cancelled.");
                 return;
@@ -360,7 +346,6 @@ public class ApplicantUI extends UI {
             }
 
             Enquiry enquiry = enquiryList.get(enquiryIndex);
-
             System.out.print("Enter new enquiry message: ");
             String newMessage = scanner.nextLine();
 
@@ -370,6 +355,7 @@ public class ApplicantUI extends UI {
             }
 
             ApplicantController.modifyEnquiry(enquiry, newMessage);
+            System.out.println("Enquiry updated successfully.");
         } catch (Exception e) {
             System.out.println("Error editing enquiry: " + e.getMessage());
         }
@@ -386,18 +372,9 @@ public class ApplicantUI extends UI {
             }
 
             System.out.println("Your Enquiries:");
-            int cnt = 0;
-            for (Enquiry e : enquiryList) {
-                if (e != null) {
-                    cnt += 1;
-                    System.out.print(cnt + ". ");
-                    e.viewEnquiry(currentUser.getUserRole());
-                }
-            }
-            System.out.println();
+            displayEnquiryList(enquiryList);
 
             int enquiryIndex = getIntInput("Select the enquiry to delete (0 to cancel): ") - 1;
-
             if (enquiryIndex == -1) {
                 System.out.println("Delete operation cancelled.");
                 return;
@@ -409,8 +386,8 @@ public class ApplicantUI extends UI {
             }
 
             Enquiry enquiry = enquiryList.get(enquiryIndex);
-
             ApplicantController.deleteEnquiry(enquiry);
+            System.out.println("Enquiry deleted successfully.");
         } catch (Exception e) {
             System.out.println("Error deleting enquiry: " + e.getMessage());
         }
@@ -431,5 +408,17 @@ public class ApplicantUI extends UI {
                 cnt += 1;
             }
         }
+    }
+    
+    private void displayEnquiryList(List<Enquiry> enquiryList) {
+        int cnt = 0;
+        for (Enquiry e : enquiryList) {
+            if (e != null) {
+                cnt += 1;
+                System.out.print(cnt + ". ");
+                e.viewEnquiry(currentUser.getUserRole());
+            }
+        }
+        System.out.println();
     }
 }

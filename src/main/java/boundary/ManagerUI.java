@@ -2,6 +2,7 @@ package boundary;
 
 import controller.enquiry.EnquiryController;
 import controller.project.ProjectController;
+import controller.user.ApplicantController;
 import controller.user.UserManager;
 import entity.Enquiry;
 import entity.Registration;
@@ -9,6 +10,7 @@ import entity.project.Project;
 import entity.user.Applicant;
 import entity.user.HDBManager;
 import entity.user.User;
+import enums.MaritalStatus;
 import enums.ProjectStatus;
 import enums.UserRole;
 
@@ -76,7 +78,7 @@ public class ManagerUI extends UI {
             case APPROVE_REJECT_OFFICER -> approveRejectOfficer(); //option 6
             case APPROVE_REJECT_APPLICATION -> approveOrRejectApplication(); //option 7
             case APPROVE_REJECT_WITHDRAWAL -> approveOrRejectWithdrawal(); //option 8
-            case GENERATE_REPORTS -> {System.out.println("Option 9 not implemented yet");} //option 9
+            case GENERATE_REPORTS -> generateReport(); //option 9
             case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 10
             case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 11
             case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 12
@@ -97,11 +99,11 @@ public class ManagerUI extends UI {
             "2. Create HDB Project",
             "3. Edit HDB Project",
             "4. Delete HDB Project",
-            "5. (Reserved) View Pending and Approved HDB Officer Registration",
-            "6. (Reserved) Approve / Reject HDB Officer Registration",
+            "5. View Pending and Approved HDB Officer Registration",
+            "6. Approve / Reject HDB Officer Registration",
             "7. Approve / Reject BTO Application",
-            "8. (Reserved) Approve / Reject Application Withdrawal",
-            "9. (Reserved) Generate Reports",
+            "8. Approve / Reject Application Withdrawal",
+            "9. Generate Reports",
             "10. View All Enquiries",
             "11. View and Reply to Enquiries",
             "12. Change Password",
@@ -610,6 +612,93 @@ public class ManagerUI extends UI {
         ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
         System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
 
+    }
+
+    private void generateReport() {
+
+        List<Project> projects = ProjectController.getProjectList();
+
+        System.out.println("\n===== REPORT GENERATION =====");
+        System.out.println("1. All applicants");
+        System.out.println("2. Filter by marital status");
+        System.out.println("3. Filter by flat type");
+        System.out.println("4. Filter by age range");
+        System.out.println("0. Return to main menu");
+
+        int filterChoice = getValidIntInput(0, 4);
+        if (filterChoice == 0) return;
+
+        MaritalStatus maritalStatus = null;
+        String flatTypeFilter = null;
+        int minAge = 0;
+        int maxAge = Integer.MAX_VALUE;
+
+        switch (filterChoice) {
+            case 2 -> {
+                try {
+                    String statusInput = getStringInput("Enter marital status to filter by (SINGLE, MARRIED): ");
+                    maritalStatus = MaritalStatus.valueOf(statusInput.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid marital status. Using no filter.");
+                }
+            }
+            case 3 -> {
+                flatTypeFilter = getStringInput("Enter flat type to filter by (2-Room, 3-Room): ");
+                if (!"2-Room".equals(flatTypeFilter) && !"3-Room".equals(flatTypeFilter)) {
+                    System.out.println("Invalid flat type. Using no filter.");
+                    flatTypeFilter = null;
+                }
+            }
+            case 4 -> {
+                try {
+                    minAge = getIntInput("Enter minimum age: ");
+                    maxAge = getIntInput("Enter maximum age: ");
+                    if (minAge > maxAge) {
+                        System.out.println("Minimum age cannot be greater than maximum age. Using no age filter.");
+                        minAge = 0;
+                        maxAge = Integer.MAX_VALUE;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Invalid age input. Using no age filter.");
+                    minAge = 0;
+                    maxAge = Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        System.out.println("\n======= REPORT ========");
+        System.out.println("Name | Age | Marital Status | Flat Type | Project Name");
+        System.out.println("--------------------------------------------------");
+
+        int recordCount = 0;
+        for (Project project: projects) {
+            for (Applicant applicant: project.getApplicants()) {
+                Map<Project, String> bookingDetails = applicant.getBookingDetails();
+                String flatType = bookingDetails.get(project);
+
+                if (flatType == null) continue;
+
+                if (maritalStatus != null && !applicant.getMaritalStatus().equals(maritalStatus.toString())) continue;
+                if (flatTypeFilter != null && !flatType.equals(flatTypeFilter)) continue;
+                if (applicant.getAge() < minAge || applicant.getAge() > maxAge) continue;
+
+                System.out.printf("%s | %d | %s | %s | %s\n",
+                        applicant.getName(),
+                        applicant.getAge(),
+                        applicant.getMaritalStatus(),
+                        flatType,
+                        project.getName());
+                recordCount++;
+            }
+        }
+
+        if (recordCount == 0) {
+            System.out.println("No records match the selected filters.");
+        } else {
+            System.out.println("\nTotal records: " + recordCount);
+        }
+
+        System.out.println("======= END REPORT ========");
     }
     
 

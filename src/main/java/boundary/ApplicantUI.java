@@ -97,6 +97,7 @@ public class ApplicantUI extends UI {
                 "7. View Submitted Enquiry",
                 "8. Edit Enquiry",
                 "9. Delete Enquiry",
+                "==================================",
                 "10. Change Password",
                 "0. Logout",
                 "==================================",
@@ -108,10 +109,15 @@ public class ApplicantUI extends UI {
         }
     }
 
+    // helper function for option 1,2 (for officer override)
+    protected List<Project> getApplyProjectList() {
+        return ProjectController.getApplicantProjects(getApplicantUser());
+    }
+
     // option 1
     protected void viewOpenProjects() {
         System.out.println("List of Open Projects: ");
-        List<Project> projectList = ProjectController.getApplicantProjects(getApplicantUser());
+        List<Project> projectList = getApplyProjectList();
 
         if (projectList.isEmpty()) {
             System.out.println("No visible project to view");
@@ -140,7 +146,7 @@ public class ApplicantUI extends UI {
                 return;
             }
 
-            List<Project> projectList = ProjectController.getApplicantProjects(applicant);
+            List<Project> projectList = getApplyProjectList();
 
             if (projectList == null || projectList.isEmpty()) {
                 System.out.println("Sorry. Currently no projects available for you to apply for.");

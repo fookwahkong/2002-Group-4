@@ -221,7 +221,7 @@ public class ManagerUI extends UI {
 
     // option 3
     private void editHDBProject() {
-        List<Project> projectList = ProjectController.getProjectList();
+        List<Project> projectList = ProjectController.getManagerProjects(currentUser);
 
         if (projectList.isEmpty()) {
             System.out.println("You have no projects to edit.");

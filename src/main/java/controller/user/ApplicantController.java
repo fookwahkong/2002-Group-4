@@ -13,109 +13,146 @@ import enums.ProjectStatus;
 import utils.FileIOUtil;
 
 public class ApplicantController {
+    
+    /**
+     * Gets the current applicant user
+     * @return The current applicant user
+     */
+    private static Applicant getCurrentApplicant() {
+        return (Applicant) UserManager.getInstance().getCurrentUser();
+    }
 
+    /**
+     * Updates the applicant's profile
+     * @param project The project the applicant is applying for
+     * @param housingType The housing type the applicant is applying for
+     */
     public static void updateProfile(Project project, String housingType) {
-        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
-
+        Applicant applicant = getCurrentApplicant();
         applicant.setBookingDetails(project, housingType);
         FileIOUtil.saveBookingDetails(UserManager.getUsers());
     }
     
+    /**
+     * Checks if an applicant is single and above 35
+     * @param applicant The applicant to check
+     * @return true if the applicant is single and above 35, false otherwise
+     */
     public static boolean checkSingle(Applicant applicant) {
-        if (applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
-            return true;
-        } 
-        return false;
+        return applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE;
+    }
+
+    /**
+     * Checks if an applicant is married and above 21
+     * @param applicant The applicant to check
+     * @return true if the applicant is married and above 21, false otherwise
+     */
+    public static boolean checkMarried(Applicant applicant) {
+        return applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED;
     }
 
     /**
      * Checks if an applicant is eligible to apply for a new project
-     * Eligibility criteria:
-     * 1. Applicant is 35+ and single, OR
-     * 2. Applicant is 21+ and married,
-     * AND
-     * 3. Applicant has no active projects
+     * @param applicant The applicant to check
+     * @return true if the applicant is eligible to apply for a new project, false otherwise
      */
-    public static boolean checkValidity() {
-        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
-
-        // Check age and marital status first
-        if (((applicant.getAge() >= 35 && applicant.getMaritalStatus() == MaritalStatus.SINGLE) ||
-                (applicant.getAge() >= 21 && applicant.getMaritalStatus() == MaritalStatus.MARRIED)) &&
-                !hasActiveProject(applicant)) {
-            return true;
-        }
-
-        return false;
+    public static boolean checkEligibility() {
+        Applicant applicant = getCurrentApplicant();
+        
+        boolean meetsAgeAndMaritalStatus = checkSingle(applicant) || checkMarried(applicant);
+            
+        return meetsAgeAndMaritalStatus && !hasActiveProject(applicant);
     }
 
-    // get projects that associates with the applicant
-    public static List<Project> getAppliedProject() {
-        Applicant applicant = (Applicant) (UserManager.getInstance().getCurrentUser());
+    /**
+     * Gets all projects that the current applicant has applied for
+     * @return List of projects the applicant has applied for
+     */
+    public static List<Project> getAppliedProjects() {
+        Applicant applicant = getCurrentApplicant();
         List<Project> projectList = new ArrayList<>();
-        for (Project p : ProjectController.getProjectList()) {
-            if (p.getApplicants().contains(applicant)) {
-                projectList.add(p);
+        
+        for (Project project : ProjectController.getProjectList()) {
+            if (project.getApplicants().contains(applicant)) {
+                projectList.add(project);
             }
         }
         return projectList;
     }
 
-    // Submits a new enquiry from the current user
+    /**
+     * Submits a new enquiry from the current user
+     * @param message The enquiry message
+     * @param project The project the enquiry is for
+     */
     public static void submitEnquiry(String message, Project project) {
-        Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
+        Applicant currentUser = getCurrentApplicant();
         Enquiry enquiry = new Enquiry(currentUser, project, message);
         project.addEnquiry(enquiry);
         System.out.println("Enquiry Submitted.");
     }
 
-    // Deletes an enquiry
-
+    /**
+     * Deletes an enquiry
+     * @param enquiry The enquiry to delete
+     */
     public static void deleteEnquiry(Enquiry enquiry) {
         Project project = enquiry.getProject();
         project.deleteEnquiry(enquiry);
     }
 
-    // Gets all enquiries for the current user
+    /**
+     * Gets all enquiries for the current user
+     * @return List of enquiries made by the current user
+     */
     public static List<Enquiry> getEnquiries() {
-        Applicant currentUser = (Applicant) (UserManager.getInstance().getCurrentUser());
-        List<Enquiry> returnList = new ArrayList<>();
+        Applicant currentUser = getCurrentApplicant();
+        List<Enquiry> userEnquiries = new ArrayList<>();
 
-        List<Project> projectList = ProjectController.getProjectList();
-        for (Project project : projectList) {
+        for (Project project : ProjectController.getProjectList()) {
             for (Enquiry enquiry : project.getEnquiries()) {
                 if (enquiry.getApplicant().equals(currentUser)) {
-                    returnList.add(enquiry);
+                    userEnquiries.add(enquiry);
                 }
             }
         }
 
-        return returnList;
+        return userEnquiries;
     }
 
-    // Modifies an existing enquiry
+    /**
+     * 
+     * @param enquiry
+     * @param newMessage
+     */
     public static void modifyEnquiry(Enquiry enquiry, String newMessage) {
         enquiry.setMessage(newMessage);
         System.out.println("Enquiry updated.");
     }
 
-    // helper method to check if there is active project
+    /**
+     * Checks if an applicant has an active project
+     * @param applicant The applicant to check
+     * @return true if the applicant has an active project, false otherwise
+     */
     public static boolean hasActiveProject(Applicant applicant) {
-        int activeProjectCount = 0;
         Map<Project, ProjectStatus> applicantActiveProject = ProjectController.getApplicantActiveProject(applicant);
         if (applicantActiveProject == null) {
             return false;
         }
-        for (Map.Entry<Project, ProjectStatus> entry : applicantActiveProject.entrySet()) {
-            if (entry.getValue() == ProjectStatus.SUCCESSFUL ||
-                    entry.getValue() == ProjectStatus.BOOKED ||
-                    entry.getValue() == ProjectStatus.PENDING) {
-                activeProjectCount++;
-            }
-        }
-        return activeProjectCount > 0;
+        
+        return applicantActiveProject.values().stream()
+            .anyMatch(status -> status == ProjectStatus.SUCCESSFUL || 
+                              status == ProjectStatus.BOOKED || 
+                              status == ProjectStatus.PENDING);
     }
     
+    /**
+     * Requests a flat booking for an applicant
+     * @param project The project to request a flat booking for
+     * @param applicant The applicant requesting the flat booking
+     * @return true if the request was successful, false otherwise
+     */
     public static boolean requestFlatBooking(Project project, Applicant applicant) {
         Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(applicant);
         if (activeProject == null || activeProject.isEmpty()) {
@@ -131,6 +168,12 @@ public class ApplicantController {
         return false;
     }
 
+    /**
+     * Requests a booking withdrawal for an applicant
+     * @param project The project to request a booking withdrawal for
+     * @param applicant The applicant requesting the booking withdrawal
+     * @return true if the request was successful, false otherwise
+     */
     public static boolean requestBookingWithdrawal(Project project, Applicant applicant) {
         Map<Project, ProjectStatus> activeProject = ProjectController.getApplicantActiveProject(applicant);
         if (activeProject == null || activeProject.isEmpty()) {
@@ -146,6 +189,11 @@ public class ApplicantController {
         return false;
     }
     
+    /**
+     * Gets the status of the applicant's active project
+     * @param applicant The applicant to get the active project status for
+     * @return The status of the applicant's active project
+     */
     public static Map<Project, ProjectStatus> getActiveProjectStatus(Applicant applicant) {
         return ProjectController.getApplicantActiveProject(applicant);
     }

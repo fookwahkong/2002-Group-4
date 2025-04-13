@@ -143,7 +143,7 @@ public class ApplicantUI extends UI {
     protected void applyProject() {
         try {
             Applicant applicant = getApplicantUser();
-            if (!ApplicantController.checkValidity()) {
+            if (!ApplicantController.checkEligibility()) {
                 System.out.println("You are not eligible to apply for a project at this time.");
                 return;
             }
@@ -181,7 +181,7 @@ public class ApplicantUI extends UI {
 
     //option 3
     protected void viewAppliedProjects() {
-        List<Project> projectList = ApplicantController.getAppliedProject();
+        List<Project> projectList = ApplicantController.getAppliedProjects();
         if (projectList == null || projectList.isEmpty()) {
             System.out.println("You haven't applied for any projects yet.");
             return;

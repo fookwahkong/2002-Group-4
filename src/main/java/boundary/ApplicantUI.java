@@ -1,5 +1,7 @@
 package boundary;
 
+import controller.password.IUserController;
+import controller.password.PasswordController;
 import controller.project.ProjectController;
 import controller.user.ApplicantController;
 import controller.user.UserManager;
@@ -14,8 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ApplicantUI extends UI {
+
+    IUserController controller = new PasswordController();
+    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
+
     protected final User currentUser;
-    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
 
     private static final int VIEW_OPEN_PROJECTS = 1;
     private static final int APPLY_PROJECT = 2;

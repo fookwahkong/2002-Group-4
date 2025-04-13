@@ -1,12 +1,15 @@
 package boundary;
 
-import controller.user.PasswordController;
+import controller.password.IUserController;
 import controller.user.UserManager;
 import entity.user.User;
 
 public class ChangePasswordUI extends UI {
 
-    public ChangePasswordUI() {
+    private final IUserController userController;
+
+    public ChangePasswordUI(IUserController userController) {
+        this.userController = userController;
     }
 
     protected void displayChangePasswordMenu() {
@@ -37,7 +40,7 @@ public class ChangePasswordUI extends UI {
 
             String password = getStringInput(content);
 
-            successful = PasswordController.updatePassword(currentUser, password);
+            successful = userController.updatePassword(currentUser, password);
 
             if (successful) {
                 System.out.println("Password changed successfully!");
@@ -49,3 +52,4 @@ public class ChangePasswordUI extends UI {
         }
     }
 }
+

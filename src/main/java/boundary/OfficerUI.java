@@ -1,6 +1,8 @@
 package boundary;
 
 import controller.enquiry.EnquiryController;
+import controller.password.IUserController;
+import controller.password.PasswordController;
 import controller.project.ProjectController;
 import controller.user.OfficerController;
 import controller.user.UserManager;
@@ -20,7 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OfficerUI extends ApplicantUI {
-    private ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+
+    IUserController controller = new PasswordController();
+    private ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
 
     private static final int VIEW_PROJECTS = 1;
     private static final int VIEW_AND_REPLY_ENQUIRIES = 2;

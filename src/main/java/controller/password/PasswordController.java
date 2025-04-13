@@ -1,10 +1,12 @@
-package controller.user;
+package controller.password;
 
+import controller.user.UserManager;
 import entity.user.User;
 
-public class PasswordController {
+public class PasswordController implements IUserController {
 
-    public static boolean updatePassword(User user, String newPassword) {
+    @Override
+    public boolean updatePassword(User user, String newPassword) {
         if (isPasswordValid(newPassword)) {
             user.changePassword(newPassword);
             UserManager.save();

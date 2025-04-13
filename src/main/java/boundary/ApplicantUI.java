@@ -69,7 +69,7 @@ public class ApplicantUI extends UI {
                     case VIEW_ENQUIRY -> viewEnquiry();
                     case EDIT_ENQUIRY -> editEnquiry();
                     case DELETE_ENQUIRY -> deleteEnquiry();
-                    case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu();
+                    case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu();
                     case LOGOUT -> {
                         UserManager.getInstance().logout();
                         running = false;

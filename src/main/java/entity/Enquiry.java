@@ -10,7 +10,6 @@ public class Enquiry {
     String message;
     String reply = "-";
     Project project;
-    UserRole[] peopleValidforViewing = {UserRole.APPLICANT, UserRole.HDB_MANAGER};
     private boolean replied = false;
 
 

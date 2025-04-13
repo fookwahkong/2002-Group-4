@@ -6,13 +6,13 @@ import entity.user.User;
 public class LoginUI extends UI {
 
     public void startLogin() {
-        User loggedInUser = showLoginMenu();
+        User loggedInUser = displayLoginMenu();
         if (loggedInUser != null) {
             navigateToMainMenu(loggedInUser);
         }
     }
 
-    public User showLoginMenu() {
+    public User displayLoginMenu() {
         boolean exit = false;
         User loggedInUser = null;
 
@@ -72,7 +72,7 @@ public class LoginUI extends UI {
     }
 
 
-    public void navigateToMainMenu(User user) {
+    protected void navigateToMainMenu(User user) {
         if (user == null) {
             return;
         }
@@ -100,7 +100,7 @@ public class LoginUI extends UI {
         }
     }
 
-    public void navigateToLoginMenu() {
+    protected void navigateToLoginMenu() {
         UserManager.getInstance().logout();
     }
 

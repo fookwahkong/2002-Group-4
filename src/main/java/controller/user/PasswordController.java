@@ -4,7 +4,7 @@ import entity.user.User;
 
 public class PasswordController {
 
-    public boolean updatePassword(User user, String newPassword) {
+    public static boolean updatePassword(User user, String newPassword) {
         if (isPasswordValid(newPassword)) {
             user.changePassword(newPassword);
             UserManager.save();
@@ -13,7 +13,7 @@ public class PasswordController {
         return false;
     }
 
-    public boolean isPasswordValid(String password) {
+    public static boolean isPasswordValid(String password) {
         if (password == null || password.length() < 8) {
             return false;
         }

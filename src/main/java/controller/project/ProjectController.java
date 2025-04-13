@@ -29,7 +29,7 @@ public class ProjectController {
     }
 
     public static void load() {
-        projects = FileIOUtil.loadProjects(); // load projects without resolving references
+        projects = FileIOUtil.loadProjects(); 
     }
 
     public static void save() {
@@ -42,11 +42,11 @@ public class ProjectController {
     }
 
     // get projects managed by manager
-    public static List<Project> getManagerProjects(HDBManager user) {
+    public static List<Project> getManagerProjects(HDBManager manager) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> {
-                    System.out.println("Comparing managers: " + project.getManager() + " and " + user);
-                    return project.getManager().equals(user);
+                    System.out.println("Comparing managers: " + project.getManager() + " and " + manager);
+                    return project.getManager().equals(manager);
                 })
                 .toList();
     }
@@ -74,13 +74,6 @@ public class ProjectController {
                 .toList();
     }
 
-    // get open projects
-    public static List<Project> getOpenProjects(Applicant applicant) {
-        return ProjectController.getProjectList().stream()
-                .filter(project -> project.getVisibility() == true)
-                .toList();
-    }
-
     // get all the projects that applicant from each group can see and apply
     public static List<Project> getApplicantProjects(Applicant applicant) {
         if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
@@ -89,7 +82,9 @@ public class ProjectController {
                     .filter(project -> project.getVisibility() == true)
                     .toList();
         } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
-            return getOpenProjects(applicant);
+            return ProjectController.getProjectList().stream()
+                .filter(project -> project.getVisibility() == true)
+                .toList();
         }
         return new ArrayList<>(); // return empty list if the applicant is neither conditions are met
         // (possible bug if reached here)

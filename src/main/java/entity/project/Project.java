@@ -25,7 +25,7 @@ public class Project {
     private Map<Applicant, ProjectStatus> applicants; //applicants who applied for the project
     private HDBManager manager;
     private List<HDBOfficer> officers;
-    private int officerSlot = 10;
+    private int officerSlot;
     private List<Enquiry> enquiries;
     private List<Registration> registrations;
 

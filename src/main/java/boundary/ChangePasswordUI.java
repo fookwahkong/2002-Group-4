@@ -6,13 +6,10 @@ import entity.user.User;
 
 public class ChangePasswordUI extends UI {
 
-    private PasswordController passwordController;
-
     public ChangePasswordUI() {
-        passwordController = new PasswordController();
     }
 
-    public void showChangePasswordMenu() {
+    protected void displayChangePasswordMenu() {
         User currentUser = UserManager.getInstance().getCurrentUser();
 
         if (currentUser == null) {
@@ -40,7 +37,7 @@ public class ChangePasswordUI extends UI {
 
             String password = getStringInput(content);
 
-            successful = passwordController.updatePassword(currentUser, password);
+            successful = PasswordController.updatePassword(currentUser, password);
 
             if (successful) {
                 System.out.println("Password changed successfully!");

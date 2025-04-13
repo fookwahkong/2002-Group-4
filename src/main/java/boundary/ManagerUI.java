@@ -2,7 +2,6 @@ package boundary;
 
 import controller.enquiry.EnquiryController;
 import controller.project.ProjectController;
-import controller.user.ApplicantController;
 import controller.user.UserManager;
 import entity.Enquiry;
 import entity.Registration;
@@ -70,18 +69,18 @@ public class ManagerUI extends UI {
 
     private boolean handleMenuChoice(int choice) {
         switch (choice) {
-            case VIEW_PROJECTS -> viewProjects(); // option 1
+            case VIEW_PROJECTS -> viewAllProjects(); // option 1
             case CREATE_PROJECT -> createHDBProject(); // option 2
             case EDIT_PROJECT -> editHDBProject(); // option 3
             case DELETE_PROJECT -> deleteHDBProject(); // option 4
             case VIEW_OFFICER_REGISTRATION_LIST -> viewOfficerRegistration(); //option 5
             case APPROVE_REJECT_OFFICER -> approveRejectOfficer(); //option 6
-            case APPROVE_REJECT_APPLICATION -> approveOrRejectApplication(); //option 7
-            case APPROVE_REJECT_WITHDRAWAL -> approveOrRejectWithdrawal(); //option 8
+            case APPROVE_REJECT_APPLICATION -> approveRejectApplication(); //option 7
+            case APPROVE_REJECT_WITHDRAWAL -> approveRejectWithdrawal(); //option 8
             case GENERATE_REPORTS -> generateReport(); //option 9
             case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 10
             case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 11
-            case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 12
+            case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu(); // option 12
             case LOGOUT -> { // option 0
                 UserManager.getInstance().logout();
                 new LoginUI().startLogin();
@@ -118,7 +117,7 @@ public class ManagerUI extends UI {
     }
 
     // option 1
-    private void viewProjects() {
+    protected void viewAllProjects() {
         List<Project> projectsToShow = selectProjectList();
 
         if (projectsToShow == null || projectsToShow.isEmpty()) {
@@ -164,7 +163,7 @@ public class ManagerUI extends UI {
     }
 
     // option 2
-    private void createHDBProject() {
+    protected void createHDBProject() {
         try {
             ProjectData data = collectProjectData();
 
@@ -208,7 +207,7 @@ public class ManagerUI extends UI {
         return data;
     }
 
-    // Helper class to store project input data (option 2)
+    // Anonymous class to store project input data (option 2)
     private static class ProjectData {
         String name;
         String neighborhood;
@@ -222,7 +221,7 @@ public class ManagerUI extends UI {
     }
 
     // option 3
-    private void editHDBProject() {
+    protected void editHDBProject() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
 
         if (projectList.isEmpty()) {
@@ -390,10 +389,6 @@ public class ManagerUI extends UI {
         updateAction.accept(input);
     }
 
-    private void updateProjectFloatField(String prompt, Consumer<Float> updateAction) {
-        float input = getFloatInput(prompt);
-        updateAction.accept(input);
-    }
 
     private void updateProjectDateField(String prompt, Consumer<String> updateAction) {
         LocalDate date = getDateInput(prompt);
@@ -408,7 +403,7 @@ public class ManagerUI extends UI {
     }
 
     // option 4
-    private void deleteHDBProject() {
+    protected void deleteHDBProject() {
         List<Project> projectList = ProjectController.getProjectList();
 
         if (projectList.isEmpty()) {
@@ -440,7 +435,7 @@ public class ManagerUI extends UI {
     }
 
     // option 5
-    private void viewOfficerRegistration() {
+    protected void viewOfficerRegistration() {
         List<Registration> registrationList = getRegistrationList();
 
         int i = 0;
@@ -455,7 +450,7 @@ public class ManagerUI extends UI {
     }
 
     // option 6
-    private void approveRejectOfficer() {
+    protected void approveRejectOfficer() {
         viewOfficerRegistration(); // print registration list
         List<Registration> registrationList = getRegistrationList();
 
@@ -489,7 +484,7 @@ public class ManagerUI extends UI {
     }
 
     // option 7
-    private void approveOrRejectApplication() {
+    protected void approveRejectApplication() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
         displayProjectList(projectList);
 
@@ -562,7 +557,8 @@ public class ManagerUI extends UI {
         System.out.println("0. Return to main menu");
     }
 
-    private void approveOrRejectWithdrawal() {
+    //option 8
+    protected void approveRejectWithdrawal() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
         displayProjectList(projectList);
 
@@ -614,7 +610,8 @@ public class ManagerUI extends UI {
 
     }
 
-    private void generateReport() {
+    //option 9
+    protected void generateReport() {
 
         List<Project> projects = ProjectController.getProjectList();
 
@@ -703,7 +700,7 @@ public class ManagerUI extends UI {
     
 
     // option 10
-    private void viewAllEnquiries() {
+    protected void viewAllEnquiries() {
         List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
 
         if (enquiryList.isEmpty()) {
@@ -725,7 +722,7 @@ public class ManagerUI extends UI {
     }
 
     // option 11
-    private void viewAndReplyToEnquiries() {
+    protected void viewAndReplyToEnquiries() {
         List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");

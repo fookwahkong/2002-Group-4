@@ -19,9 +19,8 @@ public class ProjectBuilder {
     private boolean visible = true;
     private LocalDate openingDate;
     private LocalDate closingDate;
-    private List<Applicant> applicants;
     private HDBManager manager;
-    private int officerSlots = 10;
+    private int officerSlots;
     private Map<String, Housing> housingTypes = new HashMap<>();
 
     public ProjectBuilder() {
@@ -75,11 +74,6 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder withApplicant(List<Applicant> applicants) {
-        this.applicants = applicants;
-        return this;
-    }
-
     public ProjectBuilder withManager(HDBManager manager) {
         this.manager = manager;
         return this;
@@ -109,7 +103,6 @@ public class ProjectBuilder {
             project.setClosingDate(closingDate);
         }
         
-
         // Set manager
         if (manager != null) {
             project.setManagerInCharge(manager);

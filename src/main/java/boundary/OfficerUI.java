@@ -82,7 +82,7 @@ public class OfficerUI extends ApplicantUI {
                     case EDIT_ENQUIRY -> super.editEnquiry(); // option 14
                     case DELETE_ENQUIRY -> super.deleteEnquiry(); // option 15
 
-                    case CHANGE_PASSWORD -> changePasswordUI.showChangePasswordMenu(); // option 16
+                    case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu(); // option 16
                     case LOGOUT -> { // option 0
                         UserManager.getInstance().logout();
                         running = false;
@@ -128,7 +128,7 @@ public class OfficerUI extends ApplicantUI {
     }
 
     // Option 1
-    private void viewProjects() {
+    protected void viewProjects() {
         HDBOfficer officer = getOfficerUser();
         List<Project> projectList = ProjectController.getOfficerProjects(officer);
         if (projectList.isEmpty()) {
@@ -154,7 +154,7 @@ public class OfficerUI extends ApplicantUI {
     }
 
     // Option 2
-    private void viewAndReplyToEnquiries() {
+    protected void viewAndReplyToEnquiries() {
         HDBOfficer officer = getOfficerUser();
         List<Enquiry> enquiries = EnquiryController.getEnquiriesList(officer);
         if (enquiries.isEmpty()) {

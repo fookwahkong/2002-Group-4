@@ -239,10 +239,20 @@ public class ProjectController {
         System.out.println(details.toString());
     }
 
+    private static boolean singleProjectCheck(Project project, HDBManager manager) {
+        List<Project> projectList = getManagerProjects(manager);
+        for (Project p: projectList) {
+            if (!(p.getClosingDate().isBefore(project.getOpeningDate()) || p.getOpeningDate().isAfter(project.getClosingDate()))) { // if closing < opening or opening > closing
+                return false;
+            }  
+        }
+        return true;
+    }
+
     public static void createProject(String projectName, String neighbourhood, float priceOne,
             int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
             String openingDate, String closingDate, HDBManager manager,
-            int officerSlots) {
+            int officerSlots) throws Exception {
 
         ProjectBuilder projectBuilder = new ProjectBuilder();
         Project project = projectBuilder
@@ -256,8 +266,13 @@ public class ProjectController {
                 .withOfficerSlots(officerSlots)
                 .build();
 
-        projects.add(project);
-        save();
+        if (singleProjectCheck(project, manager)) {
+            projects.add(project);
+            save();
+        } else {
+            throw new Exception("Manager can only handle one Project within each application period.");
+        }
+
     }
 
     public static void deleteProject(Project project) {

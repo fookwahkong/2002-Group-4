@@ -1,6 +1,8 @@
 package boundary;
 
 import controller.enquiry.EnquiryController;
+import controller.password.IUserController;
+import controller.password.PasswordController;
 import controller.project.ProjectController;
 import controller.user.UserManager;
 import entity.Enquiry;
@@ -21,7 +23,8 @@ import java.util.function.Consumer;
 
 public class ManagerUI extends UI {
     private final HDBManager currentUser;
-    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
+    IUserController controller = new PasswordController();
+    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
 
     // Menu options as constants to improve readability
     private static final int VIEW_PROJECTS = 1;

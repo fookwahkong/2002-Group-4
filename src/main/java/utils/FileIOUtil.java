@@ -14,6 +14,7 @@ import enums.MaritalStatus;
 import enums.ProjectStatus;
 import enums.RegistrationStatus;
 import enums.UserRole;
+import interfaces.BookingCapable;
 
 import java.io.*;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +36,7 @@ public class FileIOUtil {
     public static final String REGISTRATIONS_FILE = DATA_DIR + "registrations.csv";
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final UserFactory userFactory = new UserFactory();
 
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -222,8 +224,9 @@ public class FileIOUtil {
 
                 String password = line[4];
 
-                User user = UserFactory.createUser(userID, password, name, age, maritalStatus, userRole);
+                User user = userFactory.createUser(userID, password, name, age, maritalStatus, userRole);
                 users.add(user);
+
             }
         } catch (IOException | CsvValidationException e) {
             throw new RuntimeException("Error loading users from file: " + e.getMessage());
@@ -279,8 +282,6 @@ public class FileIOUtil {
         }
     }
 
-    
-
     public static void loadBookingDetails(List<Project> projects) {
         File file = new File(BOOKING_FILE);
 
@@ -299,8 +300,10 @@ public class FileIOUtil {
                 String housingType = line[2].trim();
 
                 User applicantUser = UserManager.getInstance().findUserByID(applicantID);
-                if (!(applicantUser instanceof Applicant applicant)) {
-                    System.err.println("Applicant not found or invalid: " + applicantID);
+
+                // Check if user is BookingCapable (interface-based approach)
+                if (!(applicantUser instanceof BookingCapable bookingCapable)) {
+                    System.err.println("User is not booking capable: " + applicantID);
                     continue;
                 }
 
@@ -313,7 +316,8 @@ public class FileIOUtil {
                     continue;
                 }
 
-                applicant.setBookingDetails(project, housingType);
+                // Use the interface method instead of direct casting
+                bookingCapable.setBookingDetails(project, housingType);
             }
         } catch (IOException | CsvValidationException e) {
             System.err.println("Error reading booking details file: " + e.getMessage());
@@ -322,10 +326,11 @@ public class FileIOUtil {
 
 
     public static void saveBookingDetails(List<User> users) {
-        List<Applicant> applicants = new ArrayList<>();
+        List<BookingCapable> bookingCapableUsers = new ArrayList<>();
         for (User user : users) {
-            if (user instanceof Applicant) {
-                applicants.add((Applicant) user);
+            // Use interface instead of concrete class
+            if (user instanceof BookingCapable) {
+                bookingCapableUsers.add((BookingCapable) user);
             }
         }
 
@@ -340,15 +345,17 @@ public class FileIOUtil {
             String[] header = {"ApplicantID", "ProjectName", "HousingType"};
             writer.writeNext(header);
 
-            for (Applicant applicant : applicants) {
-                Map<Project, String> bookingDetails = applicant.getBookingDetails();
-                if (bookingDetails != null && !bookingDetails.isEmpty()) {
+            for (BookingCapable bookingCapable : bookingCapableUsers) {
+                Map<Project, String> bookingDetails = bookingCapable.getBookingDetails();
+                
+                // Make sure the user is also a User type to get the ID
+                if (bookingCapable instanceof User user && bookingDetails != null && !bookingDetails.isEmpty()) {
                     for (Map.Entry<Project, String> entry : bookingDetails.entrySet()) {
                         Project project = entry.getKey();
                         String housingType = entry.getValue();
 
                         String[] line = {
-                                applicant.getUserID(),
+                                user.getUserID(),
                                 project.getName(),
                                 housingType
                         };

@@ -99,14 +99,8 @@ public class FileIOUtil {
                             .withOfficerSlots(officerSlots);
 
 
-                    if (unitsTypeOne > 0 || priceTypeOne > 0) {
-                        builder.addHousingType("2-Room", priceTypeOne, unitsTypeOne);
-                    }
-
-
-                    if (unitsTypeTwo > 0 || priceTypeTwo > 0) {
-                        builder.addHousingType("3-Room", priceTypeTwo, unitsTypeTwo);
-                    }
+                    builder.addHousingType("2-Room", priceTypeOne, unitsTypeOne);
+                    builder.addHousingType("3-Room", priceTypeTwo, unitsTypeTwo);
 
                     Project project = builder.build();
 

@@ -1,5 +1,2 @@
 Project Name,Neighborhood,Visibility,Application opening date,Application closing date,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Applicants,Manager,Officer Slot,Pending Officer,Officer
-Acacia Breeze,Yishun,true,2025-02-15,2025-03-20,2-Room,2,350000.00,3-Room,3,450000.00,"John:UNSUCCESSFUL,Sarah:REQUEST_WITHDRAW",Jessica,3,"Daniel,Emily"
-Atlantic Breeze,Canberra,true,2025-01-27,2025-06-27,2-Room,32,400000.00,3-Room,45,600000.00,"John:BOOKED",Jessica,3,""
-Nescafe Gold,Boon Lay,true,2025-04-27,2025-07-27,2-Room,0,0.00,3-Room,32,500000.00,"",Michael,5,""
-Mitsuko,Orchard,true,2025-01-27,2025-03-27,2-Room,25,400000.00,3-Room,0,0.00,"John:REQUEST_BOOK",Michael,4,""
+Acacia Breeze,Yishun,true,2025-02-15,2025-03-20,2-Room,2,350000.00,3-Room,3,450000.00,"",Jessica,3,"Daniel,Emily"

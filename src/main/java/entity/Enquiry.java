@@ -49,10 +49,6 @@ public class Enquiry {
         this.message = newMessage;
     }
 
-    public void setResponse(String response) {
-        this.reply = response;
-    }
-
     public String getReply() {
         return this.reply;
     }

@@ -351,6 +351,11 @@ public class ApplicantUI extends UI {
             }
 
             Enquiry enquiry = enquiryList.get(enquiryIndex);
+            if (enquiry.isReplied()) {
+                System.out.println("Cannot edit a replied enquiy.");
+                return;
+            }
+            
             System.out.print("Enter new enquiry message: ");
             String newMessage = scanner.nextLine();
 

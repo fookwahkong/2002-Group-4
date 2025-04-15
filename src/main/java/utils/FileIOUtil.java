@@ -455,6 +455,68 @@ public class FileIOUtil {
         }
     }
 
+    public static void saveEnquiriesToFile(List<Project> projects) {
+        // Ensure directory exists
+        File file = new File(ENQUIRIES_FILE);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
+            String[] header = {"ApplicantID", "ProjectName", "Message", "Reply", "Replied"};
+            writer.writeNext(header);
+    
+            for (Project project : projects) {
+                List<Enquiry> enquiries = project.getEnquiries();
+                if (enquiries != null && !enquiries.isEmpty()) {
+                    for (Enquiry enquiry : enquiries) {
+                        String[] line = {
+                                enquiry.getApplicant().getUserID(),
+                                project.getName(),
+                                enquiry.getContent(),
+                                enquiry.getReply(),
+                                String.valueOf(enquiry.isReplied())
+                        };
+                        writer.writeNext(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving enquiries to file: " + e.getMessage());
+        }
+    }
+    
+    public static void saveRegistrationsToFile(List<Project> projects) {
+        // Ensure directory exists
+        File file = new File(REGISTRATIONS_FILE);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
+            String[] header = {"OfficerName", "ProjectName", "RegistrationStatus"};
+            writer.writeNext(header);
+    
+            for (Project project : projects) {
+                List<Registration> registrations = project.getRegistrationList();
+                if (registrations != null && !registrations.isEmpty()) {
+                    for (Registration registration : registrations) {
+                        String[] line = {
+                                registration.getOfficer().getName(),
+                                project.getName(),
+                                registration.getRegistrationStatus().toString()
+                        };
+                        writer.writeNext(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving registrations to file: " + e.getMessage());
+        }
+    }
+
     private static Map<Applicant, ProjectStatus> parseApplicantProjects(String applicantProjects) {
         Map<Applicant, ProjectStatus> applicantProjectStatusMap = new HashMap<>();
         if (applicantProjects != null && !applicantProjects.isEmpty()) {

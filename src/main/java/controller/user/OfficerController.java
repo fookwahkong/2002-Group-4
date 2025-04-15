@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controller.project.ProjectController;
+import controller.registration.RegistrationController;
 import entity.Housing;
 import entity.Registration;
 import entity.project.Project;
@@ -39,6 +40,7 @@ public class OfficerController {
         Registration registration = new Registration(officer, project, RegistrationStatus.PENDING);
 
         project.addRegistration(registration);
+        RegistrationController.save();
     }
 
     public static List<Registration> getRegistrationList() {

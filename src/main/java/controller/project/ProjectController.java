@@ -45,7 +45,6 @@ public class ProjectController {
     public static List<Project> getManagerProjects(HDBManager manager) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> {
-                    System.out.println("Comparing managers: " + project.getManager() + " and " + manager);
                     return project.getManager().equals(manager);
                 })
                 .toList();
@@ -314,6 +313,10 @@ public class ProjectController {
         project.getApplicantswithStatus().put(applicant, status);
     }
 
+    public static void updateOfficer(Project project, HDBOfficer officer) {
+        project.addOfficer(officer);
+    }
+    
     public static Map<Applicant, ProjectStatus> getApplicationsByStatus(Project project, ProjectStatus status) {
         Map<Applicant, ProjectStatus> applications = new HashMap<>();
 

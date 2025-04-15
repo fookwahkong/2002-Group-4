@@ -13,6 +13,10 @@ public class RegistrationController {
         FileIOUtil.loadRegistration(ProjectController.getProjectList());
     }
 
+    public static void save() {
+        FileIOUtil.saveRegistrationsToFile(ProjectController.getProjectList());
+    }
+
     // get registration by project
     public static List<Registration> getRegistrationList(Project project) {
         return project.getRegistrationList();

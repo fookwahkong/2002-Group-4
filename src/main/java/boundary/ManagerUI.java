@@ -465,6 +465,11 @@ public class ManagerUI extends UI {
         viewOfficerRegistration(); // print registration list
         List<Registration> registrationList = getRegistrationList();
 
+        if (registrationList.isEmpty()) {
+            System.out.println("There is no registration for your project currently");
+            return;
+        }
+
         System.out.print("Which Registration do you want to Approve/Reject?  ");
         int index = getValidIntInput(1, registrationList.size()) - 1;
 
@@ -480,6 +485,7 @@ public class ManagerUI extends UI {
         switch (choice) {
             case 1: {
                 r.approveRegistration();
+                ProjectController.updateOfficer(r.getProject(), r.getOfficer());
                 System.out.println("Registration Approved.");
                 return;
             }

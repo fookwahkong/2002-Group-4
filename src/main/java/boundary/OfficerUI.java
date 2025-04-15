@@ -143,6 +143,7 @@ public class OfficerUI extends ApplicantUI {
         int cnt = 1;
         for (Project project : projectList) {
             System.out.println(cnt + ". " + project.getName());
+            cnt += 1;
         }
         try {
             int projIndex = getIntInput("Select the project to view details for: ") - 1;
@@ -247,61 +248,68 @@ public class OfficerUI extends ApplicantUI {
     }
 
     // option 5
-    protected void approveOrRejectBooking() {
-        String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for");
-        Applicant applicant = (Applicant) (UserManager.getInstance().findUserByID(userId));
+protected void approveOrRejectBooking() {
+    String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for");
+    User user = UserManager.getInstance().findUserByID(userId);
 
-        // Check if applicant exists
-        if (applicant == null) {
-            System.out.println("Applicant not found with the given NRIC.");
-            return;
-        }
-
-        Map<Project, ProjectStatus> applicantActiveProject = ProjectController.getApplicantActiveProject(applicant);
-        List<Project> officerProjects = ProjectController.getOfficerProjects(getOfficerUser());
-
-        // Check if the applicant has any active project
-        if (applicantActiveProject == null || applicantActiveProject.isEmpty()) {
-            System.out.println("This applicant does not have an active booking or application for any project.");
-            return;
-        }
-
-        // Get the project and status from the map (there should be only one entry)
-        Project applicantProject = applicantActiveProject.keySet().iterator().next();
-        ProjectStatus currentStatus = applicantActiveProject.get(applicantProject);
-
-        // Check if the officer is assigned to the applicant's project
-        if (!officerProjects.contains(applicantProject)) {
-            System.out.println("You are not authorized to approve/reject bookings for this project. " +
-                    "The project is managed by another officer.");
-            return;
-        }
-
-        // Check if the applicant's status is REQUEST_BOOK 
-        if (currentStatus != ProjectStatus.REQUEST_BOOK) {
-            System.out.println("This applicant's status is '" + currentStatus +
-                    "' and not pending for booking approval.");
-            System.out.println(
-                    "Only applicants with 'REQUEST_BOOK' status can have their bookings approved or rejected.");
-            return;
-        }
-
-        // If all checks pass, proceed with approval/rejection
-        String action = getStringInput("Do you want to (A)pprove or (R)eject the booking? Enter A or R:");
-
-        if (action.equalsIgnoreCase("A")) {
-            OfficerController.updateBookingStatus(applicantProject, applicant, ProjectStatus.BOOKED);
-            System.out.println("Booking has been approved for " + applicant.getName() + ".");
-
-        } else if (action.equalsIgnoreCase("R")) {
-            ProjectController.updateApplicantStatus(applicantProject, applicant, ProjectStatus.SUCCESSFUL);
-            System.out.println("Booking has been rejected for " + applicant.getName() +
-                    ". Applicant status reverted to SUCCESSFUL.");
-
-        } else {
-            System.out.println("Invalid action. Please enter A to approve or R to reject.");
-        }
+    // Check if user exists and is an Applicant
+    if (user == null) {
+        System.out.println("User not found with the given NRIC.");
+        return;
     }
+    
+    if (!(user instanceof Applicant)) {
+        System.out.println("The user with ID " + userId + " is not an Applicant. Found " + user.getUserRole() + " instead.");
+        return;
+    }
+    
+    Applicant applicant = (Applicant) user;
+
+    Map<Project, ProjectStatus> applicantActiveProject = ProjectController.getApplicantActiveProject(applicant);
+    List<Project> officerProjects = ProjectController.getOfficerProjects(getOfficerUser());
+
+    // Check if the applicant has any active project
+    if (applicantActiveProject == null || applicantActiveProject.isEmpty()) {
+        System.out.println("This applicant does not have an active booking or application for any project.");
+        return;
+    }
+
+    // Get the project and status from the map (there should be only one entry)
+    Project applicantProject = applicantActiveProject.keySet().iterator().next();
+    ProjectStatus currentStatus = applicantActiveProject.get(applicantProject);
+
+    // Check if the officer is assigned to the applicant's project
+    if (!officerProjects.contains(applicantProject)) {
+        System.out.println("You are not authorized to approve/reject bookings for this project. " +
+                "The project is managed by another officer.");
+        return;
+    }
+
+    // Check if the applicant's status is REQUEST_BOOK 
+    if (currentStatus != ProjectStatus.REQUEST_BOOK) {
+        System.out.println("This applicant's status is '" + currentStatus +
+                "' and not pending for booking approval.");
+        System.out.println(
+                "Only applicants with 'REQUEST_BOOK' status can have their bookings approved or rejected.");
+        return;
+    }
+
+    // If all checks pass, proceed with approval/rejection
+    String action = getStringInput("Do you want to approve or reject the booking? Enter approve or reject:");
+
+    if ("approve".equals(action.toLowerCase())) {
+        OfficerController.updateBookingStatus(applicantProject, applicant, ProjectStatus.BOOKED);
+        System.out.println("Booking has been approved for " + applicant.getName() + ".");
+
+    } else if ("reject".equals(action.toLowerCase())) {
+        ProjectController.updateApplicantStatus(applicantProject, applicant, ProjectStatus.SUCCESSFUL);
+        System.out.println("Booking has been rejected for " + applicant.getName() +
+                ". Applicant status reverted to SUCCESSFUL.");
+
+    } else {
+        System.out.println("Invalid action. Please enter 'approve' or 'reject'.");
+    }
+}
 
     // option 6
     protected void generateReceipts() {

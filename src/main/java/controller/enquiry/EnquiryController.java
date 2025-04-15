@@ -56,5 +56,6 @@ public class EnquiryController {
 
     public static void replyToEnquiry(Enquiry selectedEnquiry, String reply) {
         selectedEnquiry.setReply(reply);
+        selectedEnquiry.setReplied(true);
     }
 }

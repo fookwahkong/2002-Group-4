@@ -196,11 +196,19 @@ public class ManagerUI extends UI {
         data.name = getStringInput("Enter project name: ");
         data.neighborhood = getStringInput("Enter neighbourhood: ");
 
-        data.priceOne = getFloatInput("Enter type 1 (2-Room) price: ");
-        data.unitsOne = getIntInput("Enter number of units for 2-Room: ");
+        data.unitsOne = getIntInput("Enter number of units for 2-Room (-1 for no units): ");
+        if (data.unitsOne == -1) {
+            data.priceOne = -1;
+        } else {
+            data.priceOne = getFloatInput("Enter type 1 (2-Room) price: ");
+        }
 
-        data.priceTwo = getFloatInput("Enter type 2 (3-Room) price: ");
-        data.unitsTwo = getIntInput("Enter number of units for 3-Room: ");
+        data.unitsTwo = getIntInput("Enter number of units for 3-Room (-1 for no units): ");
+        if (data.unitsTwo == -1) {
+            data.priceTwo = -1;
+        } else {
+            data.priceTwo = getFloatInput("Enter type 2 (3-Room) price: ");
+        }
 
         data.openingDate = getDateInput("Enter opening date (yyyy-MM-dd): ");
         data.closingDate = getDateInput("Enter closing date (yyyy-MM-dd): ");

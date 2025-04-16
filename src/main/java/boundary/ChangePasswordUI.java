@@ -4,12 +4,27 @@ import controller.password.IUserController;
 import controller.user.UserManager;
 import entity.user.User;
 
-public class ChangePasswordUI extends UI {
+public class ChangePasswordUI {
 
     private final IUserController userController;
 
     public ChangePasswordUI(IUserController userController) {
         this.userController = userController;
+    }
+
+    public void displayMenuOptions() {
+        String[] menuOptions = {
+                "==================================================================================",
+                "BTO MANAGEMENT SYSTEM CHANGE PASSWORD",
+                "Information on Changing Password",
+                "==================================================================================",
+                "1. At least 8 characters long",
+                "2. Include at least one uppercase letter",
+                "3. Include at lease one lowercase letter",
+                "4. Include at least one number",
+                "5. Include at least one special character (e.g., !, @, #, $, %, ^, &, *)",
+                "==================================================================================" };
+        UIUtils.displayMenuOptions(menuOptions);
     }
 
     protected void displayChangePasswordMenu() {
@@ -23,22 +38,7 @@ public class ChangePasswordUI extends UI {
         boolean successful = false;
         while (!successful) {
 
-            String content = """
-                    ==================================================================================
-                    BTO MANAGEMENT SYSTEM CHANGE PASSWORD
-                    Information on Changing Password
-                    ==================================================================================
-                    1. At least 8 characters long
-                    2. Include at least one uppercase letter
-                    3. Include at lease one lowercase letter
-                    4. Include at least one number
-                    5. Include at least one special character (e.g., !, @, #, $, %, ^, &, *)
-                    ==================================================================================
-                    
-                    Enter your new password:
-                    """;
-
-            String password = getStringInput(content);
+            String password = UIUtils.getStringInput("Enter your new password: ");
 
             successful = userController.updatePassword(currentUser, password);
 
@@ -52,4 +52,3 @@ public class ChangePasswordUI extends UI {
         }
     }
 }
-

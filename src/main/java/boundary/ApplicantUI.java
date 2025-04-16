@@ -4,7 +4,6 @@ import controller.password.IUserController;
 import controller.password.PasswordController;
 import controller.project.ProjectController;
 import controller.user.ApplicantController;
-import controller.user.UserManager;
 import entity.Enquiry;
 import entity.project.Project;
 import entity.user.Applicant;
@@ -15,12 +14,11 @@ import enums.UserRole;
 import java.util.List;
 import java.util.Map;
 
-public class ApplicantUI extends UI {
+public class ApplicantUI extends UserUI {
 
     IUserController controller = new PasswordController();
     private final ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
-
-    protected final User currentUser;
+    private final Applicant currentUser;
 
     private static final int VIEW_OPEN_PROJECTS = 1;
     private static final int APPLY_PROJECT = 2;
@@ -32,22 +30,19 @@ public class ApplicantUI extends UI {
     private static final int EDIT_ENQUIRY = 8;
     private static final int DELETE_ENQUIRY = 9;
     private static final int CHANGE_PASSWORD = 10;
-    private static final int LOGOUT = 0;
 
-    public ApplicantUI() {
-        User user = UserManager.getInstance().getCurrentUser();
+    public ApplicantUI(User user) {
+        super(user);
 
-        if (isValidUser(user)) {
-            this.currentUser = user;
+        if (user.getUserRole() == UserRole.HDB_OFFICER) {
+            this.currentUser = (Applicant) user;
+        } else if(user != null && user.getUserRole() == UserRole.APPLICANT) {
+            this.currentUser = (Applicant) user;
         } else {
             throw new IllegalStateException("Current user is not an Applicant");
         }
     }
 
-    // method to validate the user, can be overriden by subclass (OfficerUI)
-    protected boolean isValidUser(User user) {
-        return user != null && user.getUserRole() == UserRole.APPLICANT;
-    }
 
     protected Applicant getApplicantUser() {
         if (currentUser instanceof Applicant) {
@@ -56,40 +51,29 @@ public class ApplicantUI extends UI {
         throw new IllegalStateException("Current user is not an Applicant");
     }
 
-    public void showMenu() {
-        boolean running = true;
-        while (running) {
-            displayMenuOptions();
+    @Override
+    protected int getMaxMenuOption() {
+        return 10;
+    }
 
-            try {
-                int choice = getValidIntInput(0, 10);
+    public void processInput(int choice) {
 
-                switch (choice) {
-                    case VIEW_OPEN_PROJECTS -> viewOpenProjects();
-                    case APPLY_PROJECT -> applyProject();
-                    case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
-                    case FLAT_BOOKING -> flatBooking(); 
-                    case WITHDRAW_BOOKING -> withdrawBooking();
-                    case SUBMIT_ENQUIRY -> submitEnquiry();
-                    case VIEW_ENQUIRY -> viewEnquiry();
-                    case EDIT_ENQUIRY -> editEnquiry();
-                    case DELETE_ENQUIRY -> deleteEnquiry();
-                    case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu();
-                    case LOGOUT -> {
-                        UserManager.getInstance().logout();
-                        running = false;
-                        new LoginUI().startLogin();
-                    }
-                    default -> System.out.println("Invalid choice! Please enter a number between 0 and 10");
-                }
-
-            } catch (Exception e) {
-                System.out.println("An error occurred: " + e.getMessage());
-            }
+        switch (choice) {
+            case VIEW_OPEN_PROJECTS -> viewOpenProjects();
+            case APPLY_PROJECT -> applyProject();
+            case VIEW_APPLIED_PROJECTS -> viewAppliedProjects();
+            case FLAT_BOOKING -> flatBooking();
+            case WITHDRAW_BOOKING -> withdrawBooking();
+            case SUBMIT_ENQUIRY -> submitEnquiry();
+            case VIEW_ENQUIRY -> viewEnquiry();
+            case EDIT_ENQUIRY -> editEnquiry();
+            case DELETE_ENQUIRY -> deleteEnquiry();
+            case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu();
         }
     }
 
-    private void displayMenuOptions() {
+    @Override
+    public void displayMenuOptions() {
         String[] menuOptions = {
                 "APPLICANT UI",
                 "==================================",
@@ -128,9 +112,9 @@ public class ApplicantUI extends UI {
             System.out.println("No visible project to view");
             return;
         }
-        
+
         displayProjectList(projectList);
-        
+
         try {
             int projIndex = getIntInput("Select the project to view details for: ") - 1;
             if (projIndex >= 0 && projIndex < projectList.size()) {
@@ -178,13 +162,13 @@ public class ApplicantUI extends UI {
             ProjectController.addApplicant(proj, applicant);
             ProjectController.save();
             System.out.println("Application successful!");
-            
+
         } catch (Exception e) {
             System.out.println("Error applying for project: " + e.getMessage());
         }
     }
 
-    //option 3
+    // option 3
     protected void viewAppliedProjects() {
         List<Project> projectList = ApplicantController.getAppliedProjects();
         if (projectList == null || projectList.isEmpty()) {
@@ -202,7 +186,7 @@ public class ApplicantUI extends UI {
         }
     }
 
-    //option 4
+    // option 4
     protected void flatBooking() {
         Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
         if (activeProject == null || activeProject.isEmpty()) {
@@ -230,13 +214,15 @@ public class ApplicantUI extends UI {
                 }
                 case BOOKED -> System.out.println("Flat already booked for " + p.getName());
                 case PENDING -> System.out.println("Current application is still pending approval.");
-                case REQUEST_BOOK -> System.out.println("Current booking for " + p.getName() + " already requested for.");
-                case REQUEST_WITHDRAW -> System.out.println("Current withdrawal request for " + p.getName() + " is in progress.");
+                case REQUEST_BOOK ->
+                    System.out.println("Current booking for " + p.getName() + " already requested for.");
+                case REQUEST_WITHDRAW ->
+                    System.out.println("Current withdrawal request for " + p.getName() + " is in progress.");
             }
         }
     }
 
-    //option 5
+    // option 5
     protected void withdrawBooking() {
         Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
         if (activeProject == null || activeProject.isEmpty()) {
@@ -263,8 +249,10 @@ public class ApplicantUI extends UI {
                     }
                 }
                 case SUCCESSFUL -> System.out.println("You have yet to book a flat in Project " + p.getName());
-                case PENDING -> System.out.println("Current BTO application is still pending approval. No withdrawal allowed.");
-                case REQUEST_WITHDRAW -> System.out.println("Current withdrawal request " + p.getName() + " is already in progress.");
+                case PENDING ->
+                    System.out.println("Current BTO application is still pending approval. No withdrawal allowed.");
+                case REQUEST_WITHDRAW ->
+                    System.out.println("Current withdrawal request " + p.getName() + " is already in progress.");
             }
         }
     }
@@ -355,7 +343,7 @@ public class ApplicantUI extends UI {
                 System.out.println("Cannot edit a replied enquiy.");
                 return;
             }
-            
+
             System.out.print("Enter new enquiry message: ");
             String newMessage = scanner.nextLine();
 
@@ -419,7 +407,7 @@ public class ApplicantUI extends UI {
             }
         }
     }
-    
+
     private void displayEnquiryList(List<Enquiry> enquiryList) {
         int cnt = 0;
         for (Enquiry e : enquiryList) {

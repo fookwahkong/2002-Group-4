@@ -266,7 +266,6 @@ public class ProjectController {
         } else {
             throw new Exception("Manager can only handle one Project within each application period.");
         }
-
     }
 
     public static void deleteProject(Project project) {

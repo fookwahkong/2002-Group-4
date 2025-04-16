@@ -18,6 +18,10 @@ public class EnquiryController {
         FileIOUtil.loadEnquiries(ProjectController.getProjectList());
     }
 
+    public static void save(){
+        FileIOUtil.saveEnquiriesToFile(ProjectController.getProjectList());
+    }
+
     //get enquiries on ALL project
     public static List<Enquiry> getEnquiriesList(User user) {
         List<Enquiry> result = new ArrayList<>(); // Create a new list each time
@@ -57,5 +61,6 @@ public class EnquiryController {
     public static void replyToEnquiry(Enquiry selectedEnquiry, String reply) {
         selectedEnquiry.setReply(reply);
         selectedEnquiry.setReplied(true);
+        save();
     }
 }

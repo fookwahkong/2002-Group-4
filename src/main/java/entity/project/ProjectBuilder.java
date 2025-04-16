@@ -1,7 +1,6 @@
 package entity.project;
 
 import entity.Housing;
-import entity.user.Applicant;
 import entity.user.HDBManager;
 import utils.FileIOUtil;
 

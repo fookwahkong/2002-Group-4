@@ -3,7 +3,7 @@ package boundary;
 import controller.user.UserManager;
 import entity.user.User;
 
-public class LoginUI extends UI {
+public class LoginUI {
 
     public void startLogin() {
         User loggedInUser = displayLoginMenu();
@@ -17,16 +17,18 @@ public class LoginUI extends UI {
         User loggedInUser = null;
 
         while (!exit) {
-            System.out.println("""
-                    ==================================
-                        BTO MANAGEMENT SYSTEM LOGIN   
-                    ==================================
-                    1. Login with your Singpass account
-                    2. Exit
-                    ==================================
-                    Enter your choice:  """);
+            String[] menuOptions = {
+                    "==================================",
+                    "BTO MANAGEMENT SYSTEM LOGIN",
+                    "==================================",
+                    "1. Login with your Singpass account",
+                    "2. Exit",
+                    "==================================",
+                    "Enter your choice: " };
 
-            int choice = getValidIntInput(1, 2);
+            UIUtils.displayMenuOptions(menuOptions);
+
+            int choice = UIUtils.getValidIntInput(1, 2);
 
             switch (choice) {
                 case 1 -> loggedInUser = handleLogin();
@@ -51,13 +53,13 @@ public class LoginUI extends UI {
 
         String nric;
         do {
-            nric = getStringInput("Enter userID: ");
+            nric = UIUtils.getStringInput("Enter userID: ");
             if (!UserManager.verifyNRIC(nric)) {
                 System.out.println("Invalid userID format. Try again.");
             }
         } while (!UserManager.verifyNRIC(nric));
 
-        String password = getStringInput("Enter password: ");
+        String password = UIUtils.getStringInput("Enter password: ");
 
         User user = UserManager.getInstance().login(nric, password);
 
@@ -71,7 +73,6 @@ public class LoginUI extends UI {
         }
     }
 
-
     protected void navigateToMainMenu(User user) {
         if (user == null) {
             return;
@@ -81,15 +82,15 @@ public class LoginUI extends UI {
             switch (user.getUserRole()) {
                 case APPLICANT:
                     System.out.println("Opening ApplicantUI...");
-                    new ApplicantUI().showMenu();
+                    new ApplicantUI(user).showMenu();
                     break;
                 case HDB_OFFICER:
                     System.out.println("Opening OfficerUI...");
-                    new OfficerUI().showMenu();
+                    new OfficerUI(user).showMenu();
                     break;
                 case HDB_MANAGER:
                     System.out.println("Opening ManagerUI...");
-                    new ManagerUI().showMenu();
+                    new ManagerUI(user).showMenu();
                     break;
                 default:
                     System.out.println("Unknown role. Cannot proceed.");
@@ -98,10 +99,6 @@ public class LoginUI extends UI {
             System.out.println("ERROR when navigating to UI: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    protected void navigateToLoginMenu() {
-        UserManager.getInstance().logout();
     }
 
 }

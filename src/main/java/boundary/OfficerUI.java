@@ -19,12 +19,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class OfficerUI extends ApplicantUI {
+public class OfficerUI extends UserUI {
 
-    IUserController controller = new PasswordController();
-    private ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
+    IUserController controller;
+    private ChangePasswordUI changePasswordUI;
+    private final HDBOfficer currentUser;
+    private final ApplicantUI applicantUI;
 
     private static final int VIEW_PROJECTS = 1;
     private static final int VIEW_AND_REPLY_ENQUIRIES = 2;
@@ -32,7 +33,7 @@ public class OfficerUI extends ApplicantUI {
     private static final int VIEW_REGISTRATION_STATUS = 4;
     private static final int APPROVE_BOOKING = 5;
     private static final int GENERATE_RECEIPTS = 6;
-    
+
     // Applicant Functions
     private static final int VIEW_OPEN_PROJECTS = 7;
     private static final int APPLY_PROJECT = 8;
@@ -45,11 +46,35 @@ public class OfficerUI extends ApplicantUI {
     private static final int DELETE_ENQUIRY = 15;
 
     private static final int CHANGE_PASSWORD = 16;
-    private static final int LOGOUT = 0;
 
-    @Override
-    protected boolean isValidUser(User user) {
-        return user != null && user.getUserRole() == UserRole.HDB_OFFICER;
+    public OfficerUI(User user) {
+        super(user);
+
+        if (user != null && user.getUserRole() == UserRole.HDB_OFFICER) {
+            this.currentUser = (HDBOfficer) user;
+        } else {
+            throw new IllegalStateException("Current user is not an officer");
+        }
+
+        this.applicantUI = new ApplicantUI((Applicant) user) {
+            
+            // override projectList for view and apply as Applicant
+            @Override
+            protected List<Project> getApplyProjectList() {
+                return ProjectController.getProjectList().stream()
+                        .filter(project ->
+                // check if officer is not in assigned officers list
+                !project.getAssignedOfficers().contains(getOfficerUser())
+                        &&
+                // check if officer registered for the project
+                        project.getRegistrationList().stream()
+                                .noneMatch(registration -> registration.getOfficer().equals(getOfficerUser())))
+                        .toList();
+            }
+        };
+
+        controller = new PasswordController();
+        this.changePasswordUI = new ChangePasswordUI(controller);
     }
 
     protected HDBOfficer getOfficerUser() {
@@ -60,46 +85,39 @@ public class OfficerUI extends ApplicantUI {
     }
 
     @Override
-    public void showMenu() {
-        boolean running = true;
-        while (running) {
-            displayMenuOptions();
-            try {
-                int choice = getValidIntInput(0, 12);
-                switch (choice) {
-                    case VIEW_PROJECTS -> viewProjects(); // option 1
-                    case VIEW_AND_REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 2
-                    case REGISTER_JOIN_PROJECT -> registerJoinProject(); // option 3
-                    case VIEW_REGISTRATION_STATUS -> viewReigstrationStatus(); // option 4
-                    case APPROVE_BOOKING -> approveOrRejectBooking(); // option 5
-                    case GENERATE_RECEIPTS -> generateReceipts(); //option 6
+    public void processInput(int choice) {
 
-                    // Applicant functions
-                    case VIEW_OPEN_PROJECTS -> viewOpenProjects(); // option 7 (projectList override)
-                    // case VIEW_OPEN_PROJECTS -> super.viewOpenProjects(); // option 7 use applicant one directly (remove the two additional print lines)
-                    case APPLY_PROJECT -> super.applyProject(); // option 8 (projectList override)
-                    case VIEW_APPLIED_PROJECTS -> super.viewAppliedProjects(); // option 9
-                    case FLAT_BOOKING -> super.flatBooking(); // option 10
-                    case WITHDRAW_BOOKING -> super.withdrawBooking(); // option 11
-                    case SUBMIT_ENQUIRY -> super.submitEnquiry(); // option 12
-                    case VIEW_ENQUIRY -> super.viewEnquiry(); // option 13
-                    case EDIT_ENQUIRY -> super.editEnquiry(); // option 14
-                    case DELETE_ENQUIRY -> super.deleteEnquiry(); // option 15
+        switch (choice) {
+            case VIEW_PROJECTS -> viewProjects(); // option 1
+            case VIEW_AND_REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 2
+            case REGISTER_JOIN_PROJECT -> registerJoinProject(); // option 3
+            case VIEW_REGISTRATION_STATUS -> viewReigstrationStatus(); // option 4
+            case APPROVE_BOOKING -> approveOrRejectBooking(); // option 5
+            case GENERATE_RECEIPTS -> generateReceipts(); // option 6
 
-                    case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu(); // option 16
-                    case LOGOUT -> { // option 0
-                        UserManager.getInstance().logout();
-                        running = false;
-                        new LoginUI().startLogin();
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("An error occurred: " + e.getMessage());
-            }
+            // Applicant functions
+            case VIEW_OPEN_PROJECTS -> viewOpenProjects(); // option 7 (projectList override)
+            // case VIEW_OPEN_PROJECTS -> super.viewOpenProjects(); // option 7 use
+            // applicant one directly (remove the two additional print lines)
+            case APPLY_PROJECT -> applicantUI.applyProject(); // option 8 (projectList override)
+            case VIEW_APPLIED_PROJECTS -> applicantUI.viewAppliedProjects(); // option 9
+            case FLAT_BOOKING -> applicantUI.flatBooking(); // option 10
+            case WITHDRAW_BOOKING -> applicantUI.withdrawBooking(); // option 11
+            case SUBMIT_ENQUIRY -> applicantUI.submitEnquiry(); // option 12
+            case VIEW_ENQUIRY -> applicantUI.viewEnquiry(); // option 13
+            case EDIT_ENQUIRY -> applicantUI.editEnquiry(); // option 14
+            case DELETE_ENQUIRY -> applicantUI.deleteEnquiry(); // option 15
+            case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu(); // option 16
         }
     }
 
-    private void displayMenuOptions() {
+    @Override
+    public int getMaxMenuOption() {
+        return 16;
+    }
+
+    @Override
+    public void displayMenuOptions() {
         String[] menuOptions = {
                 "OFFICER UI",
                 "==================================",
@@ -144,6 +162,7 @@ public class OfficerUI extends ApplicantUI {
         int cnt = 1;
         for (Project project : projectList) {
             System.out.println(cnt + ". " + project.getName());
+            cnt += 1;
         }
         try {
             int projIndex = getIntInput("Select the project to view details for: ") - 1;
@@ -250,13 +269,21 @@ public class OfficerUI extends ApplicantUI {
     // option 5
     protected void approveOrRejectBooking() {
         String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for");
-        Applicant applicant = (Applicant) (UserManager.getInstance().findUserByID(userId));
+        User user = UserManager.getInstance().findUserByID(userId);
 
-        // Check if applicant exists
-        if (applicant == null) {
-            System.out.println("Applicant not found with the given NRIC.");
+        // Check if user exists and is an Applicant
+        if (user == null) {
+            System.out.println("User not found with the given NRIC.");
             return;
         }
+
+        if (!(user instanceof Applicant)) {
+            System.out.println(
+                    "The user with ID " + userId + " is not an Applicant. Found " + user.getUserRole() + " instead.");
+            return;
+        }
+
+        Applicant applicant = (Applicant) user;
 
         Map<Project, ProjectStatus> applicantActiveProject = ProjectController.getApplicantActiveProject(applicant);
         List<Project> officerProjects = ProjectController.getOfficerProjects(getOfficerUser());
@@ -278,7 +305,7 @@ public class OfficerUI extends ApplicantUI {
             return;
         }
 
-        // Check if the applicant's status is REQUEST_BOOK 
+        // Check if the applicant's status is REQUEST_BOOK
         if (currentStatus != ProjectStatus.REQUEST_BOOK) {
             System.out.println("This applicant's status is '" + currentStatus +
                     "' and not pending for booking approval.");
@@ -288,19 +315,19 @@ public class OfficerUI extends ApplicantUI {
         }
 
         // If all checks pass, proceed with approval/rejection
-        String action = getStringInput("Do you want to (A)pprove or (R)eject the booking? Enter A or R:");
+        String action = getStringInput("Do you want to approve or reject the booking? Enter approve or reject:");
 
-        if (action.equalsIgnoreCase("A")) {
+        if ("approve".equals(action.toLowerCase())) {
             OfficerController.updateBookingStatus(applicantProject, applicant, ProjectStatus.BOOKED);
             System.out.println("Booking has been approved for " + applicant.getName() + ".");
 
-        } else if (action.equalsIgnoreCase("R")) {
+        } else if ("reject".equals(action.toLowerCase())) {
             ProjectController.updateApplicantStatus(applicantProject, applicant, ProjectStatus.SUCCESSFUL);
             System.out.println("Booking has been rejected for " + applicant.getName() +
                     ". Applicant status reverted to SUCCESSFUL.");
 
         } else {
-            System.out.println("Invalid action. Please enter A to approve or R to reject.");
+            System.out.println("Invalid action. Please enter 'approve' or 'reject'.");
         }
     }
 
@@ -350,18 +377,18 @@ public class OfficerUI extends ApplicantUI {
         Applicant selectedApplicant = applicantsWithBookings.get(selection);
         Map<Project, String> bookingDetails = selectedApplicant.getBookingDetails();
 
-        Project project = bookingDetails.keySet().iterator().next();; 
+        Project project = bookingDetails.keySet().iterator().next();
+        ;
 
         // Generate receipts
         if (project != null) {
             // Generate receipt for specific project
             displayReceiptForApplicantAndProject(selectedApplicant, project,
                     bookingDetails.get(project));
-        } 
+        }
     }
 
-    
-    //Helper method to display a receipt for a specific applicant 
+    // Helper method to display a receipt for a specific applicant
     private void displayReceiptForApplicantAndProject(
             Applicant applicant, Project project, String housingType) {
 
@@ -425,25 +452,11 @@ public class OfficerUI extends ApplicantUI {
 
     // Override parent methods that use getApplicantUser to prevent
     // ClassCastException
-    @Override
     protected void viewOpenProjects() {
-        System.out.println("This functionality is only for viewing Projects open for Application as Applicant only..");
+        System.out.println(
+                "This functionality is only for viewing Projects open for Application as Applicant only..");
         System.out.println("Please use Option 1 to view projects you're handling.");
 
-        super.viewOpenProjects();
-    }
-
-    // override projectList for view and apply as Applicant
-    @Override
-    protected List<Project> getApplyProjectList() {
-        return ProjectController.getProjectList().stream()
-                .filter(project ->
-                // check if officer is not in assigned officers list
-                !project.getAssignedOfficers().contains(getOfficerUser())
-                        &&
-                        // check if officer registered for the project
-                        project.getRegistrationList().stream()
-                                .noneMatch(registration -> registration.getOfficer().equals(getOfficerUser())))
-                .toList();
+        applicantUI.viewOpenProjects();
     }
 }

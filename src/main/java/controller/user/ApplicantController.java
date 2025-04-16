@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import controller.enquiry.EnquiryController;
 import controller.project.ProjectController;
 import entity.Enquiry;
 import entity.project.Project;
@@ -89,6 +90,7 @@ public class ApplicantController {
         Applicant currentUser = getCurrentApplicant();
         Enquiry enquiry = new Enquiry(currentUser, project, message);
         project.addEnquiry(enquiry);
+        EnquiryController.save();
         System.out.println("Enquiry Submitted.");
     }
 

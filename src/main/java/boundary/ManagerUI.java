@@ -4,7 +4,6 @@ import controller.enquiry.EnquiryController;
 import controller.password.IUserController;
 import controller.password.PasswordController;
 import controller.project.ProjectController;
-import controller.user.UserManager;
 import entity.Enquiry;
 import entity.Registration;
 import entity.project.Project;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ManagerUI extends UI {
+public class ManagerUI extends UserUI {
     private final HDBManager currentUser;
     IUserController controller = new PasswordController();
     private final ChangePasswordUI changePasswordUI = new ChangePasswordUI(controller);
@@ -39,14 +38,13 @@ public class ManagerUI extends UI {
     private static final int VIEW_ENQUIRIES = 10;
     private static final int REPLY_ENQUIRIES = 11;
     private static final int CHANGE_PASSWORD = 12;
-    private static final int LOGOUT = 0;
 
     // Housing type names
     private static final String TYPE_ONE = "2-Room";
     private static final String TYPE_TWO = "3-Room";
 
-    public ManagerUI() {
-        User user = UserManager.getInstance().getCurrentUser();
+    public ManagerUI(User user) {
+        super(user);
 
         // downcasting from user to manager
         if (user != null && user.getUserRole() == UserRole.HDB_MANAGER) {
@@ -56,21 +54,13 @@ public class ManagerUI extends UI {
         }
     }
 
-    public void showMenu() {
-        boolean running = true;
-        while (running) {
-            displayMenuOptions();
-
-            try {
-                int choice = getValidIntInput(0, 12);
-                running = handleMenuChoice(choice);
-            } catch (Exception e) {
-                System.out.println("An error occurred: " + e.getMessage());
-            }
-        }
+    @Override
+    protected int getMaxMenuOption() {
+        return 12;
     }
 
-    private boolean handleMenuChoice(int choice) {
+    @Override
+    public void processInput(int choice) {
         switch (choice) {
             case VIEW_PROJECTS -> viewAllProjects(); // option 1
             case CREATE_PROJECT -> createHDBProject(); // option 2
@@ -84,16 +74,11 @@ public class ManagerUI extends UI {
             case VIEW_ENQUIRIES -> viewAllEnquiries(); // option 10
             case REPLY_ENQUIRIES -> viewAndReplyToEnquiries(); // option 11
             case CHANGE_PASSWORD -> changePasswordUI.displayChangePasswordMenu(); // option 12
-            case LOGOUT -> { // option 0
-                UserManager.getInstance().logout();
-                new LoginUI().startLogin();
-                return false;
-            }
         }
-        return true;
     }
 
-    private void displayMenuOptions() {
+    @Override
+    public void displayMenuOptions() {
         String[] menuOptions = {
             "MANAGER UI",
             "===============================",
@@ -465,6 +450,11 @@ public class ManagerUI extends UI {
         viewOfficerRegistration(); // print registration list
         List<Registration> registrationList = getRegistrationList();
 
+        if (registrationList.isEmpty()) {
+            System.out.println("There is no registration for your project currently");
+            return;
+        }
+
         System.out.print("Which Registration do you want to Approve/Reject?  ");
         int index = getValidIntInput(1, registrationList.size()) - 1;
 
@@ -480,6 +470,7 @@ public class ManagerUI extends UI {
         switch (choice) {
             case 1: {
                 r.approveRegistration();
+                ProjectController.updateOfficer(r.getProject(), r.getOfficer());
                 System.out.println("Registration Approved.");
                 return;
             }
@@ -734,7 +725,7 @@ public class ManagerUI extends UI {
 
     // option 11
     protected void viewAndReplyToEnquiries() {
-        List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
+        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(currentUser);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");
             return;

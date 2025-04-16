@@ -1,40 +1,36 @@
 package entity.user;
 
-import java.util.HashMap;
+
 import java.util.Map;
 
 import entity.project.Project;
 import enums.MaritalStatus;
 import enums.UserRole;
+import interfaces.BookingCapable;
 
-public class Applicant extends User {
+public class Applicant extends User implements BookingCapable{
 
-    private Map<Project, String> bookingDetails;
+    private final BookingManager bookingManager;
 
     public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
             UserRole userRole) {
         super(userID, password, name, age, maritalStatus, userRole);
 
-        this.bookingDetails = new HashMap<>();
+        this.bookingManager = new BookingManager();
     }
 
-    public String getName() {
-        return super.getName();
-    }
-
-    public int getAge() {
-        return super.getAge();
-    }
-
+    @Override
     public void setBookingDetails(Project project, String housingType) {
-        this.bookingDetails.put(project, housingType);
+        this.bookingManager.setBookingDetails(project, housingType);
     }
 
+    @Override
     public Map<Project, String> getBookingDetails() {
-        return this.bookingDetails;
+        return this.bookingManager.getBookingDetails();
     }
 
+    @Override
     public void removeBooking(Project project) {
-        this.bookingDetails.remove(project);
+        this.bookingManager.removeBooking(project);
     }
 }

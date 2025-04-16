@@ -2,8 +2,10 @@ package entity.user;
 
 import enums.MaritalStatus;
 import enums.UserRole;
+import interfaces.Authenticatable;
+import interfaces.PersonalProfile;
 
-public abstract class User {
+public abstract class User implements Authenticatable, PersonalProfile{
     private String userID;
     private String password;
     private String name;
@@ -20,14 +22,17 @@ public abstract class User {
         this.userRole = userRole;
     }
 
+    @Override
     public void changePassword(String password) {
         this.password = password;
     }
 
+    @Override
     public String getUserID() {
         return this.userID;
     }
 
+    @Override
     public String getPassword() {
         return this.password;
     }
@@ -36,14 +41,17 @@ public abstract class User {
         return this.userRole;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public MaritalStatus getMaritalStatus() {
         return this.maritalStatus;
     }
 
+    @Override
     public int getAge() {
         return this.age;
     }

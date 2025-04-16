@@ -10,6 +10,7 @@ import entity.Enquiry;
 import entity.Registration;
 import entity.project.Project;
 import entity.user.Applicant;
+import entity.user.HDBManager;
 import entity.user.HDBOfficer;
 import entity.user.User;
 import enums.ProjectStatus;
@@ -19,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class OfficerUI extends UserUI {
 
@@ -122,7 +124,7 @@ public class OfficerUI extends UserUI {
                 "OFFICER UI",
                 "==================================",
                 "1. View projects I'm handling",
-                "2. (Yet to be tested) View and reply to enquiries",
+                "2. View and reply to enquiries",
                 "3. Register to join a Project",
                 "4. View Registration Status",
                 "5. (Yet to be tested) Approve / Reject Applicants' flat booking",
@@ -203,6 +205,24 @@ public class OfficerUI extends UserUI {
         System.out.println("Reply sent successfully!");
     }
 
+    // Single project checker (Officer cannot registere for project within same opening and closing of projects registered / registereing)
+    private boolean singleProjectCheck(Project project) {
+        List<Project> registeringProject = OfficerController.getRegistrationList().stream()
+            .map(Registration::getProject)
+            .toList();
+
+        List<Project> projectList = ProjectController.getOfficerProjects(getOfficerUser());
+        List<Project> combined = Stream.concat(registeringProject.stream(), projectList.stream())
+            .toList();
+
+        for (Project p: combined) {
+            if (!(p.getClosingDate().isBefore(project.getOpeningDate()) || p.getOpeningDate().isAfter(project.getClosingDate()))) { // if closing < opening or opening > closing
+                return false;
+            }  
+        }
+        return true;
+    }
+
     // Option 3
     private void registerJoinProject() {
         HDBOfficer officer = getOfficerUser();
@@ -245,13 +265,15 @@ public class OfficerUI extends UserUI {
 
         if (decisionJoinProject == 1) {
 
-            OfficerController.submitRegistration(selectedProject);
-
-            System.out.println("Registration Submitted.");
-            System.out.println();
-            return;
+            if (singleProjectCheck(selectedProject)) {
+                OfficerController.submitRegistration(selectedProject);
+                System.out.println("Registration Submitted.");
+            } else {
+                System.out.println("You are only allow to register for one Project within the same Opening and Closing Date.");
+            }
         }
         System.out.println();
+        return;
     }
 
     // option 4

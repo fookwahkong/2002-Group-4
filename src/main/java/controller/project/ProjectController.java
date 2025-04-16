@@ -69,7 +69,8 @@ public class ProjectController {
                                 .noneMatch(registration -> registration.getOfficer().equals(officer))
                                 &&
                                 // check if officer applied to project as applicant
-                                project.getApplicants().stream().noneMatch(applicant -> applicant.equals(officer)))
+                                project.getApplicants().stream()
+                                    .noneMatch(applicant -> applicant.equals(officer)))
                 .toList();
     }
 

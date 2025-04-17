@@ -61,18 +61,21 @@ public class ProjectController {
     public static List<Project> canRegisterProjects(HDBOfficer officer) {
         return ProjectController.getProjectList().stream()
                 .filter(project ->
-                // check if officer is not in assigned officers list
-                !project.getAssignedOfficers().contains(officer)
-                        &&
-                        // check if officer registered for the project
-                        project.getRegistrationList().stream()
-                                .noneMatch(registration -> registration.getOfficer().equals(officer))
-                                &&
-                                // check if officer applied to project as applicant
-                                project.getApplicants().stream()
-                                    .noneMatch(applicant -> applicant.equals(officer)))
+                        // Officer is not already assigned to this project
+                        !project.getAssignedOfficers().contains(officer)
+    
+                        // Officer has no active (non-rejected) registration for this project
+                        && project.getRegistrationList().stream()
+                            .noneMatch(registration ->
+                                    registration.getOfficer().equals(officer)
+                                    && registration.getRegistrationStatus() != RegistrationStatus.REJECTED)
+    
+                        // Officer is not an applicant for this project
+                        && project.getApplicants().stream()
+                            .noneMatch(applicant -> applicant.equals(officer)))
                 .toList();
     }
+    
 
     // get all the projects that applicant from each group can see and apply
     public static List<Project> getApplicantProjects(Applicant applicant) {

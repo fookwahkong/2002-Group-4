@@ -260,7 +260,7 @@ public class ApplicantUI extends UserUI {
     // option 6
     protected void submitEnquiry() {
         try {
-            System.out.println("List of visible projects:");
+            System.out.println("List of all projects:");
             List<Project> projectList = ProjectController.getProjectList();
 
             if (projectList == null || projectList.isEmpty()) {

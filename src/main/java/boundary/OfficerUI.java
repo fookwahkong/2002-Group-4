@@ -182,7 +182,7 @@ public class OfficerUI extends UserUI {
     // Option 2
     protected void viewAndReplyToEnquiries() {
         HDBOfficer officer = getOfficerUser();
-        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(officer);
+        List<Enquiry> enquiries = EnquiryController.getEnquiriesByOfficer(officer);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");
             return;
@@ -267,13 +267,19 @@ public class OfficerUI extends UserUI {
         int decisionJoinProject = getValidIntInput(1, 2);
 
         if (decisionJoinProject == 1) {
+            if (selectedProject.getRemainingSlots() > 0) {
 
-            if (singleProjectCheck(selectedProject)) {
-                OfficerController.submitRegistration(selectedProject);
-                System.out.println("Registration Submitted.");
+                if (singleProjectCheck(selectedProject)) {
+                    OfficerController.submitRegistration(selectedProject);
+                    System.out.println("Registration Submitted.");
+                } else {
+                    System.out.println("You are only allow to register for one Project within the same Opening and Closing Date.");
+                }
+
             } else {
-                System.out.println("You are only allow to register for one Project within the same Opening and Closing Date.");
+                System.out.println("Unable to register due to insufficent Officer Slots remaining.");
             }
+            
         }
         System.out.println();
         return;

@@ -13,6 +13,7 @@ import entity.user.HDBManager;
 import entity.user.User;
 import enums.MaritalStatus;
 import enums.ProjectStatus;
+import enums.RegistrationStatus;
 import enums.UserRole;
 
 import java.time.LocalDate;
@@ -461,6 +462,13 @@ public class ManagerUI extends UserUI {
 
         // print registration selected
         Registration r = registrationList.get(index);
+
+        // Prevent changes to Approved / Rejected Registration
+        if (r.getRegistrationStatus() != RegistrationStatus.PENDING) {
+            System.out.println("You are not allowed to change the approval state of a Registration.");
+            return;
+        }
+
         r.viewRegistration();
         System.out.println("1. Approve");
         System.out.println("2. Reject");

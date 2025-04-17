@@ -4,6 +4,7 @@ import controller.enquiry.EnquiryController;
 import controller.password.IUserController;
 import controller.password.PasswordController;
 import controller.project.ProjectController;
+import controller.registration.RegistrationController;
 import entity.Enquiry;
 import entity.Registration;
 import entity.project.Project;
@@ -477,19 +478,15 @@ public class ManagerUI extends UserUI {
 
         switch (choice) {
             case 1: {
-                if (r.getProject().getRemainingSlots() > 0) {
-                    r.approveRegistration();
-                    ProjectController.updateOfficer(r.getProject(), r.getOfficer());
+                if (RegistrationController.approveRegistration(r)) {
                     System.out.println("Registration Approved.");
-                    return;
                 } else {
-                    System.out.println("Invalid selection due to insufficient Officer Slots remaining.");
+                    System.out.println("Cannot approve registration: No more officer slots available.");
                 }
-                
+                return;
             }
             case 2: {
-                r.rejectRegistration();
-                System.out.println("Registration Rejected.");
+                RegistrationController.rejectRegistration(r);
                 return;
             }
             default: {

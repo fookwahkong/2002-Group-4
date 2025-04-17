@@ -3,7 +3,6 @@ package controller.registration;
 import controller.project.ProjectController;
 import entity.Registration;
 import entity.project.Project;
-import entity.user.HDBOfficer;
 import utils.FileIOUtil;
 
 import java.util.List;
@@ -22,16 +21,20 @@ public class RegistrationController {
         return project.getRegistrationList();
     }
 
-    public static void approveRegistration(Registration registration) {
-        registration.approveRegistration();
+    public static boolean approveRegistration(Registration registration) {
         Project project = registration.getProject();
-        HDBOfficer officer = registration.getOfficer();
-        project.addOfficersIncharge(officer);
-        System.out.println("Registration Approved.");
+        if (project.getRemainingSlots() <= 0) {
+            return false;
+        }
+        registration.approveRegistration();
+        ProjectController.updateOfficer(registration.getProject(), registration.getOfficer());
+        save();
+        return true;
     }
 
     public static void rejectRegistration(Registration registration) {
         registration.rejectRegistration();
+        save();
         System.out.println("Registration Rejected.");
     }
 }

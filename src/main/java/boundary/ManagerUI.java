@@ -4,6 +4,7 @@ import controller.enquiry.EnquiryController;
 import controller.password.IUserController;
 import controller.password.PasswordController;
 import controller.project.ProjectController;
+import controller.registration.RegistrationController;
 import entity.Enquiry;
 import entity.Registration;
 import entity.project.Project;
@@ -469,14 +470,11 @@ public class ManagerUI extends UserUI {
 
         switch (choice) {
             case 1: {
-                r.approveRegistration();
-                ProjectController.updateOfficer(r.getProject(), r.getOfficer());
-                System.out.println("Registration Approved.");
+                RegistrationController.approveRegistration(r);
                 return;
             }
             case 2: {
-                r.rejectRegistration();
-                System.out.println("Registration Rejected.");
+                RegistrationController.rejectRegistration(r);
                 return;
             }
             default: {

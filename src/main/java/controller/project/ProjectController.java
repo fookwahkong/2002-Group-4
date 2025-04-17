@@ -318,6 +318,7 @@ public class ProjectController {
 
     public static void updateOfficer(Project project, HDBOfficer officer) {
         project.addOfficer(officer);
+        save();
     }
     
     public static Map<Applicant, ProjectStatus> getApplicationsByStatus(Project project, ProjectStatus status) {

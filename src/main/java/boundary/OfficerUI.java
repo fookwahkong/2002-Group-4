@@ -14,6 +14,7 @@ import entity.user.HDBManager;
 import entity.user.HDBOfficer;
 import entity.user.User;
 import enums.ProjectStatus;
+import enums.RegistrationStatus;
 import enums.UserRole;
 
 import java.time.format.DateTimeFormatter;
@@ -208,6 +209,8 @@ public class OfficerUI extends UserUI {
     // Single project checker (Officer cannot registere for project within same opening and closing of projects registered / registereing)
     private boolean singleProjectCheck(Project project) {
         List<Project> registeringProject = OfficerController.getRegistrationList().stream()
+            // only include non-rejected registrations
+            .filter(registration -> registration.getRegistrationStatus() != RegistrationStatus.REJECTED)
             .map(Registration::getProject)
             .toList();
 

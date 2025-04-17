@@ -470,7 +470,11 @@ public class ManagerUI extends UserUI {
 
         switch (choice) {
             case 1: {
-                RegistrationController.approveRegistration(r);
+                if (RegistrationController.approveRegistration(r)) {
+                    System.out.println("Registration Approved.");
+                } else {
+                    System.out.println("Cannot approve registration: No more officer slots available.");
+                }
                 return;
             }
             case 2: {

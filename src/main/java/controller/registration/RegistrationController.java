@@ -21,11 +21,15 @@ public class RegistrationController {
         return project.getRegistrationList();
     }
 
-    public static void approveRegistration(Registration registration) {
+    public static boolean approveRegistration(Registration registration) {
+        Project project = registration.getProject();
+        if (project.getRemainingSlots() <= 0) {
+            return false;
+        }
         registration.approveRegistration();
         ProjectController.updateOfficer(registration.getProject(), registration.getOfficer());
         save();
-        System.out.println("Registration Approved.");
+        return true;
     }
 
     public static void rejectRegistration(Registration registration) {

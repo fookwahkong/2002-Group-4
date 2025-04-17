@@ -274,6 +274,7 @@ public class ProjectController {
 
     public static void deleteProject(Project project) {
         projects.remove(project);
+        save();
     }
 
     public static boolean isProjectVisible(Project project) {
@@ -282,38 +283,47 @@ public class ProjectController {
 
     public static void toggleProjectVisibility(Project project) {
         project.setVisiblity(!project.getVisibility());
+        save();
     }
 
     public static void updateProjectName(Project project, String name) {
         project.setName(name);
+        save();
     }
 
     public static void updateProjectNeighbourhood(Project project, String neighbourhood) {
         project.setNeighbourhood(neighbourhood);
+        save();
     }
 
     public static void updateProjectOpeningDate(Project project, String openingDate) {
         project.setOpeningDate(LocalDate.parse(openingDate.trim(), formatter));
+        save();
     }
 
     public static void updateProjectClosingDate(Project project, String closingDate) {
         project.setClosingDate(LocalDate.parse(closingDate.trim(), formatter));
+        save();
     }
 
     public static void updateProjectSlots(Project project, int slots) {
         project.setOfficerSlot(slots);
+        save();
     }
 
     public static void updateHousingType(Project project, String typeName, float sellingPrice, int numberOfUnits) {
         project.setHousingType(typeName, sellingPrice, numberOfUnits);
+        save();
     }
 
     public static void addApplicant(Project project, Applicant applicant) {
         project.addApplicant(applicant, ProjectStatus.PENDING); // default pending, unless changed my manager
+        save();
     }
 
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
         project.getApplicantswithStatus().put(applicant, status);
+        save();
     }
 
     public static void updateOfficer(Project project, HDBOfficer officer) {

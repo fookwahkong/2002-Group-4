@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for file input/output operations.
+ */
 public class FileIOUtil {
 
     private static final String DATA_DIR = "src/main/resources/data/";
@@ -38,6 +41,11 @@ public class FileIOUtil {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final UserFactory userFactory = new UserFactory();
 
+    /**
+     * Loads all users from the file system.
+     *
+     * @return a list of all users
+     */
     public static List<User> loadUsers() {
         List<User> allUsers = new ArrayList<>();
         allUsers.addAll(loadUsersFromFile(APPLICANTS_FILE, UserRole.APPLICANT));
@@ -46,6 +54,11 @@ public class FileIOUtil {
         return allUsers;
     }
 
+    /**
+     * Loads all projects from the file system.
+     *
+     * @return a list of all projects
+     */
     public static List<Project> loadProjects() {
         List<Project> allProjects = new ArrayList<>();
 
@@ -229,6 +242,12 @@ public class FileIOUtil {
         return users;
     }
 
+
+    /**
+     * Loads all registrations from the file system.
+     *
+     * @param projects the list of projects
+     */ 
     public static void loadRegistration(List<Project> projects) {
         File file = new File(REGISTRATIONS_FILE);
         
@@ -276,6 +295,11 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Loads all booking details from the file system.
+     *
+     * @param projects the list of projects
+     */
     public static void loadBookingDetails(List<Project> projects) {
         File file = new File(BOOKING_FILE);
 
@@ -318,7 +342,11 @@ public class FileIOUtil {
         }
     }
 
-
+    /**
+     * Saves all booking details to the file system.
+     *
+     * @param users the list of users
+     */
     public static void saveBookingDetails(List<User> users) {
         List<BookingCapable> bookingCapableUsers = new ArrayList<>();
         for (User user : users) {
@@ -363,6 +391,12 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Saves all users to the file system.
+     *
+     * @param userList the list of users
+     * @param filepath the path to the file
+     */
     public static void saveUsersToFile(List<User> userList, String filepath) {
         // Ensure directory exists
         File file = new File(filepath);
@@ -393,6 +427,12 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Saves all projects to the file system.
+     *
+     * @param projects the list of projects
+     * @param filepath the path to the file
+     */
     public static void saveProjectToFile(List<Project> projects, String filepath) {
         // Ensure directory exists
         File file = new File(filepath);
@@ -455,6 +495,11 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Saves all enquiries to the file system.
+     *
+     * @param projects the list of projects
+     */
     public static void saveEnquiriesToFile(List<Project> projects) {
         // Ensure directory exists
         File file = new File(ENQUIRIES_FILE);
@@ -486,7 +531,12 @@ public class FileIOUtil {
             throw new RuntimeException("Error saving enquiries to file: " + e.getMessage());
         }
     }
-    
+
+    /**
+     * Saves all registrations to the file system.
+     *
+     * @param projects the list of projects
+     */
     public static void saveRegistrationsToFile(List<Project> projects) {
         // Ensure directory exists
         File file = new File(REGISTRATIONS_FILE);
@@ -517,6 +567,12 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Parses the applicant projects from a string.
+     *
+     * @param applicantProjects the string of applicant projects
+     * @return a map of applicant and project status
+     */ 
     private static Map<Applicant, ProjectStatus> parseApplicantProjects(String applicantProjects) {
         Map<Applicant, ProjectStatus> applicantProjectStatusMap = new HashMap<>();
         if (applicantProjects != null && !applicantProjects.isEmpty()) {

@@ -7,6 +7,9 @@ import java.util.Scanner;
 import bto.controller.user.UserManager;
 import bto.entity.user.User;
 
+/**
+ * A class representing a user UI.
+ */
 public abstract class UserUI implements UserInterface{
     protected static final Scanner scanner = new Scanner(System.in);
     protected static final DateTimeFormatter DATE_FORMATTER =

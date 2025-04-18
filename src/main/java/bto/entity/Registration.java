@@ -4,6 +4,9 @@ import bto.entity.project.Project;
 import bto.entity.user.HDBOfficer;
 import bto.enums.RegistrationStatus;
 
+/**
+ * A class representing a registration.
+ */
 public class Registration {
     HDBOfficer officer;
     Project project;

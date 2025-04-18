@@ -10,6 +10,9 @@ import bto.entity.factory.UserCreator;
 import bto.enums.MaritalStatus;
 import bto.enums.UserRole;
 
+/**
+ * A factory class for creating User objects.
+ */
 public class UserFactory {
     private final Map<UserRole, UserCreator> creators = new HashMap<>();
     

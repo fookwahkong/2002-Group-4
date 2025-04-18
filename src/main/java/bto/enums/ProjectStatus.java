@@ -1,5 +1,8 @@
 package bto.enums;
 
+/**
+ * Enum representing the status of a project.
+ */
 public enum ProjectStatus {
     PENDING(false, "Project application is still pending."),
     SUCCESSFUL(true, "Project is application is successful."),
@@ -11,15 +14,31 @@ public enum ProjectStatus {
     private final boolean visible;
     private final String description;
     
+    /**
+     * Constructor for ProjectStatus.
+     * 
+     * @param visible whether the project is visible to applicants
+     * @param description the description of the project status
+     */
     ProjectStatus(boolean visible, String description) {
         this.visible = visible;
         this.description = description;
     }
     
+    /**
+     * Returns whether the project is visible to applicants.
+     * 
+     * @return true if the project is visible, false otherwise
+     */
     public boolean isVisible() {
         return visible;
     }
     
+    /**
+     * Returns the description of the project status.
+     * 
+     * @return the description of the project status
+     */
     public String getDescription() {
         return description;
     }

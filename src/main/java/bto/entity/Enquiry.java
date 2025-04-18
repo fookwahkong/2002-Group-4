@@ -4,7 +4,9 @@ import bto.entity.project.Project;
 import bto.entity.user.Applicant;
 import bto.enums.UserRole;
 
-
+/**
+ * A class representing an enquiry.
+ */
 public class Enquiry {
     Applicant applicant;
     String message;

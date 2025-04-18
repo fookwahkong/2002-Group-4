@@ -12,6 +12,9 @@ import bto.utils.FileIOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A controller class for enquiry operations.
+ */
 public class EnquiryController {
 
     /**

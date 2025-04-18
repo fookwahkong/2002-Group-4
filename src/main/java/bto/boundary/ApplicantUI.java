@@ -14,6 +14,9 @@ import bto.enums.UserRole;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class representing an applicant UI.
+ */
 public class ApplicantUI extends UserUI {
 
     IUserController controller = new PasswordController();

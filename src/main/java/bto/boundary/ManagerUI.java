@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * A class representing a manager UI.
+ */
 public class ManagerUI extends UserUI {
     private final HDBManager currentUser;
     IUserController controller = new PasswordController();
@@ -849,7 +852,7 @@ public class ManagerUI extends UserUI {
             System.out.println(); // Add a newline for better formatting
         }
     }
-    
+
     /**
      * View and reply to enquiries.
      */

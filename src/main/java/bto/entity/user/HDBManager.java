@@ -3,6 +3,9 @@ package bto.entity.user;
 import bto.enums.MaritalStatus;
 import bto.enums.UserRole;
 
+/**
+ * A class representing an HDB manager.
+ */
 public class HDBManager extends User {
 
     public HDBManager(String userID, String password, String name, int age, MaritalStatus maritalStatus,

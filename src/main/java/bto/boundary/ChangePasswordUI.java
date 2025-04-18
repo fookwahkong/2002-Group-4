@@ -4,6 +4,9 @@ import bto.controller.password.IUserController;
 import bto.controller.user.UserManager;
 import bto.entity.user.User;
 
+/**
+ * A class representing a change password UI.
+ */
 public class ChangePasswordUI {
 
     private final IUserController userController;

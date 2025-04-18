@@ -3,6 +3,9 @@ package bto.controller.password;
 import bto.controller.user.UserManager;
 import bto.entity.user.User;
 
+/**
+ * A controller class for password operations.
+ */
 public class PasswordController implements IUserController {
 
     @Override

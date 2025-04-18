@@ -1,5 +1,8 @@
 package bto.entity;
 
+/**
+ * A class representing a housing.
+ */
 public class Housing {
     private String type;
     private float sellingPrice;

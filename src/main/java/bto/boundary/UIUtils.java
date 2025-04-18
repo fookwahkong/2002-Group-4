@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+/**
+ * A utility class for UI operations.
+ */
 public class UIUtils {
     private static final Scanner scanner = new Scanner(System.in);
     protected static final DateTimeFormatter DATE_FORMATTER =

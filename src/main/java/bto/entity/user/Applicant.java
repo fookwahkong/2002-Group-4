@@ -8,6 +8,9 @@ import bto.enums.MaritalStatus;
 import bto.enums.UserRole;
 import bto.interfaces.BookingCapable;
 
+/**
+ * A class representing an applicant.
+ */
 public class Applicant extends User implements BookingCapable{
 
     private final BookingManager bookingManager;

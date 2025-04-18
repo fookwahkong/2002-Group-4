@@ -14,6 +14,9 @@ import bto.entity.user.HDBManager;
 import bto.entity.user.HDBOfficer;
 import bto.enums.ProjectStatus;
 
+/**
+ * A class representing a project.
+ */
 public class Project {
 
     private String name;

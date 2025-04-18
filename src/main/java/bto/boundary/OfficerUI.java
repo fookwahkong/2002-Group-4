@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * A class representing an officer UI.
+ */
 public class OfficerUI extends UserUI {
 
     IUserController controller;

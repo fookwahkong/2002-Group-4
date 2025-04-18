@@ -6,6 +6,9 @@ import bto.controller.user.UserManager;
 import bto.utils.FileIOUtil;
 import bto.controller.registration.RegistrationController;
 
+/**
+ * A class representing the BTO application.
+ */
 public class BTOApp {
     /**
      * Start the BTO application.

@@ -13,6 +13,9 @@ import bto.entity.user.HDBOfficer;
 import bto.enums.ProjectStatus;
 import bto.enums.RegistrationStatus;
 
+/**
+ * A controller class for officer operations.
+ */
 public class OfficerController {
 
     /**

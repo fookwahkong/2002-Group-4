@@ -2,6 +2,9 @@ package bto.controller.password;
 
 import bto.entity.user.User;
 
+/**
+ * An interface for user controllers.
+ */
 public interface IUserController {
     /**
      * Update the password.

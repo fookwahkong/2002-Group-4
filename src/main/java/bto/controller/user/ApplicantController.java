@@ -13,6 +13,9 @@ import bto.enums.MaritalStatus;
 import bto.enums.ProjectStatus;
 import bto.utils.FileIOUtil;
 
+/**
+ * A controller class for applicant operations.
+ */
 public class ApplicantController {
     
     /**

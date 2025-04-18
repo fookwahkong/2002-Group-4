@@ -5,6 +5,9 @@ import java.util.Map;
 
 import bto.entity.project.Project;
 
+/**
+ * A class representing a booking manager.
+ */
 public class BookingManager {
     private final Map<Project, String> bookingDetails;
 

@@ -4,6 +4,9 @@ import bto.entity.user.HDBOfficer;
 import bto.enums.MaritalStatus;
 import bto.enums.UserRole;
 
+/**
+ * A factory class for creating HDBOfficer objects.
+ */
 public class HDBOfficerCreator implements UserCreator {
 
     @Override

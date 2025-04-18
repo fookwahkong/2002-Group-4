@@ -5,6 +5,9 @@ import bto.enums.UserRole;
 import bto.interfaces.Authenticatable;
 import bto.interfaces.PersonalProfile;
 
+/**
+ * A class representing a user.
+ */
 public abstract class User implements Authenticatable, PersonalProfile{
     private String userID;
     private String password;

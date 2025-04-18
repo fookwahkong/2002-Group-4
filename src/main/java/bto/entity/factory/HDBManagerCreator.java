@@ -5,6 +5,9 @@ import bto.entity.user.HDBManager;
 import bto.enums.MaritalStatus;
 import bto.enums.UserRole;
 
+/**
+ * A factory class for creating HDBManager objects.
+ */
 public class HDBManagerCreator implements UserCreator {
 
     @Override

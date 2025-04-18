@@ -3,6 +3,9 @@ package bto.boundary;
 import bto.controller.user.UserManager;
 import bto.entity.user.User;
 
+/**
+ * A class representing a login UI.
+ */
 public class LoginUI {
 
     /**

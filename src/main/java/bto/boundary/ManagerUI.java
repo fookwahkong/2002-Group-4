@@ -761,6 +761,7 @@ public class ManagerUI extends UserUI {
                 try {
                     String statusInput = getStringInput("Enter marital status to filter by (SINGLE, MARRIED): ");
                     maritalStatus = MaritalStatus.valueOf(statusInput.toUpperCase());
+                    System.out.println(maritalStatus);
                 } catch (IllegalArgumentException e) {
                     System.out.println("Invalid marital status. Using no filter.");
                 }
@@ -801,7 +802,7 @@ public class ManagerUI extends UserUI {
 
                 if (flatType == null) continue;
 
-                if (maritalStatus != null && !applicant.getMaritalStatus().equals(maritalStatus.toString())) continue;
+                if (maritalStatus != null && !applicant.getMaritalStatus().equals(maritalStatus)) continue;
                 if (flatTypeFilter != null && !flatType.equals(flatTypeFilter)) continue;
                 if (applicant.getAge() < minAge || applicant.getAge() > maxAge) continue;
 

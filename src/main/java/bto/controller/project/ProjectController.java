@@ -124,7 +124,7 @@ public class ProjectController {
                 .toList();
         }
         return new ArrayList<>(); // return empty list if the applicant is neither conditions are met
-        // (possible bug if reached here)
+        // not eligible for any project
     }
 
     /**

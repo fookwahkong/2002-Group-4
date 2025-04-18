@@ -154,7 +154,7 @@ public class OfficerUI extends UserUI {
                 "2. View and reply to enquiries",
                 "3. Register to join a Project",
                 "4. View Registration Status",
-                "5. (Yet to be tested) Approve / Reject Applicants' flat booking",
+                "5. Approve / Reject Applicants' flat booking",
                 "6. Generate receipts",
                 "=================================",
                 "OFFICER UI (APPLICANT)",

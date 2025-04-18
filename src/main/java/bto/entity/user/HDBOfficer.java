@@ -8,6 +8,7 @@ import bto.enums.UserRole;
  */
 public class HDBOfficer extends Applicant {
 
+    private final UserRole userRole = UserRole.HDB_OFFICER;
     /**
      * Constructor for HDBOfficer
      * @param userID The user ID
@@ -15,10 +16,13 @@ public class HDBOfficer extends Applicant {
      * @param name The name
      * @param age The age 
      * @param maritalStatus The marital status
-     * @param userRole The user role
      */
-    public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
-        super(userID, password, name, age, maritalStatus, userRole);
+    public HDBOfficer(String userID, String password, String name, int age, MaritalStatus maritalStatus) {
+        super(userID, password, name, age, maritalStatus);
     }
 
+    @Override
+    public UserRole getUserRole() {
+        return this.userRole;
+    }
 }

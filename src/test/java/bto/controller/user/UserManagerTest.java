@@ -29,11 +29,11 @@ class UserManagerTest {
         
         // Create test users
         Applicant applicant = new Applicant("S1234567A", "password1", "John Doe", 30,
-                MaritalStatus.SINGLE, UserRole.APPLICANT);
+                MaritalStatus.SINGLE);
         HDBOfficer officer = new HDBOfficer("S2345678B", "password2", "Jane Smith", 35,
-                MaritalStatus.MARRIED, UserRole.HDB_OFFICER);
+                MaritalStatus.MARRIED);
         HDBManager manager = new HDBManager("S3456789C", "password3", "Bob Johnson", 40,
-                MaritalStatus.MARRIED, UserRole.HDB_MANAGER);
+                MaritalStatus.MARRIED);
                 
         // Add to our test list
         testUsers.add(applicant);

@@ -18,6 +18,7 @@ import bto.enums.UserRole;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -339,7 +340,20 @@ public class OfficerUI extends UserUI {
      * Approve or reject a booking.
      */
     protected void approveOrRejectBooking() {
-        String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for");
+        List<Project> projectList = ProjectController.getOfficerProjects(currentUser);
+        if (projectList.isEmpty()) {
+            System.out.println("You are not handling any Projects.");
+            return;
+        }
+        Map<Applicant, ProjectStatus> applicationMap = new HashMap<>();
+        for (Project p: projectList) {
+            applicationMap.putAll(p.getApplicantswithStatus());
+        }
+        for (Map.Entry<Applicant, ProjectStatus> entry : applicationMap.entrySet()) {
+            System.out.println("Applicant: " + entry.getKey().getName() + " (" + entry.getKey().getUserID() + ")" + ", Status: " + entry.getValue());
+        }
+
+        String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for: ");
         User user = UserManager.getInstance().findUserByID(userId);
 
         // Check if user exists and is an Applicant
@@ -386,7 +400,7 @@ public class OfficerUI extends UserUI {
         }
 
         // If all checks pass, proceed with approval/rejection
-        String action = getStringInput("Do you want to approve or reject the booking? Enter approve or reject:");
+        String action = getStringInput("Do you want to approve or reject the booking? Enter approve or reject: ");
 
         if ("approve".equals(action.toLowerCase())) {
             OfficerController.updateBookingStatus(applicantProject, applicant, ProjectStatus.BOOKED);
@@ -439,7 +453,7 @@ public class OfficerUI extends UserUI {
         }
         System.out.println("0. Return to previous menu");
 
-        int selection = getIntInput("Select an applicant to generate receipt (0 to cancel)") - 1;
+        int selection = getIntInput("Select an applicant to generate receipt (0 to cancel): ") - 1;
 
         // Return to previous menu if user selects 0
         if (selection == -1) {

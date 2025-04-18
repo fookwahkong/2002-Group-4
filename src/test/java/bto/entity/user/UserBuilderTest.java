@@ -16,11 +16,11 @@ class UserBuilderTest {
     @BeforeEach
     void setUp() {
         applicant = new Applicant("A001", "password", "John Doe", 30,
-                MaritalStatus.SINGLE, UserRole.APPLICANT);
+                MaritalStatus.SINGLE);
         officer = new HDBOfficer("O001", "password", "Jane Smith", 35,
-                MaritalStatus.MARRIED, UserRole.HDB_OFFICER);
+                MaritalStatus.MARRIED);
         manager = new HDBManager("M001", "password", "Bob Johnson", 40,
-                MaritalStatus.MARRIED, UserRole.HDB_MANAGER);
+                MaritalStatus.MARRIED);
     }
 
     @Test

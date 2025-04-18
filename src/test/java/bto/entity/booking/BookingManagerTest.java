@@ -9,7 +9,6 @@ import bto.entity.project.ProjectBuilder;
 import bto.entity.user.BookingManager;
 import bto.entity.user.HDBManager;
 import bto.enums.MaritalStatus;
-import bto.enums.UserRole;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -25,7 +24,7 @@ class BookingManagerTest {
         bookingManager = new BookingManager();
         
         HDBManager manager = new HDBManager("M001", "password", "Manager", 40,
-                                    MaritalStatus.MARRIED, UserRole.HDB_MANAGER);
+                                    MaritalStatus.MARRIED);
         
         // Create test projects
         project1 = new ProjectBuilder()

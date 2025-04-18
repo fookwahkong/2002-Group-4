@@ -14,15 +14,14 @@ public abstract class User implements Authenticatable, PersonalProfile{
     private String name;
     private int age;
     private MaritalStatus maritalStatus;
-    private UserRole userRole;
+    private UserRole userRole = null;
 
-    public User(String userID, String password, String name, int age, MaritalStatus maritalStatus, UserRole userRole) {
+    public User(String userID, String password, String name, int age, MaritalStatus maritalStatus) {
         this.userID = userID;
         this.password = password;
         this.name = name;
         this.age = age;
         this.maritalStatus = maritalStatus;
-        this.userRole = userRole;
     }
 
     @Override

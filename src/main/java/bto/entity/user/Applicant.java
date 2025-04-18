@@ -14,12 +14,17 @@ import bto.interfaces.BookingCapable;
 public class Applicant extends User implements BookingCapable{
 
     private final BookingManager bookingManager;
+    private final UserRole userRole = UserRole.APPLICANT;
 
-    public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus,
-            UserRole userRole) {
-        super(userID, password, name, age, maritalStatus, userRole);
+    public Applicant(String userID, String password, String name, int age, MaritalStatus maritalStatus) {
+        super(userID, password, name, age, maritalStatus);
 
         this.bookingManager = new BookingManager();
+    }
+
+    @Override
+    public UserRole getUserRole() {
+        return this.userRole;
     }
 
     @Override

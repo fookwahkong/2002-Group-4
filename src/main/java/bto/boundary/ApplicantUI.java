@@ -142,7 +142,7 @@ public class ApplicantUI extends UserUI {
         List<Project> projectList = getApplyProjectList();
 
         if (projectList.isEmpty()) {
-            System.out.println("No visible project to view");
+            System.out.println("No visible project to view based on your User Group.");
             return;
         }
 

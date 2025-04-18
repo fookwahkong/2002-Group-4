@@ -40,7 +40,7 @@ public class OfficerController {
 
         ProjectController.updateApplicantStatus(project, applicant, projStatus);
         ProjectController.updateHousingType(project, housingType , house.getSellingPrice(), house.getNumberOfUnits() - 1);
-        ApplicantController.updateProfile(project,housingType);
+        ApplicantController.updateProfile(project,applicant, housingType);
         ProjectController.save();
     }
 

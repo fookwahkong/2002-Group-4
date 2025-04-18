@@ -104,7 +104,7 @@ class FileIOUtilTest {
     void testBookingCapableOperations() {
         // Create a booking-capable user
         Applicant applicant = new Applicant("A002", "pass", "Booking User", 30,
-                MaritalStatus.SINGLE, UserRole.APPLICANT);
+                MaritalStatus.SINGLE);
 
         // Verify it implements BookingCapable
         assertTrue(applicant instanceof BookingCapable);

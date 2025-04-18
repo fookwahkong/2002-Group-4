@@ -46,7 +46,7 @@ class UserFactoryTest {
                 // Create a mock creator for testing
                 UserCreator mockCreator = (userId, password, name, age, maritalStatus) -> new Applicant(userId,
                                 password,
-                                "Custom" + name, age, maritalStatus, UserRole.APPLICANT);
+                                "Custom" + name, age, maritalStatus);
 
                 // Register the custom creator
                 factory.registerCreator(UserRole.APPLICANT, mockCreator);

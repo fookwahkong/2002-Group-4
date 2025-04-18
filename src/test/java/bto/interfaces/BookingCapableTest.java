@@ -9,8 +9,6 @@ import bto.entity.project.ProjectBuilder;
 import bto.entity.user.Applicant;
 import bto.entity.user.HDBManager;
 import bto.enums.MaritalStatus;
-import bto.enums.UserRole;
-
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -23,11 +21,11 @@ class BookingCapableTest {
     void setUp() {
         // Create an Applicant (which implements BookingCapable)
         bookingCapable = new Applicant("A001", "password", "John Doe", 30, 
-                                MaritalStatus.SINGLE, UserRole.APPLICANT);
+                                MaritalStatus.SINGLE);
         
         // Create a test project
         HDBManager manager = new HDBManager("M001", "password", "Manager", 40,
-                                    MaritalStatus.MARRIED, UserRole.HDB_MANAGER);
+                                    MaritalStatus.MARRIED);
         
         project = new ProjectBuilder()
                 .withName("Test Project")

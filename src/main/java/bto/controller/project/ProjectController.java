@@ -112,12 +112,13 @@ public class ProjectController {
      * @return a list of projects the applicant can see and apply for
      */
     public static List<Project> getApplicantProjects(Applicant applicant) {
-        if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
+        if (applicant.getMaritalStatus() == MaritalStatus.SINGLE && applicant.getAge() >= 35) {
             return ProjectController.getProjectList().stream()
-                    .filter(project -> project.getAllHousingTypes().get("2-Room").getNumberOfUnits() != -1)
-                    .filter(project -> project.getVisibility() == true)
-                    .toList();
-        } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED) {
+                .filter(project -> project.getAllHousingTypes().get("2-Room").getNumberOfUnits() != -1)
+                .filter(project -> project.getVisibility() == true)
+                .toList();
+            
+        } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED && applicant.getAge() >= 21) {
             return ProjectController.getProjectList().stream()
                 .filter(project -> project.getVisibility() == true)
                 .toList();

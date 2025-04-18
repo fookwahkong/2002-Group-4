@@ -31,8 +31,7 @@ public class ApplicantController {
      * @param project The project the applicant is applying for
      * @param housingType The housing type the applicant is applying for
      */
-    public static void updateProfile(Project project, String housingType) {
-        Applicant applicant = getCurrentApplicant();
+    public static void updateProfile(Project project, Applicant applicant, String housingType) {
         applicant.setBookingDetails(project, housingType);
         FileIOUtil.saveBookingDetails(UserManager.getUsers());
     }

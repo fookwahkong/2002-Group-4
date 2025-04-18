@@ -743,7 +743,8 @@ public class ManagerUI extends UserUI {
 
         System.out.println("Enquiries you are handling:");
         for (int i = 0; i < enquiries.size(); i++) {
-            System.out.println((i + 1) + ". " + enquiries.get(i).getContent());
+            String projectName = enquiries.get(i).getProject().getName();
+            System.out.println((i + 1) + ". " + projectName + ": " + enquiries.get(i).getContent());
         }
 
         int enquiryIndex = getIntInput("Select an enquiry to reply (0 to cancel): ") - 1;

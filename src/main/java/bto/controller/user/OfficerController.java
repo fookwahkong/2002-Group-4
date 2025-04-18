@@ -15,6 +15,13 @@ import bto.enums.RegistrationStatus;
 
 public class OfficerController {
 
+    /**
+     * Updates the booking status of an applicant in a project.
+     * 
+     * @param project the project
+     * @param applicant the applicant
+     * @param projStatus the new project status
+     */
     public static void updateBookingStatus(Project project, Applicant applicant, ProjectStatus projStatus){
 
         //if the program is robust enough, there should only be two types of applicants here (single (>35) or married (>21))
@@ -34,6 +41,11 @@ public class OfficerController {
         ProjectController.save();
     }
 
+    /**
+     * Submits a registration for a project.
+     * 
+     * @param project the project
+     */
     public static void submitRegistration(Project project) {
 
         HDBOfficer officer = (HDBOfficer) (UserManager.getInstance().getCurrentUser());
@@ -43,6 +55,11 @@ public class OfficerController {
         RegistrationController.save();
     }
 
+    /**
+     * Retrieves the list of registrations for the current officer.
+     * 
+     * @return a list of Registration objects for the current officer
+     */ 
     public static List<Registration> getRegistrationList() {
         HDBOfficer officer = (HDBOfficer) (UserManager.getInstance().getCurrentUser());
         List<Registration> returnList = new ArrayList<>();

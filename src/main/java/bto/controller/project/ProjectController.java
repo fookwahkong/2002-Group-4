@@ -28,20 +28,35 @@ public class ProjectController {
     public ProjectController() {
     }
 
+    /**
+     * Loads the list of projects from persistent storage.
+     */
     public static void load() {
         projects = FileIOUtil.loadProjects(); 
     }
 
+    /**
+     * Saves the current list of projects to persistent storage.
+     */
     public static void save() {
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }
 
-    // get ALL the projects
+    /**
+     * Returns the list of all projects.
+     *
+     * @return a list containing all projects
+     */
     public static List<Project> getProjectList() {
         return projects;
     }
 
-    // get projects managed by manager
+    /**
+     * Returns the list of projects managed by the specified manager.
+     *
+     * @param manager the HDB manager
+     * @return a list of projects managed by the given manager
+     */
     public static List<Project> getManagerProjects(HDBManager manager) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> {
@@ -50,14 +65,24 @@ public class ProjectController {
                 .toList();
     }
 
-    // get projects managed by officer
+    /**
+     * Returns the list of projects assigned to the specified officer.
+     *
+     * @param officer the HDB officer
+     * @return a list of projects assigned to the given officer
+     */
     public static List<Project> getOfficerProjects(HDBOfficer officer) {
         return ProjectController.getProjectList().stream()
                 .filter(project -> project.getAssignedOfficers().contains(officer))
                 .toList();
     }
 
-    // get projects yet to be managed/applied by officer
+    /**
+     * Returns the list of projects that the officer can register for (i.e., not already assigned, not registered, and not an applicant).
+     *
+     * @param officer the HDB officer
+     * @return a list of projects the officer can register for
+     */
     public static List<Project> canRegisterProjects(HDBOfficer officer) {
         return ProjectController.getProjectList().stream()
                 .filter(project ->
@@ -77,7 +102,12 @@ public class ProjectController {
     }
     
 
-    // get all the projects that applicant from each group can see and apply
+    /**
+     * Returns the list of projects visible and available for the applicant to apply, based on their marital status.
+     *
+     * @param applicant the applicant
+     * @return a list of projects the applicant can see and apply for
+     */
     public static List<Project> getApplicantProjects(Applicant applicant) {
         if (applicant.getMaritalStatus() == MaritalStatus.SINGLE) {
             return ProjectController.getProjectList().stream()
@@ -93,7 +123,12 @@ public class ProjectController {
         // (possible bug if reached here)
     }
 
-    // get the active project applied by the applicant
+    /**
+     * Returns the active project (if any) that the applicant has applied for, along with its status.
+     *
+     * @param applicant the applicant
+     * @return a map containing the project and its status, or null if none found
+     */
     public static Map<Project, ProjectStatus> getApplicantActiveProject(Applicant applicant) {
         for (Project p : projects) {
             Map<Applicant, ProjectStatus> applicantStatusMap = p.getApplicantswithStatus();
@@ -113,6 +148,12 @@ public class ProjectController {
         return null; // Return null if no applied project is found
     }
 
+    /**
+     * Finds and returns a project by its name.
+     *
+     * @param projectName the name of the project
+     * @return the project with the specified name, or null if not found
+     */
     public static Project findProjectByName(String projectName) {
         List<Project> projectList = getProjectList();
         for (Project p : projectList) {
@@ -124,8 +165,9 @@ public class ProjectController {
     }
 
     /**
-     * Displays all details of a project in a formatted manner.
-     * Can be used in a console or for generating reports.
+     * Displays all details of the specified project in a formatted manner.
+     *
+     * @param project the project to display details for
      */
     public static void displayProjectDetails(Project project) {
         if (project == null) {
@@ -237,6 +279,13 @@ public class ProjectController {
         System.out.println(details.toString());
     }
 
+    /**
+     * Checks if the manager can handle only one project within each application period.
+     *
+     * @param project the project to check
+     * @param manager the manager
+     * @return true if the manager can handle only one project within each application period, false otherwise
+     */
     private static boolean singleProjectCheck(Project project, HDBManager manager) {
         List<Project> projectList = getManagerProjects(manager);
         for (Project p: projectList) {
@@ -246,7 +295,22 @@ public class ProjectController {
         }
         return true;
     }
-
+    
+    /**
+     * Creates a new project and adds it to the list if the manager is eligible.
+     *
+     * @param projectName the name of the project
+     * @param neighbourhood the neighbourhood of the project
+     * @param priceOne the price of the 2-room housing type
+     * @param numberOfUnitsOne the number of units for the 2-room housing type
+     * @param priceTwo the price of the 3-room housing type
+     * @param numberOfUnitsTwo the number of units for the 3-room housing type
+     * @param openingDate the opening date (format: yyyy-MM-dd)
+     * @param closingDate the closing date (format: yyyy-MM-dd)
+     * @param manager the manager for the project
+     * @param officerSlots the number of officer slots
+     * @throws Exception if the manager is not eligible to handle the project
+     */
     public static void createProject(String projectName, String neighbourhood, float priceOne,
             int numberOfUnitsOne, float priceTwo, int numberOfUnitsTwo,
             String openingDate, String closingDate, HDBManager manager,
@@ -272,65 +336,145 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Deletes the specified project from the list.
+     *
+     * @param project the project to delete
+     */
     public static void deleteProject(Project project) {
         projects.remove(project);
         save();
     }
 
+    /**
+     * Checks if the specified project is visible to applicants.
+     *
+     * @param project the project
+     * @return true if the project is visible, false otherwise
+     */
     public static boolean isProjectVisible(Project project) {
         return project.getVisibility();
     }
 
+    /**
+     * Toggles the visibility of the specified project.
+     *
+     * @param project the project
+     */
     public static void toggleProjectVisibility(Project project) {
         project.setVisiblity(!project.getVisibility());
         save();
     }
 
+    /**
+     * Updates the name of the specified project.
+     *
+     * @param project the project
+     * @param name the new name
+     */
     public static void updateProjectName(Project project, String name) {
         project.setName(name);
         save();
     }
 
+    /**
+     * Updates the neighbourhood of the specified project.
+     *
+     * @param project the project
+     * @param neighbourhood the new neighbourhood
+     */
     public static void updateProjectNeighbourhood(Project project, String neighbourhood) {
         project.setNeighbourhood(neighbourhood);
         save();
     }
 
+    /**
+     * Updates the opening date of the specified project.
+     *
+     * @param project the project
+     * @param openingDate the new opening date (format: yyyy-MM-dd)
+     */
     public static void updateProjectOpeningDate(Project project, String openingDate) {
         project.setOpeningDate(LocalDate.parse(openingDate.trim(), formatter));
         save();
     }
 
+    /**
+     * Updates the closing date of the specified project.
+     *
+     * @param project the project
+     * @param closingDate the new closing date (format: yyyy-MM-dd)
+     */
     public static void updateProjectClosingDate(Project project, String closingDate) {
         project.setClosingDate(LocalDate.parse(closingDate.trim(), formatter));
         save();
     }
 
+    /**
+     * Updates the number of officer slots for the specified project.
+     *
+     * @param project the project
+     * @param slots the new number of officer slots
+     */
     public static void updateProjectSlots(Project project, int slots) {
         project.setOfficerSlot(slots);
         save();
     }
 
+    /**
+     * Updates the specified housing type for the project.
+     *
+     * @param project the project
+     * @param typeName the housing type name
+     * @param sellingPrice the new selling price
+     * @param numberOfUnits the new number of units
+     */
     public static void updateHousingType(Project project, String typeName, float sellingPrice, int numberOfUnits) {
         project.setHousingType(typeName, sellingPrice, numberOfUnits);
         save();
     }
 
+    /**
+     * Adds an applicant to the specified project with a default status of PENDING.
+     *
+     * @param project the project
+     * @param applicant the applicant to add
+     */
     public static void addApplicant(Project project, Applicant applicant) {
         project.addApplicant(applicant, ProjectStatus.PENDING); // default pending, unless changed my manager
         save();
     }
 
+    /**
+     * Updates the status of the specified applicant in the project.
+     *
+     * @param project the project
+     * @param applicant the applicant
+     * @param status the new status
+     */
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
         project.getApplicantswithStatus().put(applicant, status);
         save();
     }
 
+    /**
+     * Adds an officer to the specified project.
+     *
+     * @param project the project
+     * @param officer the officer to add
+     */
     public static void updateOfficer(Project project, HDBOfficer officer) {
         project.addOfficer(officer);
         save();
     }
     
+    /**
+     * Returns a map of applicants with the specified status for the given project.
+     *
+     * @param project the project
+     * @param status the status to filter by
+     * @return a map of applicants and their status matching the given status
+     */
     public static Map<Applicant, ProjectStatus> getApplicationsByStatus(Project project, ProjectStatus status) {
         Map<Applicant, ProjectStatus> applications = new HashMap<>();
 

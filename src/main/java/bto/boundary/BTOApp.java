@@ -7,6 +7,9 @@ import bto.utils.FileIOUtil;
 import bto.controller.registration.RegistrationController;
 
 public class BTOApp {
+    /**
+     * Start the BTO application.
+     */
     public static void start() {
 
         UserManager.load();

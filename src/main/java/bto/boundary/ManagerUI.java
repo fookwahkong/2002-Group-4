@@ -45,6 +45,11 @@ public class ManagerUI extends UserUI {
     private static final String TYPE_ONE = "2-Room";
     private static final String TYPE_TWO = "3-Room";
 
+    /**
+     * Constructor for the ManagerUI class.
+     * 
+     * @param user the user to be displayed in the UI
+     */
     public ManagerUI(User user) {
         super(user);
 
@@ -56,11 +61,21 @@ public class ManagerUI extends UserUI {
         }
     }
 
+    /**
+     * Get the maximum menu option.
+     * 
+     * @return the maximum menu option
+     */
     @Override
     protected int getMaxMenuOption() {
         return 12;
     }
 
+    /**
+     * Process the input.
+     * 
+     * @param choice the choice to be processed
+     */
     @Override
     public void processInput(int choice) {
         switch (choice) {
@@ -79,6 +94,9 @@ public class ManagerUI extends UserUI {
         }
     }
 
+    /**
+     * Display the menu options.
+     */
     @Override
     public void displayMenuOptions() {
         String[] menuOptions = {
@@ -106,7 +124,9 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // option 1
+    /**
+     * View all projects.
+     */
     protected void viewAllProjects() {
         List<Project> projectsToShow = selectProjectList();
 
@@ -129,7 +149,11 @@ public class ManagerUI extends UserUI {
         ProjectController.displayProjectDetails(selectedProject);
     }
 
-    // helper method for option 1
+    /**
+     * Select the project list.
+     * 
+     * @return the project list
+     */
     private List<Project> selectProjectList() {
         int filterChoice = getIntInput("Select projects to view (1. All 2. Self): ");
 
@@ -143,7 +167,11 @@ public class ManagerUI extends UserUI {
         };
     }
 
-    // helper method
+    /**
+     * Display the project list.
+     * 
+     * @param projects the project list
+     */
     private void displayProjectList(List<Project> projects) {
         System.out.println("Available Projects:");
         for (int i = 0; i < projects.size(); i++) {
@@ -152,7 +180,9 @@ public class ManagerUI extends UserUI {
         System.out.println("0. Return to main menu");
     }
 
-    // option 2
+    /**
+     * Create a HDB project.
+     */
     protected void createHDBProject() {
         try {
             ProjectData data = collectProjectData();
@@ -176,7 +206,11 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // helper method for option 2
+    /**
+     * Collect the project data.
+     * 
+     * @return the project data
+     */
     private ProjectData collectProjectData() {
         ProjectData data = new ProjectData();
 
@@ -218,7 +252,9 @@ public class ManagerUI extends UserUI {
         int officerSlots;
     }
 
-    // option 3
+    /**
+     * Edit a HDB project.
+     */
     protected void editHDBProject() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
 
@@ -239,7 +275,11 @@ public class ManagerUI extends UserUI {
         editProjectMenu(selectedProject);
     }
 
-    // helper method for option 3
+    /**
+     * Display the project list with status.
+     * 
+     * @param projects the project list
+     */
     private void displayProjectListWithStatus(List<Project> projects) {
         System.out.println("\nYour HDB Projects:");
         for (int i = 0; i < projects.size(); i++) {
@@ -249,7 +289,11 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // helper method for option 3
+    /**
+     * Display the edit project menu.
+     * 
+     * @param project the project
+     */
     private void editProjectMenu(Project project) {
         boolean editing = true;
 
@@ -260,7 +304,11 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // helper method for option 3
+    /**
+     * Display the edit options.
+     * 
+     * @param project the project
+     */
     private void displayEditOptions(Project project) {
         System.out.println("\nEditing Project: " + project.getName());
         System.out.println("1. Edit project name");
@@ -277,7 +325,13 @@ public class ManagerUI extends UserUI {
         System.out.println("0. Save and return to main menu");
     }
 
-    // helper method for option 3
+    /**
+     * Handle the edit choice.
+     * 
+     * @param choice the choice
+     * @param project the project
+     * @return true if the edit is successful, false otherwise
+     */
     private boolean handleEditChoice(int choice, Project project) {
         try {
             switch (choice) {
@@ -312,7 +366,13 @@ public class ManagerUI extends UserUI {
         return true;
     }
 
-    //Helper method to get the current price of a housing type
+    /**
+     * Get the current price of a housing type.
+     * 
+     * @param project the project
+     * @param typeName the type name
+     * @return the current price of the housing type
+     */
     private float getHousingTypePrice(Project project, String typeName) {
         try {
             if (project.getHousingType(typeName) != null) {
@@ -327,7 +387,13 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    //Helper method to get the current units of a housing type
+    /**
+     * Get the current units of a housing type.
+     * 
+     * @param project the project
+     * @param typeName the type name
+     * @return the current units of the housing type
+     */
     private int getHousingTypeUnits(Project project, String typeName) {
         try {
             if (project.getHousingType(typeName) != null) {
@@ -343,8 +409,10 @@ public class ManagerUI extends UserUI {
     }
 
     /**
-     * Helper method for option 3
-     * Updates the price of a specific housing type
+     * Update the price of a specific housing type.
+     * 
+     * @param project the project
+     * @param typeName the type name
      */
     private void updateHousingTypePrice(Project project, String typeName) {
         // Get the current housing details to preserve units
@@ -360,8 +428,10 @@ public class ManagerUI extends UserUI {
     }
 
     /**
-     * Helper method for option 3
-     * Updates the units of a specific housing type
+     * Update the units of a specific housing type.
+     * 
+     * @param project the project
+     * @param typeName the type name
      */
     private void updateHousingTypeUnits(Project project, String typeName) {
         // Get the current housing details to preserve price
@@ -376,23 +446,45 @@ public class ManagerUI extends UserUI {
         System.out.println(typeName + " units updated successfully.");
     }
 
-    // to update project details based on the different input types
+    /**
+     * Update the project field.
+     * 
+     * @param prompt the prompt
+     * @param updateAction the update action
+     */
     private void updateProjectField(String prompt, Consumer<String> updateAction) {
         String input = getStringInput(prompt);
         updateAction.accept(input);
     }
 
+    /**
+     * Update the project integer field.
+     * 
+     * @param prompt the prompt
+     * @param updateAction the update action
+     */
     private void updateProjectIntField(String prompt, Consumer<Integer> updateAction) {
         int input = getIntInput(prompt);
         updateAction.accept(input);
     }
 
 
+    /**
+     * Update the project date field.
+     * 
+     * @param prompt the prompt
+     * @param updateAction the update action
+     */
     private void updateProjectDateField(String prompt, Consumer<String> updateAction) {
         LocalDate date = getDateInput(prompt);
         updateAction.accept(date.format(DATE_FORMATTER));
     }
 
+    /**
+     * Toggle the project visibility.
+     * 
+     * @param project the project
+     */
     private void toggleProjectVisibility(Project project) {
         boolean currentVisibility = ProjectController.isProjectVisible(project);
         ProjectController.toggleProjectVisibility(project);
@@ -400,7 +492,9 @@ public class ManagerUI extends UserUI {
                 "Project visibility toggled to: " + (!currentVisibility ? "Visible" : "Hidden"));
     }
 
-    // option 4
+    /**
+     * Delete a HDB project.
+     */
     protected void deleteHDBProject() {
         List<Project> projectList = ProjectController.getProjectList();
 
@@ -422,7 +516,11 @@ public class ManagerUI extends UserUI {
         System.out.println("Project \"" + proj.getName() + "\" deleted successfully.");
     }
 
-    // helper function for 5,6
+    /**
+     * Get the registration list.
+     * 
+     * @return the registration list
+     */
     private List<Registration> getRegistrationList() {
         List<Registration> registrationList = new ArrayList<>();
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
@@ -432,7 +530,9 @@ public class ManagerUI extends UserUI {
         return registrationList;
     }
 
-    // option 5
+    /**
+     * View the officer registration.
+     */
     protected void viewOfficerRegistration() {
         List<Registration> registrationList = getRegistrationList();
 
@@ -447,7 +547,9 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // option 6
+    /**
+     * Approve or reject an officer.
+     */
     protected void approveRejectOfficer() {
         viewOfficerRegistration(); // print registration list
         List<Registration> registrationList = getRegistrationList();
@@ -495,7 +597,9 @@ public class ManagerUI extends UserUI {
         }
     }
 
-    // option 7
+    /**
+     * Approve or reject an application.
+     */
     protected void approveRejectApplication() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
         displayProjectList(projectList);
@@ -548,8 +652,11 @@ public class ManagerUI extends UserUI {
         System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
     }
 
-
-    // helper method
+    /**
+     * Display the applicant list with status.
+     * 
+     * @param applicantsWithStatus the applicants with status
+     */
     private void displayApplicantListWithStatus(Map<Applicant, ProjectStatus> applicantsWithStatus) {
         System.out.println("Applications:");
 
@@ -569,7 +676,9 @@ public class ManagerUI extends UserUI {
         System.out.println("0. Return to main menu");
     }
 
-    //option 8
+    /**
+     * Approve or reject a withdrawal.
+     */
     protected void approveRejectWithdrawal() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
         displayProjectList(projectList);
@@ -622,7 +731,9 @@ public class ManagerUI extends UserUI {
 
     }
 
-    //option 9
+    /**
+     * Generate a report.
+     */
     protected void generateReport() {
 
         List<Project> projects = ProjectController.getProjectList();
@@ -711,7 +822,9 @@ public class ManagerUI extends UserUI {
     }
     
 
-    // option 10
+    /**
+     * View all enquiries.
+     */
     protected void viewAllEnquiries() {
         List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
 
@@ -723,7 +836,11 @@ public class ManagerUI extends UserUI {
         displayEnquiryList(enquiryList);
     }
 
-    // helper method for option 10
+    /**
+     * Display the enquiry list.
+     * 
+     * @param enquiries the enquiry list
+     */
     private void displayEnquiryList(List<Enquiry> enquiries) {
         System.out.println("\nEnquiries:");
         for (int i = 0; i < enquiries.size(); i++) {
@@ -732,8 +849,10 @@ public class ManagerUI extends UserUI {
             System.out.println(); // Add a newline for better formatting
         }
     }
-
-    // option 11
+    
+    /**
+     * View and reply to enquiries.
+     */
     protected void viewAndReplyToEnquiries() {
         List<Enquiry> enquiries = EnquiryController.getEnquiriesList(currentUser);
         if (enquiries.isEmpty()) {

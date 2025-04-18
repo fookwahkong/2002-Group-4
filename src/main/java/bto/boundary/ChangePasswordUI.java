@@ -8,10 +8,18 @@ public class ChangePasswordUI {
 
     private final IUserController userController;
 
+    /**
+     * Constructor for the ChangePasswordUI class.
+     * 
+     * @param userController the user controller
+     */
     public ChangePasswordUI(IUserController userController) {
         this.userController = userController;
     }
 
+    /**
+     * Display the menu options.
+     */
     public void displayMenuOptions() {
         String[] menuOptions = {
                 "==================================================================================",
@@ -27,6 +35,9 @@ public class ChangePasswordUI {
         UIUtils.displayMenuOptions(menuOptions);
     }
 
+    /**
+     * Display the change password menu.
+     */ 
     protected void displayChangePasswordMenu() {
         User currentUser = UserManager.getInstance().getCurrentUser();
 

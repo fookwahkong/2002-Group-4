@@ -5,6 +5,9 @@ import bto.entity.user.User;
 
 public class LoginUI {
 
+    /**
+     * Start the login process.
+     */
     public void startLogin() {
         User loggedInUser = displayLoginMenu();
         if (loggedInUser != null) {
@@ -12,6 +15,11 @@ public class LoginUI {
         }
     }
 
+    /**
+     * Display the login menu.
+     * 
+     * @return the logged in user
+     */
     public User displayLoginMenu() {
         boolean exit = false;
         User loggedInUser = null;
@@ -48,6 +56,11 @@ public class LoginUI {
         return null;
     }
 
+    /**
+     * Handle the login process.
+     * 
+     * @return the logged in user
+     */
     private User handleLogin() {
         System.out.println("Logging in with your SingPass account...");
 
@@ -73,6 +86,11 @@ public class LoginUI {
         }
     }
 
+    /**
+     * Navigate to the main menu.
+     * 
+     * @param user the logged in user
+     */ 
     protected void navigateToMainMenu(User user) {
         if (user == null) {
             return;

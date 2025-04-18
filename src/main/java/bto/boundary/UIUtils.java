@@ -58,7 +58,11 @@ public class UIUtils {
         return scanner.nextLine().trim();
     }
     
-    
+    /**
+     * Gets float input from user
+     * @param prompt message to display to user
+     * @return float input
+     */
     public static float getFloatInput(String prompt) {
         while (true) {
             try {
@@ -70,6 +74,11 @@ public class UIUtils {
         }
     }
 
+    /**
+     * Gets date input from user
+     * @param prompt message to display to user
+     * @return date input
+     */
     public static LocalDate getDateInput(String prompt) {
         while (true) {
             try {

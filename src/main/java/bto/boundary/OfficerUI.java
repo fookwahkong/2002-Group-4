@@ -49,6 +49,11 @@ public class OfficerUI extends UserUI {
 
     private static final int CHANGE_PASSWORD = 16;
 
+    /**
+     * Constructor for the OfficerUI class.
+     * 
+     * @param user the user to be displayed in the UI
+     */ 
     public OfficerUI(User user) {
         super(user);
 
@@ -79,6 +84,11 @@ public class OfficerUI extends UserUI {
         this.changePasswordUI = new ChangePasswordUI(controller);
     }
 
+    /**
+     * Get the officer user.
+     * 
+     * @return the officer user
+     */
     protected HDBOfficer getOfficerUser() {
         if (currentUser instanceof HDBOfficer) {
             return (HDBOfficer) currentUser;
@@ -86,6 +96,11 @@ public class OfficerUI extends UserUI {
         throw new IllegalStateException("Current user is not an HDB Officer");
     }
 
+    /**
+     * Process the input.
+     * 
+     * @param choice the choice to be processed
+     */
     @Override
     public void processInput(int choice) {
 
@@ -113,11 +128,19 @@ public class OfficerUI extends UserUI {
         }
     }
 
+    /**
+     * Get the maximum menu option.
+     * 
+     * @return the maximum menu option
+     */ 
     @Override
     public int getMaxMenuOption() {
         return 16;
     }
 
+    /**
+     * Display the menu options.
+     */
     @Override
     public void displayMenuOptions() {
         String[] menuOptions = {
@@ -151,7 +174,9 @@ public class OfficerUI extends UserUI {
         }
     }
 
-    // Option 1
+    /**
+     * View the projects.
+     */
     protected void viewProjects() {
         HDBOfficer officer = getOfficerUser();
         List<Project> projectList = ProjectController.getOfficerProjects(officer);
@@ -178,7 +203,9 @@ public class OfficerUI extends UserUI {
         }
     }
 
-    // Option 2
+    /**
+     * View and reply to enquiries.
+     */
     protected void viewAndReplyToEnquiries() {
         HDBOfficer officer = getOfficerUser();
         List<Enquiry> enquiries = EnquiryController.getEnquiriesByOfficer(officer);
@@ -205,7 +232,12 @@ public class OfficerUI extends UserUI {
         System.out.println("Reply sent successfully!");
     }
 
-    // Single project checker (Officer cannot registere for project within same opening and closing of projects registered / registereing)
+    /**
+     * Single project checker (Officer cannot registere for project within same opening and closing of projects registered / registereing)
+     * 
+     * @param project the project to check
+     * @return true if the project is valid, false otherwise
+     */
     private boolean singleProjectCheck(Project project) {
         List<Project> registeringProject = OfficerController.getRegistrationList().stream()
             // only include non-rejected registrations
@@ -225,7 +257,9 @@ public class OfficerUI extends UserUI {
         return true;
     }
 
-    // Option 3
+    /**
+     * Register to join a project.
+     */
     private void registerJoinProject() {
         HDBOfficer officer = getOfficerUser();
         List<Project> projectList = ProjectController.canRegisterProjects(officer);
@@ -284,7 +318,9 @@ public class OfficerUI extends UserUI {
         return;
     }
 
-    // option 4
+    /**
+     * View the registration status.
+     */
     private void viewReigstrationStatus() {
         // get registration List
         List<Registration> registrationList = OfficerController.getRegistrationList();
@@ -296,7 +332,9 @@ public class OfficerUI extends UserUI {
         }
     }
 
-    // option 5
+    /**
+     * Approve or reject a booking.
+     */
     protected void approveOrRejectBooking() {
         String userId = getStringInput("Type the NRIC of the applicant that you want to approve booking for");
         User user = UserManager.getInstance().findUserByID(userId);
@@ -361,7 +399,9 @@ public class OfficerUI extends UserUI {
         }
     }
 
-    // option 6
+    /**
+     * Generate receipts.
+     */
     protected void generateReceipts() {
         // Get all users from the UserManager
         List<User> allUsers = UserManager.getUsers();
@@ -418,7 +458,13 @@ public class OfficerUI extends UserUI {
         }
     }
 
-    // Helper method to display a receipt for a specific applicant
+    /**
+     * Display a receipt for a specific applicant.
+     * 
+     * @param applicant the applicant
+     * @param project the project
+     * @param housingType the housing type
+     */
     private void displayReceiptForApplicantAndProject(
             Applicant applicant, Project project, String housingType) {
 
@@ -465,23 +511,12 @@ public class OfficerUI extends UserUI {
         System.out.println("====================================================");
     }
 
-    private void displayApplicantListWithStatus(Project project) {
-        System.out.println("Applications:");
-
-        int index = 1;
-        for (Map.Entry<Applicant, ProjectStatus> entry : project.getApplicantswithStatus().entrySet()) {
-            Applicant applicant = entry.getKey();
-            ProjectStatus status = entry.getValue();
-
-            System.out.println(index + ". " + applicant.getName() + " (" + status + ")");
-            index++;
-        }
-
-        System.out.println("0. Return to main menu");
-    }
 
     // Override parent methods that use getApplicantUser to prevent
     // ClassCastException
+    /**
+     * View the open projects.
+     */
     protected void viewOpenProjects() {
         System.out.println(
                 "This functionality is only for viewing Projects open for Application as Applicant only..");

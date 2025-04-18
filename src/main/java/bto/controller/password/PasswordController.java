@@ -15,6 +15,12 @@ public class PasswordController implements IUserController {
         return false;
     }
 
+    /**
+     * Check if the password is valid.
+     * 
+     * @param password the password
+     * @return true if the password is valid, false otherwise
+     */ 
     public static boolean isPasswordValid(String password) {
         if (password == null || password.length() < 8) {
             return false;

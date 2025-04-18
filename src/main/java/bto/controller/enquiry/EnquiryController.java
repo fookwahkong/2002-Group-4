@@ -14,15 +14,26 @@ import java.util.List;
 
 public class EnquiryController {
 
+    /**
+     * Load the enquiries.
+     */
     public static void load() {
         FileIOUtil.loadEnquiries(ProjectController.getProjectList());
     }
 
+    /**
+     * Save the enquiries.
+     */
     public static void save(){
         FileIOUtil.saveEnquiriesToFile(ProjectController.getProjectList());
     }
 
-    //get enquiries on ALL project
+    /**
+     * Get the enquiries on all projects.
+     * 
+     * @param user the user
+     * @return the enquiries
+     */
     public static List<Enquiry> getEnquiriesList(User user) {
         List<Enquiry> result = new ArrayList<>(); // Create a new list each time
         UserRole userRole = user.getUserRole();
@@ -36,6 +47,12 @@ public class EnquiryController {
         return result;
     }
 
+    /**
+     * Get the enquiries by manager.
+     * 
+     * @param manager the manager
+     * @return the enquiries
+     */
     public static List<Enquiry> getEnquiriesByManager(HDBManager manager) {
         List<Enquiry> result = new ArrayList<>(); // Create a new list each time
         List<Project> projectList = ProjectController.getManagerProjects(manager);
@@ -47,6 +64,12 @@ public class EnquiryController {
         return result;
     }
 
+    /**
+     * Get the enquiries by officer.
+     * 
+     * @param officer the officer
+     * @return the enquiries
+     */
     public static List<Enquiry> getEnquiriesByOfficer(HDBOfficer officer) {
         List<Enquiry> result = new ArrayList<>(); // Create a new list each time
         List<Project> projectList = ProjectController.getOfficerProjects(officer);
@@ -58,6 +81,12 @@ public class EnquiryController {
         return result;
     }
 
+    /**
+     * Reply to an enquiry.
+     * 
+     * @param selectedEnquiry the selected enquiry
+     * @param reply the reply
+     */
     public static void replyToEnquiry(Enquiry selectedEnquiry, String reply) {
         selectedEnquiry.setReply(reply);
         selectedEnquiry.setReplied(true);

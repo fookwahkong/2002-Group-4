@@ -9,7 +9,7 @@ import bto.entity.project.Project;
 import bto.entity.user.Applicant;
 import bto.entity.user.User;
 import bto.enums.ProjectStatus;
-import bto.enums.UserRole;
+import bto.enums.UserRole; 
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,12 @@ public class ApplicantUI extends UserUI {
     private static final int DELETE_ENQUIRY = 9;
     private static final int CHANGE_PASSWORD = 10;
 
+
+    /**
+     * Constructor for the ApplicantUI class.
+     * 
+     * @param user the user to be displayed in the UI
+     */
     public ApplicantUI(User user) {
         super(user);
 
@@ -44,6 +50,11 @@ public class ApplicantUI extends UserUI {
     }
 
 
+    /**
+     * Get the applicant user.
+     * 
+     * @return the applicant user
+     */
     protected Applicant getApplicantUser() {
         if (currentUser instanceof Applicant) {
             return (Applicant) currentUser;
@@ -51,11 +62,21 @@ public class ApplicantUI extends UserUI {
         throw new IllegalStateException("Current user is not an Applicant");
     }
 
+    /**
+     * Get the maximum menu option.
+     * 
+     * @return the maximum menu option
+     */ 
     @Override
     protected int getMaxMenuOption() {
         return 10;
     }
 
+    /**
+     * Process the input.
+     * 
+     * @param choice the choice to be processed
+     */
     public void processInput(int choice) {
 
         switch (choice) {
@@ -72,6 +93,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
+    /**
+     * Display the menu options.
+     */     
     @Override
     public void displayMenuOptions() {
         String[] menuOptions = {
@@ -98,12 +122,18 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // helper function for option 1,2 (for officer override)
+    /**
+     * Get the list of projects that the applicant can apply for.
+     * 
+     * @return the list of projects that the applicant can apply for
+     */
     protected List<Project> getApplyProjectList() {
         return ProjectController.getApplicantProjects(getApplicantUser());
     }
 
-    // option 1
+    /**
+     * View the open projects.
+     */
     protected void viewOpenProjects() {
         System.out.println("List of Open Projects: ");
         List<Project> projectList = getApplyProjectList();
@@ -128,7 +158,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 2
+    /**
+     * Apply for a project.
+     */
     protected void applyProject() {
         try {
             Applicant applicant = getApplicantUser();
@@ -168,7 +200,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 3
+    /**
+     * View the applied projects.
+     */
     protected void viewAppliedProjects() {
         List<Project> projectList = ApplicantController.getAppliedProjects();
         if (projectList == null || projectList.isEmpty()) {
@@ -186,7 +220,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 4
+    /**
+     * Book a flat through an HDB Officer.
+     */
     protected void flatBooking() {
         Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
         if (activeProject == null || activeProject.isEmpty()) {
@@ -222,7 +258,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 5
+    /**
+     * Withdraw a booking.
+     */
     protected void withdrawBooking() {
         Map<Project, ProjectStatus> activeProject = ApplicantController.getActiveProjectStatus(getApplicantUser());
         if (activeProject == null || activeProject.isEmpty()) {
@@ -257,7 +295,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 6
+    /**
+     * Submit an enquiry.
+     */
     protected void submitEnquiry() {
         try {
             System.out.println("List of all projects:");
@@ -297,7 +337,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 7
+    /**
+     * View an enquiry.
+     */
     protected void viewEnquiry() {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
@@ -314,7 +356,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 8
+    /**
+     * Edit an enquiry.
+     */
     protected void editEnquiry() {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
@@ -359,7 +403,9 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // option 9
+    /**
+     * Delete an enquiry.
+     */
     protected void deleteEnquiry() {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
@@ -391,7 +437,11 @@ public class ApplicantUI extends UserUI {
         }
     }
 
-    // Helper method to display a list of projects
+    /**
+     * Display a list of projects.
+     * 
+     * @param projectList the list of projects to display
+     */
     protected void displayProjectList(List<Project> projectList) {
         if (projectList == null || projectList.isEmpty()) {
             System.out.println("No projects to display.");
@@ -408,6 +458,11 @@ public class ApplicantUI extends UserUI {
         }
     }
 
+    /**
+     * Display a list of enquiries.
+     * 
+     * @param enquiryList the list of enquiries to display
+     */
     private void displayEnquiryList(List<Enquiry> enquiryList) {
         int cnt = 0;
         for (Enquiry e : enquiryList) {

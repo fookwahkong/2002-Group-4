@@ -7,7 +7,7 @@ Welcome to our OO-based **Built-To-Order (BTO) Management System** — a console
 
 This project was built collaboratively as part of NTU's SC2002 course. Special focus was given to OO modeling, clarity of user roles, and thoughtful requirement interpretation.
 
-## 👨‍💻 Team Members
+## Team Members
 
 | Name | Matric No. | Course |
 |------|------------|---------|
@@ -45,7 +45,7 @@ This project was built collaboratively as part of NTU's SC2002 course. Special f
 
 ---
 
-## 🧠 Design Approach
+## Design Approach
 
 We started with a deep dive into the assignment brief, identifying key actors, their roles, and use-case actions. Our process involved:
 - **Iterative requirement analysis** – multiple readings of the brief, highlighting roles/actions
@@ -56,7 +56,7 @@ We started with a deep dive into the assignment brief, identifying key actors, t
 
 ---
 
-## 🧩 UML & System Design
+## UML & System Design
 
 We modeled our system with clear **aggregation** where reusable components (like `ChangePasswordUI`) are shared across interfaces. Our class design promotes modularity, maintainability, and scalability.
 
@@ -68,30 +68,27 @@ Key Concepts:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```bash
-src/
+
+/2002-Group-4
 │
-├── ui/
-│   ├── ApplicantUI.java
-│   ├── OfficerUI.java
-│   ├── ManagerUI.java
-│   └── ChangePasswordUI.java
-│
-├── controller/
-│   ├── ProjectController.java
-│   ├── EnquiryController.java
-│   └── RegistrationController.java
-│
-├── model/
-│   ├── Applicant.java
-│   ├── HDBOfficer.java
-│   ├── HDBManager.java
-│   ├── Project.java
-│   └── Flat.java
-│
-└── Main.java
+|     ├──docs                              → Final Project Documentation (documents, diagrams, etc.)
+|     ├──src/                              → Java source code
+|     |   ├── main/
+|     |   |    ├── java/
+|     |   |    |    ├── boundary/
+|     |   |    |    ├── controller/
+|     |   |    |    ├── entity/
+|     |   |    |    ├── enums/
+|     |   |    |    ├── interfaces/
+|     |   |    |    ├── utils/
+|     |   |    |    └── Main.java
+|     |   |    └── resources/
+|     |   ├── test/
+└──   └── README.md                        → This file
+
 ```
 
 ---
@@ -100,6 +97,7 @@ How to Run:
 
 ```bash
 #clone this repository
+cd src/main/java
 javac Main.java
 java Main
 ```

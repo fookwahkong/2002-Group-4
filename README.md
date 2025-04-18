@@ -3,6 +3,21 @@
 Welcome to our OO-based **Built-To-Order (BTO) Management System** — a console-based application designed to streamline interactions between HDB applicants and staff. Built as part of our SC2002 (Object-Oriented Design & Programming) assignment, this project models a centralised platform for all BTO operations.
 
 ---
+## Team & Contribution
+
+This project was built collaboratively as part of NTU's SC2002 course. Special focus was given to OO modeling, clarity of user roles, and thoughtful requirement interpretation.
+
+## 👨‍💻 Team Members
+
+| Name | Matric No. | Course |
+|------|------------|---------|
+| Kong Fook Wah | U2421655E | Data Science and Artificial Intelligence |
+| Kris Khor Hai Xiang | U2421377C | Computer Science |
+| Lin Zeshen | U2421421J | Computer Science |
+| Mau Ze Ming | U2421176G | Data Science and Artificial Intelligence |
+| Zheng Nan | U2422815K | Computer Science |
+
+---
 
 ## 🚀 Features
 
@@ -88,12 +103,6 @@ How to Run:
 javac Main.java
 java Main
 ```
-
----
-
-## Team & Contribution
-
-This project was built collaboratively as part of NTU's SC2002 course. Special focus was given to OO modeling, clarity of user roles, and thoughtful requirement interpretation.
 
 ---
 

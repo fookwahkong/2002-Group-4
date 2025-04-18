@@ -1,5 +1,6 @@
-package bto.entity.user;
-
 /**
  * A package for user classes.
  */
+package bto.entity.user;
+
+

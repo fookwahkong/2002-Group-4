@@ -28,6 +28,9 @@ import java.util.Map;
  */
 public class FileIOUtil {
 
+    /**
+     * The data directory
+     */
     private static final String DATA_DIR = "src/main/resources/data/";
 
     public static final String APPLICANTS_FILE = DATA_DIR + "applicants.csv";
@@ -159,6 +162,11 @@ public class FileIOUtil {
         return allProjects;
     }
 
+    /**
+     * Loads all enquiries from the file system.
+     *
+     * @param projects the list of projects
+     */
     public static void loadEnquiries(List<Project> projects) {
         try (CSVReader reader = new CSVReader(new FileReader(ENQUIRIES_FILE))) {
 
@@ -208,6 +216,13 @@ public class FileIOUtil {
         }
     }
 
+    /**
+     * Loads all users from a file.
+     *
+     * @param filepath the path to the file
+     * @param userRole the role of the user
+     * @return a list of users
+     */
     public static List<User> loadUsersFromFile(String filepath, UserRole userRole) {
         List<User> users = new ArrayList<>();
         

@@ -8,5 +8,8 @@ public enum MaritalStatus {
      * Represents a single person.
      */
     SINGLE,
+    /**
+     * Represents a married person.
+     */
     MARRIED
 }

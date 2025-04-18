@@ -5,7 +5,17 @@ package bto.boundary;
  */
 
 public interface UserInterface {
+    /**
+     * Displays the menu
+     */
     void showMenu();
+    /**
+     * Processes the input
+     * @param choice The choice
+     */
     void processInput(int choice);
+    /**
+     * Displays the menu options
+     */
     void displayMenuOptions();
 }

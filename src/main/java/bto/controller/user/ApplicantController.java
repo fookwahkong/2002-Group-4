@@ -57,7 +57,6 @@ public class ApplicantController {
 
     /**
      * Checks if an applicant is eligible to apply for a new project
-     * @param applicant The applicant to check
      * @return true if the applicant is eligible to apply for a new project, false otherwise
      */
     public static boolean checkEligibility() {
@@ -126,9 +125,9 @@ public class ApplicantController {
     }
 
     /**
-     * 
-     * @param enquiry
-     * @param newMessage
+     * Modifies an enquiry
+     * @param enquiry The enquiry to modify
+     * @param newMessage The new message
      */
     public static void modifyEnquiry(Enquiry enquiry, String newMessage) {
         enquiry.setMessage(newMessage);

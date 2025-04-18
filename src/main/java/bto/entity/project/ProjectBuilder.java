@@ -94,6 +94,10 @@ public class ProjectBuilder {
         return this;
     }
 
+    /**
+     * Builds the project
+     * @return The built project
+     */
     public Project build() {
         validateProjectData();
 
@@ -126,6 +130,9 @@ public class ProjectBuilder {
         return project;
     }
 
+    /**
+     * Validates the project data
+     */
     private void validateProjectData() {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalStateException("Project name cannot be empty");
@@ -144,6 +151,11 @@ public class ProjectBuilder {
         }
     }
 
+    /**
+     * Parses the date
+     * @param dateString The date string
+     * @return The parsed date
+     */
     private LocalDate parseDate(String dateString) {
         if (dateString == null || dateString.trim().isEmpty()) {
             return null;
@@ -151,6 +163,10 @@ public class ProjectBuilder {
         return LocalDate.parse(dateString.trim(), formatter);
     }
 
+    /**
+     * Saves the project to the file
+     * @param projects The list of projects
+     */ 
     public void save(List<Project> projects) {
         FileIOUtil.saveProjectToFile(projects, FileIOUtil.PROJECTS_FILE);
     }

@@ -391,7 +391,7 @@ public class ApplicantUI extends UserUI {
 
             Enquiry enquiry = enquiryList.get(enquiryIndex);
             if (enquiry.isReplied()) {
-                System.out.println("Cannot edit a replied enquiy.");
+                System.out.println("Cannot edit a replied enquiry.");
                 return;
             }
 

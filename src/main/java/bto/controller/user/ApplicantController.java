@@ -145,9 +145,7 @@ public class ApplicantController {
         }
         
         return applicantActiveProject.values().stream()
-            .anyMatch(status -> status == ProjectStatus.SUCCESSFUL || 
-                              status == ProjectStatus.BOOKED || 
-                              status == ProjectStatus.PENDING);
+            .noneMatch(status -> status == ProjectStatus.UNSUCCESSFUL);
     }
     
     /**

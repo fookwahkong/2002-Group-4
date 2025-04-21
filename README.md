@@ -1,21 +1,24 @@
-# BTO Management System (SC2002 Assignment)
+#SC2002-FDAB-Group4
 
-Welcome to our OO-based **Built-To-Order (BTO) Management System** — a console-based application designed to streamline interactions between HDB applicants and staff. Built as part of our SC2002 (Object-Oriented Design & Programming) assignment, this project models a centralised platform for all BTO operations.
+# BTO Management System
+
+Built as part of our SC2002 (Object-Oriented Design & Programming) assignment, this project is an OO-based **Built-To-Order (BTO) Management System**, designed to be a console-based centralised platform for all BTO operations.
 
 ---
+
 ## Team & Contribution
 
 This project was built collaboratively as part of NTU's SC2002 course. Special focus was given to OO modeling, clarity of user roles, and thoughtful requirement interpretation.
 
 ## Team Members
 
-| Name | Matric No. | Course |
-|------|------------|---------|
-| Kong Fook Wah | U2421655E | Data Science and Artificial Intelligence |
-| Kris Khor Hai Xiang | U2421377C | Computer Science |
-| Lin Zeshen | U2421421J | Computer Science |
-| Mau Ze Ming | U2421176G | Data Science and Artificial Intelligence |
-| Zheng Nan | U2422815K | Computer Science |
+| Name | Matric No. | Course | Roles |
+|------|------------|---------|---------|
+| Kong Fook Wah | U2421655E | Data Science and Artificial Intelligence | Project Manager |
+| Kris Khor Hai Xiang | U2421377C | Computer Science | Documentation |
+| Lin Zeshen | U2421421J | Computer Science | Lead Tester |
+| Mau Ze Ming | U2421176G | Data Science and Artificial Intelligence | Documentation |
+| Zheng Nan | U2422815K | Computer Science | Lead Developer |
 
 ---
 
@@ -50,7 +53,7 @@ This project was built collaboratively as part of NTU's SC2002 course. Special f
 We started with a deep dive into the assignment brief, identifying key actors, their roles, and use-case actions. Our process involved:
 - **Iterative requirement analysis** – multiple readings of the brief, highlighting roles/actions
 - **Keyword & functionality clustering** – grouped actions to clarify scope
-- **Use of MVC structure** – with Controller classes handling core logic (`ProjectController`, `EnquiryController`, etc.)
+- **Use of MVC structure** – structure the system into Models for data handling, Views for user interface, and Controllers for business logic
 - **Clean UI layering** – separate UI classes for Applicant, Officer, and Manager
 - **Password logic encapsulation** – managed via a shared `ChangePasswordUI` used across all actors
 
@@ -58,12 +61,13 @@ We started with a deep dive into the assignment brief, identifying key actors, t
 
 ## UML & System Design
 
-We modeled our system with clear **aggregation** where reusable components (like `ChangePasswordUI`) are shared across interfaces. Our class design promotes modularity, maintainability, and scalability.
+We modeled our system with a strong emphasis on modularity, maintainability, and scalability to ensure clean architecture and long-term adaptability
 
 Key Concepts:
 - Object-Oriented Programming
 - MVC-inspired layering
-- Aggregation vs Inheritance
+- Association vs Dependency
+- Generalisation vs Realisation
 - Encapsulation of sensitive data (passwords)
 
 ---
@@ -74,20 +78,20 @@ Key Concepts:
 
 /2002-Group-4
 │
-|     ├──docs                              → Final Project Documentation (documents, diagrams, etc.)
+|     ├──docs                              → Final Project Documentation (javadocs, diagrams, etc.)
 |     ├──src/                              → Java source code
-|     |   ├── main/
-|     |   |    ├── java/
-|     |   |    |    ├── boundary/
-|     |   |    |    ├── controller/
-|     |   |    |    ├── entity/
-|     |   |    |    ├── enums/
-|     |   |    |    ├── interfaces/
-|     |   |    |    ├── utils/
-|     |   |    |    └── Main.java
-|     |   |    └── resources/
-|     |   ├── test/
-└──   └── README.md                        → This file
+|     |   ├── main/java
+|     |   |    ├── bto/
+|     |   |    |    ├── boundary/          → UI views (e.g. OfficerUI, LoginUI etc.)
+|     |   |    |    ├── controller/        → Handles backend logic and links models with views
+|     |   |    |    ├── entity/            → Core data models representing system objecets
+|     |   |    |    ├── enums/             → Defines constant values across the system
+|     |   |    |    ├── interfaces/        → Defines shared contract for types and structure
+|     |   |    |    ├── utils/             → Contain utility functions and helper 
+|     |   |    |    └── Main.java          → Program entry point
+|     |   |    └── resources/              → csv files containing samples for testing
+|     |   └── test/                        → unit testing
+├──   └── README.md                        → This file
 
 ```
 
@@ -97,7 +101,7 @@ How to Run:
 
 ```bash
 #clone this repository
-cd src/main/java
+cd src/main/java/bto
 javac Main.java
 java Main
 ```

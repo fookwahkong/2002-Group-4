@@ -278,7 +278,7 @@ public class ApplicantUI extends UserUI {
             ProjectStatus status = entry.getValue();
 
             switch (status) {
-                case BOOKED, REQUEST_BOOK -> {
+                case BOOKED, SUCCESSFUL -> {
                     System.out.println("Withdrawal from flat in " + p.getName() + "? (1. Yes 2. No)");
                     int choice = getValidIntInput(1, 2);
                     if (choice == 1) {
@@ -291,7 +291,7 @@ public class ApplicantUI extends UserUI {
                         System.out.println("Withdrawal not confirmed.");
                     }
                 }
-                case SUCCESSFUL -> System.out.println("You have yet to book a flat in Project " + p.getName());
+                case REQUEST_BOOK -> System.out.println("Current Book application is still pending approval. No withdrawl allowed.");
                 case PENDING ->
                     System.out.println("Current BTO application is still pending approval. No withdrawal allowed.");
                 case REQUEST_WITHDRAW ->

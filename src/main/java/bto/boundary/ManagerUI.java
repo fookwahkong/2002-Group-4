@@ -728,6 +728,7 @@ public class ManagerUI extends UserUI {
             return;
         }
 
+        selectedApplicant.removeBooking(selectedProject);
         ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
         System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
 

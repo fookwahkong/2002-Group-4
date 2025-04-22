@@ -182,8 +182,11 @@ public class ApplicantController {
         }
         
         ProjectStatus status = activeProject.get(project);
-        if (status == ProjectStatus.BOOKED || status == ProjectStatus.SUCCESSFUL) {
-            ProjectController.updateApplicantStatus(project, applicant, ProjectStatus.REQUEST_WITHDRAW);
+        if (status == ProjectStatus.BOOKED) {
+            ProjectController.updateApplicantStatus(project, applicant, ProjectStatus.WITHDRAW_FROM_BOOKED);
+            return true;
+        } else if (status == ProjectStatus.SUCCESSFUL) {
+            ProjectController.updateApplicantStatus(project, applicant, ProjectStatus.WITHDRAW_FROM_SUCCESSFUL);
             return true;
         }
         

@@ -141,7 +141,8 @@ public class ProjectController {
                         status == ProjectStatus.SUCCESSFUL ||
                         status == ProjectStatus.BOOKED ||
                         status == ProjectStatus.REQUEST_BOOK ||
-                        status == ProjectStatus.REQUEST_WITHDRAW)) {
+                        status == ProjectStatus.WITHDRAW_FROM_BOOKED ||
+                        status == ProjectStatus.WITHDRAW_FROM_SUCCESSFUL)) {
                     Map<Project, ProjectStatus> result = new HashMap<>();
                     result.put(p, status);
                     return result;

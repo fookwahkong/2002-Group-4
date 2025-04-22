@@ -255,7 +255,7 @@ public class ApplicantUI extends UserUI {
                 case PENDING -> System.out.println("Current application is still pending approval.");
                 case REQUEST_BOOK ->
                     System.out.println("Current booking for " + p.getName() + " already requested for.");
-                case REQUEST_WITHDRAW ->
+                case WITHDRAW_FROM_BOOKED, WITHDRAW_FROM_SUCCESSFUL ->
                     System.out.println("Current withdrawal request for " + p.getName() + " is in progress.");
                 case UNSUCCESSFUL ->
                     System.out.println("Currenty application has been successfully withdraw.\nPlease submit a new application before booking.");
@@ -291,10 +291,10 @@ public class ApplicantUI extends UserUI {
                         System.out.println("Withdrawal not confirmed.");
                     }
                 }
-                case REQUEST_BOOK -> System.out.println("Current Book application is still pending approval. No withdrawl allowed.");
+                case REQUEST_BOOK -> System.out.println("Current Booking application is still pending approval. No withdrawl allowed.");
                 case PENDING ->
                     System.out.println("Current BTO application is still pending approval. No withdrawal allowed.");
-                case REQUEST_WITHDRAW ->
+                case WITHDRAW_FROM_BOOKED, WITHDRAW_FROM_SUCCESSFUL ->
                     System.out.println("Current withdrawal request " + p.getName() + " is already in progress.");
                 case UNSUCCESSFUL ->
                     System.out.println("Booking has already been successfully withdrawn.");

@@ -18,6 +18,7 @@ import bto.enums.UserRole;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -693,8 +694,13 @@ public class ManagerUI extends UserUI {
 
         Project selectedProject = projectList.get(projIndex);
 
-        Map<Applicant, ProjectStatus> withdrawingApplicantsMap =
-                ProjectController.getApplicationsByStatus(selectedProject, ProjectStatus.REQUEST_WITHDRAW);
+        Map<Applicant, ProjectStatus> withdrawingBookedMap =
+                ProjectController.getApplicationsByStatus(selectedProject, ProjectStatus.WITHDRAW_FROM_BOOKED);
+        Map<Applicant, ProjectStatus> withdrawingSuccessfulMap =
+                ProjectController.getApplicationsByStatus(selectedProject, ProjectStatus.WITHDRAW_FROM_SUCCESSFUL);
+        Map<Applicant, ProjectStatus> withdrawingApplicantsMap = new HashMap<>();
+        withdrawingApplicantsMap.putAll(withdrawingBookedMap);
+        withdrawingApplicantsMap.putAll(withdrawingSuccessfulMap);
 
         if (withdrawingApplicantsMap.isEmpty()) {
             System.out.println("No pending withdrawals for this project.");
@@ -705,7 +711,7 @@ public class ManagerUI extends UserUI {
 
         displayApplicantListWithStatus(withdrawingApplicantsMap);
 
-        int appIndex = getIntInput("Select the withdrawal to approve (0 to cancel): ") - 1;
+        int appIndex = getIntInput("Select the withdrawal to approve / reject (0 to cancel): ") - 1;
         if (appIndex < 0 || appIndex >= pendingApplicants.size()) {
             System.out.println("Invalid selection or cancelled. Returning to menu.");
             return;
@@ -715,20 +721,25 @@ public class ManagerUI extends UserUI {
         ProjectStatus currentStatus = selectedProject.getApplicantStatus(selectedApplicant);
         System.out.println("Current status for " + selectedApplicant.getName() + ": " + currentStatus);
 
-        String newStatusStr = getStringInput("Confirm withdrawal (y/n): ").toLowerCase();
+        String newStatusStr = getStringInput("Enter new status for the application (approve/reject): ").toLowerCase();
         ProjectStatus newStatus;
 
-        if ("y".equals(newStatusStr)) {
+        if ("approve".equals(newStatusStr)) {
             newStatus = ProjectStatus.UNSUCCESSFUL;
-        } else if ("n".equals(newStatusStr)) {
-            System.out.println("No changes made. Returning to menu.");
-            return;
+            if (currentStatus == ProjectStatus.WITHDRAW_FROM_BOOKED) {
+                selectedApplicant.removeBooking(selectedProject);
+            }
+        } else if ("reject".equals(newStatusStr)) {
+            if (currentStatus == ProjectStatus.WITHDRAW_FROM_BOOKED) {
+                newStatus = ProjectStatus.BOOKED;
+            } else {
+                newStatus = ProjectStatus.SUCCESSFUL;
+            }
         } else {
-            System.out.println("Invalid choice. Returning to menu.");
+            System.out.println("Invalid status. Returning to menu.");
             return;
         }
-
-        selectedApplicant.removeBooking(selectedProject);
+        
         ProjectController.updateApplicantStatus(selectedProject, selectedApplicant, newStatus);
         System.out.println("Status updated to " + newStatus + " for " + selectedApplicant.getName());
 
@@ -799,8 +810,6 @@ public class ManagerUI extends UserUI {
             for (Applicant applicant: project.getApplicants()) {
                 Map<Project, String> bookingDetails = applicant.getBookingDetails();
                 String flatType = bookingDetails.get(project);
-                
-                if (project.getApplicantStatus(applicant) != ProjectStatus.BOOKED) continue;
 
                 if (flatType == null) continue;
 

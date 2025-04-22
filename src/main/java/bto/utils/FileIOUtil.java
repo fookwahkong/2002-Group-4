@@ -391,13 +391,16 @@ public class FileIOUtil {
                         Project project = entry.getKey();
                         String housingType = entry.getValue();
 
-                        String[] line = {
-                                user.getUserID(),
-                                project.getName(),
-                                housingType
-                        };
+                        // Make sure the user have not withdraw booking
+                        if (project.getApplicantswithStatus().get(user) != ProjectStatus.UNSUCCESSFUL) {
+                            String[] line = {
+                                    user.getUserID(),
+                                    project.getName(),
+                                    housingType
+                            };
 
-                        writer.writeNext(line);
+                            writer.writeNext(line);
+                        }
                     }
                 }
             }

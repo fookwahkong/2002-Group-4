@@ -1,5 +1,6 @@
 package bto.controller.project;
 
+import bto.controller.user.UserManager;
 import bto.entity.Enquiry;
 import bto.entity.Housing;
 import bto.entity.Registration;
@@ -440,6 +441,7 @@ public class ProjectController {
      */
     public static void updateApplicantStatus(Project project, Applicant applicant, ProjectStatus status) {
         project.getApplicantswithStatus().put(applicant, status);
+        FileIOUtil.saveBookingDetails(UserManager.getUsers());
         save();
     }
 

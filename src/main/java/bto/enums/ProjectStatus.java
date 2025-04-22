@@ -9,5 +9,5 @@ public enum ProjectStatus {
     UNSUCCESSFUL,
     BOOKED,
     REQUEST_BOOK,
-    REQUEST_WITHDRAW;
+    REQUEST_WITHDRAW
 }

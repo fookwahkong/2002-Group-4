@@ -62,9 +62,7 @@ public class ProjectController {
      */
     public static List<Project> getManagerProjects(HDBManager manager) {
         return ProjectController.getProjectList().stream()
-                .filter(project -> {
-                    return project.getManager().equals(manager);
-                })
+                .filter(project -> project.getManager().equals(manager))
                 .toList();
     }
 
@@ -115,12 +113,12 @@ public class ProjectController {
         if (applicant.getMaritalStatus() == MaritalStatus.SINGLE && applicant.getAge() >= 35) {
             return ProjectController.getProjectList().stream()
                 .filter(project -> project.getAllHousingTypes().get("2-Room").getNumberOfUnits() != -1)
-                .filter(project -> project.getVisibility() == true)
+                .filter(Project::getVisibility)
                 .toList();
             
         } else if (applicant.getMaritalStatus() == MaritalStatus.MARRIED && applicant.getAge() >= 21) {
             return ProjectController.getProjectList().stream()
-                .filter(project -> project.getVisibility() == true)
+                .filter(Project::getVisibility)
                 .toList();
         }
         return new ArrayList<>(); // return empty list if the applicant is neither conditions are met
@@ -150,22 +148,6 @@ public class ProjectController {
             }
         }
         return null; // Return null if no applied project is found
-    }
-
-    /**
-     * Finds and returns a project by its name.
-     *
-     * @param projectName the name of the project
-     * @return the project with the specified name, or null if not found
-     */
-    public static Project findProjectByName(String projectName) {
-        List<Project> projectList = getProjectList();
-        for (Project p : projectList) {
-            if (p.getName().equals(projectName)) {
-                return p;
-            }
-        }
-        return null; // Return null if no project is found (bug is here if not found)
     }
 
     /**
@@ -280,7 +262,7 @@ public class ProjectController {
         details.append("\n");
         details.append("=".repeat(60)).append("\n");
 
-        System.out.println(details.toString());
+        System.out.println(details);
     }
 
     /**

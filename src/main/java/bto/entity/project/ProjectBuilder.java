@@ -44,35 +44,10 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder withOpeningDate(String openingDate) {
-        this.openingDate = parseDate(openingDate);
-        return this;
-    }
-
-    public ProjectBuilder withOpeningDate(LocalDate openingDate) {
-        this.openingDate = openingDate;
-        return this;
-    }
-
-    public ProjectBuilder withClosingDate(String closingDate) {
-        this.closingDate = parseDate(closingDate);
-        return this;
-    }
-
-    public ProjectBuilder withClosingDate(LocalDate closingDate) {
-        this.closingDate = closingDate;
-        return this;
-    }
 
     public ProjectBuilder withApplicationPeriod(String openingDate, String closingDate) {
         this.openingDate = parseDate(openingDate);
         this.closingDate = parseDate(closingDate);
-        return this;
-    }
-
-    public ProjectBuilder withApplicationPeriod(LocalDate openingDate, LocalDate closingDate) {
-        this.openingDate = openingDate;
-        this.closingDate = closingDate;
         return this;
     }
 

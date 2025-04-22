@@ -141,7 +141,7 @@ public class ManagerUI extends UserUI {
         displayProjectList(projectsToShow);
 
         int projectChoice = getIntInput("\nSelect a project to view details (0 to return): ");
-        if (projectChoice == 0 || projectChoice < 1 || projectChoice > projectsToShow.size()) {
+        if (projectChoice < 1 || projectChoice > projectsToShow.size()) {
             if (projectChoice != 0) {
                 System.out.println("Invalid project selection.");
             }
@@ -595,7 +595,6 @@ public class ManagerUI extends UserUI {
                 return;
             }
             default: {
-                return;
             }
         }
     }

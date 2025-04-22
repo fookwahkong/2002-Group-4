@@ -3,7 +3,6 @@ package bto.controller.enquiry;
 import bto.controller.project.ProjectController;
 import bto.entity.Enquiry;
 import bto.entity.project.Project;
-import bto.entity.user.HDBManager;
 import bto.entity.user.HDBOfficer;
 import bto.entity.user.User;
 import bto.enums.UserRole;
@@ -47,23 +46,6 @@ public class EnquiryController {
                 result.addAll(p.getEnquiries());
             }
         }
-        return result;
-    }
-
-    /**
-     * Get the enquiries by manager.
-     * 
-     * @param manager the manager
-     * @return the enquiries
-     */
-    public static List<Enquiry> getEnquiriesByManager(HDBManager manager) {
-        List<Enquiry> result = new ArrayList<>(); // Create a new list each time
-        List<Project> projectList = ProjectController.getManagerProjects(manager);
-
-        for (Project p : projectList) {
-            result.addAll(p.getEnquiries());
-        }
-
         return result;
     }
 

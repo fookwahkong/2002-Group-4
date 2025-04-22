@@ -36,7 +36,6 @@ public class Project {
         this.name = name;
         this.neighborhood = neighborhood;
         this.visible = visible;
-        this.registrations = new ArrayList<>();
         this.housingTypes = new HashMap<>();
         this.applicants = new HashMap<>();
         this.officers = new ArrayList<>();
@@ -188,15 +187,6 @@ public class Project {
      */              
     public Map<Applicant, ProjectStatus> getApplicantswithStatus() {
         return this.applicants;
-    }
-
-    /**
-     * Checks if the project is open for application
-     * @return True if the project is open for application, false otherwise
-     */              
-    public boolean isOpenForApplication() {
-        LocalDate today = LocalDate.now();
-        return today.isAfter(openingDate) && today.isBefore(closingDate);
     }
 
     /**

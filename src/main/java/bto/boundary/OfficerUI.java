@@ -319,7 +319,6 @@ public class OfficerUI extends UserUI {
             
         }
         System.out.println();
-        return;
     }
 
     /**
@@ -402,11 +401,11 @@ public class OfficerUI extends UserUI {
         // If all checks pass, proceed with approval/rejection
         String action = getStringInput("Do you want to approve or reject the booking? Enter approve or reject: ");
 
-        if ("approve".equals(action.toLowerCase())) {
+        if ("approve".equalsIgnoreCase(action)) {
             OfficerController.updateBookingStatus(applicantProject, applicant, ProjectStatus.BOOKED);
             System.out.println("Booking has been approved for " + applicant.getName() + ".");
 
-        } else if ("reject".equals(action.toLowerCase())) {
+        } else if ("reject".equalsIgnoreCase(action)) {
             ProjectController.updateApplicantStatus(applicantProject, applicant, ProjectStatus.SUCCESSFUL);
             System.out.println("Booking has been rejected for " + applicant.getName() +
                     ". Applicant status reverted to SUCCESSFUL.");

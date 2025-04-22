@@ -30,13 +30,12 @@ public class OfficerController {
         //if the program is robust enough, there should only be two types of applicants here (single (>35) or married (>21))
         String housingType;
         Housing house;
-        if (ApplicantController.checkSingle(applicant) == true) {
+        if (ApplicantController.checkSingle(applicant)) {
             housingType = "2-Room";
-            house = project.getHousingType(housingType);
         } else {
             housingType = "3-Room";
-            house = project.getHousingType(housingType);
         }
+        house = project.getHousingType(housingType);
 
         ProjectController.updateApplicantStatus(project, applicant, projStatus);
         ProjectController.updateHousingType(project, housingType , house.getSellingPrice(), house.getNumberOfUnits() - 1);

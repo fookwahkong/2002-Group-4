@@ -37,7 +37,7 @@ public class ApplicantUI extends UserUI {
 
     /**
      * Constructor for the ApplicantUI class.
-     * 
+     * Depending on UserRole, we cast it to Applicant
      * @param user the user to be displayed in the UI
      */
     public ApplicantUI(User user) {
@@ -45,7 +45,7 @@ public class ApplicantUI extends UserUI {
 
         if (user.getUserRole() == UserRole.HDB_OFFICER) {
             this.currentUser = (Applicant) user;
-        } else if(user != null && user.getUserRole() == UserRole.APPLICANT) {
+        } else if(user.getUserRole() == UserRole.APPLICANT) {
             this.currentUser = (Applicant) user;
         } else {
             throw new IllegalStateException("Current user is not an Applicant");
@@ -59,7 +59,7 @@ public class ApplicantUI extends UserUI {
      * @return the applicant user
      */
     protected Applicant getApplicantUser() {
-        if (currentUser instanceof Applicant) {
+        if (currentUser != null) {
             return (Applicant) currentUser;
         }
         throw new IllegalStateException("Current user is not an Applicant");
@@ -208,7 +208,7 @@ public class ApplicantUI extends UserUI {
      */
     protected void viewAppliedProjects() {
         List<Project> projectList = ApplicantController.getAppliedProjects();
-        if (projectList == null || projectList.isEmpty()) {
+        if (projectList.isEmpty()) {
             System.out.println("You haven't applied for any projects yet.");
             return;
         }
@@ -351,7 +351,7 @@ public class ApplicantUI extends UserUI {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
 
-            if (enquiryList == null || enquiryList.isEmpty()) {
+            if (enquiryList.isEmpty()) {
                 System.out.println("You haven't submitted any enquiries yet.");
                 return;
             }
@@ -370,7 +370,7 @@ public class ApplicantUI extends UserUI {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
 
-            if (enquiryList == null || enquiryList.isEmpty()) {
+            if (enquiryList.isEmpty()) {
                 System.out.println("You don't have any enquiries to edit.");
                 return;
             }
@@ -417,7 +417,7 @@ public class ApplicantUI extends UserUI {
         try {
             List<Enquiry> enquiryList = ApplicantController.getEnquiries();
 
-            if (enquiryList == null || enquiryList.isEmpty()) {
+            if (enquiryList.isEmpty()) {
                 System.out.println("You don't have any enquiries to delete.");
                 return;
             }

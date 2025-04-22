@@ -23,7 +23,7 @@ public class ChangePasswordUI {
     /**
      * Display the menu options.
      */
-    public void displayMenuOptions() {
+    private void displayMenuOptions() {
         String[] menuOptions = {
                 "==================================================================================",
                 "BTO MANAGEMENT SYSTEM CHANGE PASSWORD",
@@ -51,7 +51,7 @@ public class ChangePasswordUI {
 
         boolean successful = false;
         while (!successful) {
-
+            displayMenuOptions();
             String password = UIUtils.getStringInput("Enter your new password: ");
 
             successful = userController.updatePassword(currentUser, password);
@@ -59,7 +59,7 @@ public class ChangePasswordUI {
             if (successful) {
                 System.out.println("Password changed successfully!");
             } else {
-                System.out.println("Password change failed. Please ensure it meets all requirements.");
+                System.out.println("Password change failed. Please ensure it meets all requirements.\n");
 
             }
 

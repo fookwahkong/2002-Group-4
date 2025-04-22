@@ -10,7 +10,7 @@ public class PasswordController implements IUserController {
 
     @Override
     public boolean updatePassword(User user, String newPassword) {
-        if (isPasswordValid(newPassword)) {
+        if (!user.getPassword().equals(newPassword) && isPasswordValid(newPassword)) {
             user.changePassword(newPassword);
             UserManager.save();
             return true;

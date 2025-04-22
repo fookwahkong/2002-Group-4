@@ -798,6 +798,8 @@ public class ManagerUI extends UserUI {
             for (Applicant applicant: project.getApplicants()) {
                 Map<Project, String> bookingDetails = applicant.getBookingDetails();
                 String flatType = bookingDetails.get(project);
+                
+                if (project.getApplicantStatus(applicant) != ProjectStatus.BOOKED) continue;
 
                 if (flatType == null) continue;
 

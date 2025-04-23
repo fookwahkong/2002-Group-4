@@ -24,39 +24,50 @@ public class LoginUI {
      * @return the logged in user
      */
     public User displayLoginMenu() {
-        boolean exit = false;
-        User loggedInUser = null;
+        try{
+            boolean exit = false;
+            User loggedInUser = null;
 
-        while (!exit) {
-            String[] menuOptions = {
-                    "==================================",
-                    "BTO MANAGEMENT SYSTEM LOGIN",
-                    "==================================",
-                    "1. Login with your Singpass account",
-                    "2. Exit",
-                    "==================================",
-                    "Enter your choice: " };
+            while (!exit) {
+                System.out.println("Loading BTO Management System...");
 
-            UIUtils.displayMenuOptions(menuOptions);
+                Thread.sleep(1000); // Simulate loading time
+                String[] menuOptions = {
+                        "==================================",
+                        "BTO MANAGEMENT SYSTEM LOGIN",
+                        "==================================",
+                        "1. Login with your Singpass account",
+                        "2. Exit",
+                        "==================================",
+                        "Enter your choice: " };
 
-            int choice = UIUtils.getValidIntInput(1, 2);
+                UIUtils.displayMenuOptions(menuOptions);
 
-            switch (choice) {
-                case 1 -> loggedInUser = handleLogin();
-                case 2 -> {
-                    System.out.println("Exiting BTO Management System...");
-                    return null;
+                int choice = UIUtils.getValidIntInput(1, 2);
+
+                switch (choice) {
+                    case 1 -> loggedInUser = handleLogin();
+                    case 2 -> {
+                        System.out.println("Exiting BTO Management System...");
+                        return null;
+                    }
+                    default -> System.out.println("Invalid choice! Please enter a number between 1 and 3.");
                 }
-                default -> System.out.println("Invalid choice! Please enter a number between 1 and 3.");
-            }
 
-            if (loggedInUser != null) {
-                return loggedInUser;
-            }
+                if (loggedInUser != null) {
+                    return loggedInUser;
+                }
 
-            System.out.println();
+                System.out.println();
+            }
+            return null;
+        } catch (InterruptedException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**

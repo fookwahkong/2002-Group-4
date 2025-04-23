@@ -123,8 +123,13 @@ public class ManagerUI extends UserUI {
             "Enter your choice: "
         };
         
-        for (String option : menuOptions) {
-            System.out.println(option);
+        try {
+            Thread.sleep(1000);
+            for (String option : menuOptions) {
+                System.out.println(option);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("Error displaying menu options: " + e.getMessage());
         }
     }
 
@@ -605,7 +610,14 @@ public class ManagerUI extends UserUI {
      */
     protected void approveRejectApplication() {
         List<Project> projectList = ProjectController.getManagerProjects(currentUser);
-        displayProjectList(projectList);
+
+        System.out.println("Available Projects:");
+        for (int i = 0; i < projectList.size(); i++) {
+            System.out.println((i + 1) + ". " + projectList.get(i).getName() + 
+            " (No. of 2-Room units: " + projectList.get(i).getHousingType(TYPE_ONE).getNumberOfUnits() +
+            ", No. of 3-Room units: " + projectList.get(i).getHousingType(TYPE_TWO).getNumberOfUnits() +")");
+        }
+        System.out.println("0. Return to main menu");
 
         int projIndex = getIntInput("Select the project to view (0 to cancel): ") - 1;
         if (projIndex < 0 || projIndex >= projectList.size()) {
@@ -841,7 +853,7 @@ public class ManagerUI extends UserUI {
      * View all enquiries.
      */
     protected void viewAllEnquiries() {
-        List<Enquiry> enquiryList = EnquiryController.getEnquiriesList(currentUser);
+        List<Enquiry> enquiryList = EnquiryController.getAllEnquiries();
 
         if (enquiryList.isEmpty()) {
             System.out.println("No enquiries found.");
@@ -869,17 +881,14 @@ public class ManagerUI extends UserUI {
      * View and reply to enquiries.
      */
     protected void viewAndReplyToEnquiries() {
-        List<Enquiry> enquiries = EnquiryController.getEnquiriesList(currentUser);
+        List<Enquiry> enquiries = EnquiryController.getEnquiriesByManager(currentUser);
         if (enquiries.isEmpty()) {
             System.out.println("No enquiries assigned to you.");
             return;
         }
 
         System.out.println("Enquiries you are handling:");
-        for (int i = 0; i < enquiries.size(); i++) {
-            String projectName = enquiries.get(i).getProject().getName();
-            System.out.println((i + 1) + ". " + projectName + ": " + enquiries.get(i).getContent());
-        }
+        displayEnquiryList(enquiries);
 
         int enquiryIndex = getIntInput("Select an enquiry to reply (0 to cancel): ") - 1;
         if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {

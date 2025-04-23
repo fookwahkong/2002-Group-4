@@ -120,8 +120,13 @@ public class ApplicantUI extends UserUI {
                 "Enter your choice: "
         };
 
-        for (String option : menuOptions) {
-            System.out.println(option);
+        try {
+            Thread.sleep(1000);
+            for (String option : menuOptions) {
+                System.out.println(option);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("Error displaying menu options: " + e.getMessage());
         }
     }
 

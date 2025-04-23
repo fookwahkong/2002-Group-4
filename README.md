@@ -55,7 +55,7 @@ We started with a deep dive into the assignment brief, identifying key actors, t
 - **Keyword & functionality clustering** – grouped actions to clarify scope
 - **Use of MVC structure** – structure the system into Models for data handling, Views for user interface, and Controllers for business logic
 - **Clean UI layering** – separate UI classes for Applicant, Officer, and Manager
-- **Password logic encapsulation** – managed via a shared `ChangePasswordUI` used across all actors
+- **Password logic encapsulation** – managed via a shared `ChangePasswordUI` used across all actors' UI
 
 ---
 
@@ -100,10 +100,10 @@ Key Concepts:
 How to Run:
 
 ```bash
-#clone this repository
-cd src/main/java/bto
-javac Main.java
-java Main
+cd src/main/java
+javac bto/*.java
+java bto.Main
+
 ```
 
 ---

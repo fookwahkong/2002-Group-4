@@ -47,6 +47,12 @@ public class EnquiryController {
         return result;
     }
 
+    /**
+     * Get the enquiries by manager.
+     * 
+     * @param manager the manager
+     * @return the enquiries
+     */
     public static List<Enquiry> getEnquiriesByManager(HDBManager manager) {
         List<Enquiry> result = new ArrayList<>();
         List<Project> projectList = ProjectController.getManagerProjects(manager);

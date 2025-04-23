@@ -33,8 +33,7 @@ public class EnquiryController {
 
     /**
      * Get the enquiries on all projects.
-     * 
-     * @param user the user
+     *
      * @return the enquiries
      */
     public static List<Enquiry> getAllEnquiries() {

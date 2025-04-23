@@ -94,18 +94,6 @@ Key Concepts:
 ├──   └── README.md                        → This file
 
 ```
-
----
-
-How to Run:
-
-```bash
-cd src/main/java
-javac bto/*.java
-java bto.Main
-
-```
-
 ---
 
 Feel free to fork, explore or take inspiration from our structure ✨
